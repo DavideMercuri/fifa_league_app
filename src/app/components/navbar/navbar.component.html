@@ -1,0 +1,9 @@
+<nav tuiTabBar [(activeItemIndex)]="activeItemIndex">
+    <button tuiTabBarItem [icon]="'tuiIconHomeLarge'" routerLinkActive="" [routerLink]="'/'">Home</button>
+    <button *ngFor="let item of items; let i = index" tuiTabBarItem [icon]="item.icon" routerLinkActive=""
+        [routerLink]="item.routerLink" (mouseenter)="showSubmenu(i)" (mouseleave)="hideSubmenu(i)">
+        {{ item.text }}
+        <div class="submenu" *ngIf="showSubMenu[i]">
+        </div>
+    </button>
+</nav>
