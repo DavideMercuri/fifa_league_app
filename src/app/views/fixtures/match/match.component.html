@@ -32,14 +32,14 @@
 
     <div style="width: 50%">
         <label [tuiLabel]="'Marcatori'" class="multiselect-label">
-        <tui-multi-select #tuitui *tuiLet="items$ | async as items" placeholder="Selezionare i Marcatori"
-            class="b-form scorers-select" tuiTextfieldSize="l" [formControl]="activeScorers" [stringify]="stringify"
-            [tuiTextfieldLabelOutside]="true" [expandable]="true" [tuiTextfieldCleaner]="true"
-            (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
-            Marcatori
-            <tui-data-list-wrapper *tuiDataList [items]="items | tuiHideSelected"
-                [itemContent]="itemContent"></tui-data-list-wrapper>
-        </tui-multi-select>
+            <tui-multi-select #tuitui *tuiLet="items$ | async as items" placeholder="Selezionare i Marcatori"
+                class="b-form scorers-select" tuiTextfieldSize="l" [formControl]="activeScorers" [stringify]="stringify"
+                [tuiTextfieldLabelOutside]="true" [expandable]="true" [tuiTextfieldCleaner]="true"
+                (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
+                Marcatori
+                <tui-data-list-wrapper *tuiDataList [items]="items | tuiHideSelected"
+                    [itemContent]="itemContent"></tui-data-list-wrapper>
+            </tui-multi-select>
         </label>
 
         <ng-template #itemContent let-data>
@@ -55,32 +55,28 @@
 
     <!-- Assists Selection -->
 
-        <div style="width: 55%">
-            <label [tuiLabel]="'Assist'" class="multiselect-label">
+    <div style="width: 55%">
+        <label [tuiLabel]="'Assist'" class="multiselect-label">
             <tui-multi-select #tuituiAssist *tuiLet="items$ | async as assist" placeholder="Selezionare gli Assist"
                 class="b-form assist-select" tuiTextfieldSize="l" [formControl]="activeAssist" [stringify]="stringify"
                 [tuiTextfieldLabelOutside]="true" [expandable]="true" [tuiTextfieldCleaner]="true"
                 (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
                 Assist
-                <tui-data-list-wrapper *tuiDataList [items]="assist | tuiHideSelected"
-                    [itemContent]="assistContent">
+                <tui-data-list-wrapper *tuiDataList [items]="assist | tuiHideSelected" [itemContent]="assistContent">
                 </tui-data-list-wrapper>
             </tui-multi-select>
         </label>
 
-            <ng-template #assistContent let-data>
-                <div class="template">
-                    <tui-avatar size="m" class="avatar" [avatarUrl]="data.photo" [text]="data.toString()">
-                    </tui-avatar>
-                    <span class="player-name">{{ data.name }}</span>
-                    <tui-badge [value]="data.position" class="badge-position"></tui-badge>
-                </div>
-            </ng-template>
+        <ng-template #assistContent let-data>
+            <div class="template">
+                <tui-avatar size="m" class="avatar" [avatarUrl]="data.photo" [text]="data.toString()">
+                </tui-avatar>
+                <span class="player-name">{{ data.name }}</span>
+                <tui-badge [value]="data.position" class="badge-position"></tui-badge>
+            </div>
+        </ng-template>
 
-        </div>
-
-        <button (click)="print(tuituiAssist)">PRINT</button>
-
+    </div>
 
 </div>
 

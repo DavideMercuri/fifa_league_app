@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, Renderer2, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Renderer2, Input, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { TuiContextWithImplicit, TuiStringHandler } from '@taiga-ui/cdk';
 import { Player } from 'src/interfaces/player.interface';
@@ -42,11 +42,14 @@ class PlayerSearch implements Player {
 
 export class MatchComponent implements OnInit, AfterViewInit {
 
+  private assist: Array<Player> = [];
+  private processedTuiTags = new Set<string>();
+
   @ViewChild('tuitui') tuitui !: ElementRef;
   @ViewChild('tuituiAssist') tuituiAssist !: ElementRef;
   @Input() match!: Fixture;
 
-  constructor(private http: HttpClient, private renderer: Renderer2, private el: ElementRef) { }
+  constructor(private http: HttpClient, private cdRef: ChangeDetectorRef, private el: ElementRef) { }
   ngAfterViewInit(): void {
 
 
@@ -55,6 +58,14 @@ export class MatchComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.getPlayers();
+
+    // Iscriviti ai cambiamenti delle selezioni attive e chiama `AddCounter` quando cambiano
+    this.activeScorers.valueChanges.subscribe(() => {
+      this.AddCounter(this.tuitui);
+    });
+    this.activeAssist.valueChanges.subscribe(() => {
+      this.AddCounter(this.tuituiAssist);
+    });
   }
 
 
@@ -114,10 +125,10 @@ export class MatchComponent implements OnInit, AfterViewInit {
     }
   }
 
-  assist: Array<Player> = [];
 
-  print(param: any) {
-
+  AddCounter(param: any) {
+    // Aggiungi una chiamata a detectChanges per assicurarti che l'elemento sia completamente renderizzato
+    this.cdRef.detectChanges();
 
     if (param.previousInternalValue) {
       param.previousInternalValue.forEach((players: Player) => {
@@ -126,61 +137,83 @@ export class MatchComponent implements OnInit, AfterViewInit {
       });
     }
 
-    // Trova tutti gli elementi con il tag 'tui-tag'
-    const tuiTags = document.getElementsByTagName('tui-tag');
+    setTimeout(() => {
 
-    // SVG content for plus and minus icons
-    const plusSVGContent = '<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path fill="white" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>';
-    const minusSVGContent = '<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path fill="white" d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z"/></svg>';
+      // Trova tutti gli elementi con il tag 'tui-tag'
+      const tuiTags = document.getElementsByTagName('tui-tag');
 
-    const buttonStyle = 'color: white; background-color: transparent; border: none;';
+      // SVG content for plus and minus icons
+      const plusSVGContent = '<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path fill="white" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>';
+      const minusSVGContent = '<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path fill="white" d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z"/></svg>';
 
-    // Itera attraverso ogni elemento nella collezione
-    for (let i = 0; i < tuiTags.length; i++) {
-      const tuiTag = tuiTags[i];
-      const divElement = tuiTag.querySelector('div');
-      const spanElement = divElement ? divElement.querySelector('span') : null;
-      const closeButton = tuiTag.querySelector('svg[class="t-svg ng-star-inserted"]');
+      const buttonStyle = 'color: white; background-color: transparent; border: none;';
 
-      // Crea il contatore
-      const count = document.createElement('span');
-      count.textContent = '1';
+      // Itera attraverso ogni elemento nella collezione
+      for (let i = 0; i < tuiTags.length; i++) {
+        const tuiTag = tuiTags[i];
 
-      // Crea un pulsante con l'icona specificata
-      const createButtonWithIcon = (svgContent: string, onClick: () => void) => {
-        const button = document.createElement('button');
-        button.setAttribute('style', buttonStyle);
-        const icon = document.createElement('tui-svg');
-        icon.innerHTML = svgContent;
-        button.appendChild(icon);
-        button.addEventListener('click', onClick);
-        return button;
-      };
-
-      const plusButton = createButtonWithIcon(plusSVGContent, () => {
-        count.textContent = (parseInt(count.textContent!, 10) + 1).toString();
-      });
-
-      const minusButton = createButtonWithIcon(minusSVGContent, () => {
-        const newCount = parseInt(count.textContent!, 10) - 1;
-        count.textContent = newCount.toString();
-        if (newCount < 1 && closeButton) {
-          const clickEvent = new MouseEvent('click', {
-            view: window,
-            bubbles: true,
-            cancelable: true,
-          });
-          closeButton.dispatchEvent(clickEvent);
+        // Ottieni o assegna un ID univoco per il tui-tag
+        let tuiTagId = tuiTag.getAttribute('data-tui-tag-id');
+        if (!tuiTagId) {
+          tuiTagId = `tui-tag-${i}-${Date.now()}`;
+          tuiTag.setAttribute('data-tui-tag-id', tuiTagId);
         }
-      });
 
-      if (divElement && spanElement) {
-        divElement.insertBefore(plusButton, spanElement.nextSibling);
-        divElement.insertBefore(minusButton, plusButton.nextSibling);
-        divElement.insertBefore(count, minusButton.nextSibling);
+        // Verifica se il tui-tag è già stato elaborato
+        if (this.processedTuiTags.has(tuiTagId)) {
+          continue; // Passa al prossimo tag se questo è già stato elaborato
+        }
+
+        // Aggiungi l'ID al set di tui-tag elaborati
+        this.processedTuiTags.add(tuiTagId);
+
+        const divElement = tuiTag.querySelector('div');
+        const spanElement = divElement ? divElement.querySelector('span') : null;
+        const closeButton = tuiTag.querySelector('svg[class="t-svg ng-star-inserted"]');
+
+        // Crea il contatore
+        const count = document.createElement('span');
+        count.textContent = '1';
+
+        // Crea un pulsante con l'icona specificata
+        const createButtonWithIcon = (svgContent: string, onClick: () => void) => {
+          const button = document.createElement('button');
+          button.setAttribute('style', buttonStyle);
+          const icon = document.createElement('tui-svg');
+          icon.innerHTML = svgContent;
+          button.appendChild(icon);
+          button.addEventListener('click', onClick);
+          return button;
+        };
+
+        const plusButton = createButtonWithIcon(plusSVGContent, () => {
+          count.textContent = (parseInt(count.textContent!, 10) + 1).toString();
+        });
+
+        const minusButton = createButtonWithIcon(minusSVGContent, () => {
+          const newCount = parseInt(count.textContent!, 10) - 1;
+          count.textContent = newCount.toString();
+          if (newCount < 1 && closeButton) {
+            const clickEvent = new MouseEvent('click', {
+              view: window,
+              bubbles: true,
+              cancelable: true,
+            });
+            closeButton.dispatchEvent(clickEvent);
+          }
+        });
+
+        if (divElement && spanElement) {
+          divElement.insertBefore(plusButton, spanElement.nextSibling);
+          divElement.insertBefore(minusButton, plusButton.nextSibling);
+          divElement.insertBefore(count, minusButton.nextSibling);
+        }
       }
-    }
+
+    }, 0)
+
 
   }
+
 
 }
