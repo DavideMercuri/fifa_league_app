@@ -1,20 +1,29 @@
-<div class="mx-4 mt-5 row">
-    <br>
-    <div *ngFor="let test of fixtures; let i = index;" class="col-4">
-            <button tuiAction type="button" class="action tui-table" style="width: 470px; height: 100px;float: left; margin: 5px">
+<div class="mx-4 mt-3 row">
+    <ng-container  *ngFor="let fixture of fixtures; let i = index;" class="col-12 col-md-4">
+        <div class="tui-space_right-2 col-12 matchday" *ngIf="i % 3 === 0" style="margin-left: 5px; margin-top: 10px;">
+            {{'Giornata ' + fixture.matchday}}
+        </div>
+            <button tuiAction type="button" class="action tui-table col-4" style="width: 100%; height: 100px;float: left; margin: 2px" (click)="onClick(content, header, 'fullscreen', fixture.id_game)">
                 <table class="tui-table tui-table__tr_hover_disabled tui-table_font-size_s">
                     <tbody>
                         <tr class="tui-table__tr tui-table__tr_border_none tui-table__tr_hover_disabled" style="vertical-align: middle;">
-                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 50px; height: 40px;"><img [src]="teamLogo(test.home_team)" style="width: 40px; height: 40px;"></td>
-                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 100px; height: 40px;">{{test.home_team}}</td>
-                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 20px; height: 40px;">{{ test.played == 'yes' ? test.ht_goals : '/' }}</td>
+                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 50px; height: 40px;"><img [src]="teamLogo(fixture.home_team)" style="width: 40px; height: 40px;"></td>
+                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 100px; height: 40px;">{{fixture.home_team}}</td>
+                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 20px; height: 40px; font-size: 20px;">{{ fixture.played == 'yes' ? fixture.ht_goals : '/' }}</td>
                             <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 20px; height: 40px;"> - </td>
-                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 20px; height: 40px;">{{ test.played == 'yes' ? test.aw_goals : '/' }}</td>
-                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 100px; height: 40px;">{{ test.away_team }}</td>
-                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 50px; height: 40px;"><img [src]="teamLogo(test.away_team)" style="width: 40px; height: 40px;"></td>
+                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 20px; height: 40px; font-size: 20px;">{{ fixture.played == 'yes' ? fixture.aw_goals : '/' }}</td>
+                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 100px; height: 40px;">{{ fixture.away_team }}</td>
+                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 50px; height: 40px;"><img [src]="teamLogo(fixture.away_team)" style="width: 40px; height: 40px;"></td>
                         </tr>
                     </tbody>
                 </table>
             </button>
-    </div>
+    </ng-container>
 </div>
+
+<ng-template #content>
+    <app-match [match]="match"></app-match>
+</ng-template>
+
+<ng-template #header>
+</ng-template>

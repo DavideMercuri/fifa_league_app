@@ -1,16 +1,8 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-
-interface Fixture {
-  id_game: string;
-  home_team: string;
-  away_team: string;
-  matchday: string;
-  played: string;
-  ht_goals: string;
-  aw_goals: string;
-
-}
+import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { TuiDialogContext, TuiDialogService, TuiDialogSize } from '@taiga-ui/core';
+import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
+import { Fixture } from 'src/interfaces/fixture.interfaces';
 
 @Component({
   selector: 'app-fixtures',
@@ -20,8 +12,9 @@ interface Fixture {
 export class FixturesComponent implements OnInit, AfterViewInit {
 
   fixtures: Array<Fixture> = [];
+  match!: Fixture;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, @Inject(TuiDialogService) private readonly dialogs: TuiDialogService) { }
 
   ngOnInit(): void {
     this.getFixtures();
@@ -31,8 +24,6 @@ export class FixturesComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
 
   }
-
-
 
   getFixtures() {
     this.http.get('http://localhost:3000/players/fixtures').subscribe({
@@ -56,6 +47,31 @@ export class FixturesComponent implements OnInit, AfterViewInit {
       default:
         return '';
     }
+  }
+
+  onClick(
+    content: PolymorpheusContent<TuiDialogContext>,
+    header: PolymorpheusContent,
+    size: TuiDialogSize, id: any): void {
+
+    this.getSingleMatchInfo(id);
+
+    this.dialogs.open(content, {
+        label: '',
+        header,
+        size,
+      }).subscribe();
+
+
+  }
+
+  getSingleMatchInfo(id: any) {
+    this.http.get(`http://localhost:3000/players/fixture?id=${id}`).subscribe({
+      next: (res: any) => {
+        
+        this.match = res[0];
+      }
+    });
   }
 
 }
