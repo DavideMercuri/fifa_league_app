@@ -6,7 +6,7 @@
                 <tr class="tui-table__tr tui-table__tr_border_none tui-table__tr_hover_disabled"
                     style="vertical-align: middle;">
                     <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last"
-                        style="width: 100px; height: 90px;"><img [src]="teamLogo(match.home_team)"
+                        style="width: 100px; height: 90px;"><img [src]="TeamLogo(match.home_team)"
                             style="width: 80px; height: 80px;"></td>
                     <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last"
                         style="width: 100px; height: 40px;">{{match.home_team}}</td>
@@ -21,7 +21,7 @@
                     <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last"
                         style="width: 100px; height: 40px;">{{ match.away_team }}</td>
                     <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last"
-                        style="width: 100px; height: 90px;"><img [src]="teamLogo(match.away_team)"
+                        style="width: 100px; height: 90px;"><img [src]="TeamLogo(match.away_team)"
                             style="width: 80px; height: 80px;"></td>
                 </tr>
             </tbody>
@@ -30,12 +30,13 @@
 
     <!-- Scorers Selection -->
 
-    <div style="width: 50%">
+    <div style="width: 55%">
         <label [tuiLabel]="'Marcatori'" class="multiselect-label">
-            <tui-multi-select #tuitui *tuiLet="items$ | async as items" placeholder="Selezionare i Marcatori"
-                class="b-form scorers-select" tuiTextfieldSize="l" [formControl]="activeScorers" [stringify]="stringify"
-                [tuiTextfieldLabelOutside]="true" [expandable]="true" [tuiTextfieldCleaner]="true"
-                (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
+            <tui-multi-select #tuitui id="tuitui" *tuiLet="items$ | async as items"
+                placeholder="Selezionare i Marcatori" class="b-form scorers-select" tuiTextfieldSize="l"
+                [formControl]="activeScorers" [stringify]="stringify" [tuiTextfieldLabelOutside]="true"
+                [expandable]="true" [tuiTextfieldCleaner]="true" (searchChange)="onSearchChange($event)"
+                (focusedChange)="onSearchChange('')">
                 Marcatori
                 <tui-data-list-wrapper *tuiDataList [items]="items | tuiHideSelected"
                     [itemContent]="itemContent"></tui-data-list-wrapper>
@@ -53,14 +54,17 @@
 
     </div>
 
+    <br>
+
     <!-- Assists Selection -->
 
     <div style="width: 55%">
         <label [tuiLabel]="'Assist'" class="multiselect-label">
-            <tui-multi-select #tuituiAssist *tuiLet="items$ | async as assist" placeholder="Selezionare gli Assist"
-                class="b-form assist-select" tuiTextfieldSize="l" [formControl]="activeAssist" [stringify]="stringify"
-                [tuiTextfieldLabelOutside]="true" [expandable]="true" [tuiTextfieldCleaner]="true"
-                (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
+            <tui-multi-select #tuituiAssist id="tuituiAssist" *tuiLet="items$ | async as assist"
+                placeholder="Selezionare gli Assist" class="b-form assist-select" tuiTextfieldSize="l"
+                [formControl]="activeAssist" [stringify]="stringify" [tuiTextfieldLabelOutside]="true"
+                [expandable]="true" [tuiTextfieldCleaner]="true" (searchChange)="onSearchChange($event)"
+                (focusedChange)="onSearchChange('')">
                 Assist
                 <tui-data-list-wrapper *tuiDataList [items]="assist | tuiHideSelected" [itemContent]="assistContent">
                 </tui-data-list-wrapper>
@@ -77,6 +81,36 @@
         </ng-template>
 
     </div>
+
+    <br>
+    <br>
+
+    <!-- MOTM Selection -->
+
+    <div style="width: 50%;">
+        <label [tuiLabel]="'Migliore in Campo'" class="multiselect-label">
+            <tui-combo-box #tuicomboMotm *tuiLet="items$ | async as items" [formControl]="activeMotm"
+                [valueContent]="motmContent" [stringify]="stringify" (searchChange)="onSearchChange('')"
+                (focusedChange)="onSearchChange('')">
+                <input tuiTextfield placeholder="Type a name" (input)="onSearchChange(extractValueFromEvent($event))" />
+                <tui-data-list-wrapper *tuiDataList [items]="items" [itemContent]="motmContent"></tui-data-list-wrapper>
+
+            </tui-combo-box>
+            <ng-template #motmContent let-data>
+                <div class="template">
+                    <tui-avatar size="m" class="avatar" [avatarUrl]="data.photo" [text]="data.toString()">
+                    </tui-avatar>
+                    <span class="player-name-motm">{{ data.name }}</span>
+                    <tui-badge [value]="data.position"></tui-badge>
+                </div>
+            </ng-template>
+        </label>
+    </div>
+
+    <br>
+    <br>
+
+    <button (click)="SaveMatchData()">SAVE</button>
 
 </div>
 

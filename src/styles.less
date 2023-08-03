@@ -120,13 +120,29 @@ fieldset.t-item[_ngcontent-vmu-c17] {
   width: 150px;
 }
 
-.t-tag {
-  background-color: var(--tui-positive-hover);
-// pointer-events:none;
+.player-name-motm {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+  width: 180px;
+  font-size: 15px;
+}
+
+#tuitui .t-tag {
+  background-color: var(--tui-support-04);
+}
+
+#tuituiAssist .t-tag {
+  background-color: var(--tui-negative-hover);
 }
 
 .badge-position {
   margin-left: 55px;
+}
+
+.badge-position-motm {
+  background-color: var(--tui-support-04);
 }
 
 .multiselect-label .t-text.ng-star-inserted {
@@ -136,6 +152,15 @@ fieldset.t-item[_ngcontent-vmu-c17] {
   text-align: left;
 }
 
-.t-tag .t-text{
+.t-tag .t-text {
   width: 300px !important;
+}
+
+div.tui-autofill {
+  padding-top: 0px !important;
+  height: 65px !important;
+}
+
+tui-combo-box .t-input {
+  top: -10px !important;
 }
