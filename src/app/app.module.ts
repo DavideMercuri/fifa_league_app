@@ -1,9 +1,9 @@
 import { NgDompurifySanitizer } from "@tinkoff/ng-dompurify";
-import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButtonModule, TuiDataListModule, TuiTextfieldControllerModule, TuiLabelModule, TuiSvgModule, TuiLoaderModule } from "@taiga-ui/core";
+import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButtonModule, TuiDataListModule, TuiTextfieldControllerModule, TuiLabelModule, TuiSvgModule, TuiLoaderModule, TuiAlertService } from "@taiga-ui/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiIslandModule, TuiMultiSelectModule, TuiSelectModule, TuiTagModule } from "@taiga-ui/kit";
+import { TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiIslandModule, TuiMultiSelectModule, TuiSelectModule, TuiTabsModule, TuiTagModule } from "@taiga-ui/kit";
 import { TuiAppBarModule, TuiTabBarModule } from '@taiga-ui/addon-mobile';
 import { TuiCalendarModule } from '@taiga-ui/core';
 import {TuiLetModule} from '@taiga-ui/cdk';
@@ -18,6 +18,7 @@ import { MatchComponent } from './views/fixtures/match/match.component';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { TuiTagDirectiveDirective } from './views/fixtures/match/tui-tag-directive.directive';
 import { TuiTableModule } from "@taiga-ui/addon-table";
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 
 @NgModule({
@@ -33,6 +34,7 @@ import { TuiTableModule } from "@taiga-ui/addon-table";
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    FontAwesomeModule,
     TuiRootModule,
     TuiDialogModule,
     TuiTableModule,
@@ -43,6 +45,7 @@ import { TuiTableModule } from "@taiga-ui/addon-table";
     TuiCalendarModule,
     TuiLoaderModule,
     TuiSvgModule,
+    TuiTabsModule,
     TuiButtonModule,
     TuiTabBarModule,
     TuiBadgeModule,
@@ -60,13 +63,16 @@ import { TuiTableModule } from "@taiga-ui/addon-table";
     TuiDataListModule,
     TuiTextfieldControllerModule,
     TuiDataListWrapperModule,
-    HttpClientModule
+    HttpClientModule,
+    FontAwesomeModule
   ],
   providers: [
   {
     provide: TUI_SANITIZER,
     useClass: NgDompurifySanitizer
-  }],
+  },
+      {provide: TUI_SANITIZER, useClass: NgDompurifySanitizer}
+],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

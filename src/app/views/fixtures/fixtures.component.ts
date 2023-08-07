@@ -60,6 +60,7 @@ export class FixturesComponent implements OnInit, AfterViewInit {
         label: '',
         header,
         size,
+        dismissible: false
       }).subscribe();
 
 

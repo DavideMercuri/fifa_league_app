@@ -1,12 +1,14 @@
+import { faBolt, faFutbol, faMedal, faPersonRunning, faSquare, faSquarePollVertical, faTablet, faTrophy, faTruckMedical } from '@fortawesome/free-solid-svg-icons';
 import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, Renderer2, Input, OnInit, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy, Inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { TuiContextWithImplicit, TuiDestroyService, TuiStringHandler } from '@taiga-ui/cdk';
+import { TuiContextWithImplicit, TuiStringHandler } from '@taiga-ui/cdk';
 import { Player } from 'src/interfaces/player.interface';
 import { TUI_DEFAULT_MATCHER } from '@taiga-ui/cdk';
 import { Observable, of, Subject } from 'rxjs';
 import { delay, filter, startWith, switchMap } from 'rxjs/operators';
 import { Fixture } from 'src/interfaces/fixture.interfaces';
+import { TuiAlertService } from '@taiga-ui/core';
 
 
 
@@ -43,16 +45,28 @@ class PlayerSearch implements Player {
 
 export class MatchComponent implements OnInit, AfterViewInit {
 
+  faFutbol = faFutbol;
+  faMedal = faMedal;
+  faPersonRunning = faPersonRunning;
+  faRectangle = faSquare;
+  faTruckMedical = faTruckMedical;
+  faCard = faTablet;
+
   value = null;
+  tdStyleClass: string = 'tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last';
   search: string | null = '';
   players: Array<PlayerSearch> = [];
 
   @ViewChild('tuitui') tuitui !: ElementRef;
   @ViewChild('tuituiAssist') tuituiAssist !: ElementRef;
   @ViewChild('tuicomboMotm') tuicomboMotm !: any;
+  @ViewChild('tuituiYellowCard') tuituiYellowCard !: any;
+  @ViewChild('tuituiRedCard') tuituiRedCard !: any;
+  @ViewChild('tuituiInjured') tuituiInjured !: any;
   @Input() match!: Fixture;
 
-  constructor(private http: HttpClient, private cdRef: ChangeDetectorRef) { }
+  constructor(private http: HttpClient, private cdRef: ChangeDetectorRef, @Inject(TuiAlertService)
+  private readonly alerts: TuiAlertService) { }
 
   ngAfterViewInit(): void { }
 
@@ -84,6 +98,9 @@ export class MatchComponent implements OnInit, AfterViewInit {
   readonly activeScorers = new FormControl();
   readonly activeAssist = new FormControl();
   readonly activeMotm = new FormControl();
+  readonly activeYellowCards = new FormControl();
+  readonly activeRedCards = new FormControl();
+  readonly activeInjured = new FormControl();
 
   onSearchChange(searchQuery: string | null): void {
     this.search$.next(searchQuery);
@@ -133,44 +150,57 @@ export class MatchComponent implements OnInit, AfterViewInit {
 
   SaveMatchData() {
 
-    const scorersArray: Array<any> = [];
-    const assistsArray: Array<any> = [];
-    const motm: any = {
-      id: this.tuicomboMotm.previousInternalValue.id,
-      name: this.tuicomboMotm.previousInternalValue.name
-    }
+    if (!this.tuicomboMotm.previousInternalValue) {
 
-    const tuituiTags = document.querySelectorAll('#tuitui tui-tag.modified');
-    const tuituiassistTags = document.querySelectorAll('#tuituiAssist tui-tag.modified');
+      this.alerts
+        .open('Aggiungere il migliore in campo!', { label: 'MOTM Mancante' })
+        .subscribe();
 
-    const extractData = (tuiTags: NodeListOf<Element>, arrayToFill: any[]) => {
-      for (let i = 0; i < tuiTags.length; i++) {
-        const tuiTag = tuiTags[i];
-        const id = tuiTag.getAttribute('data-id');
-        const name = tuiTag.getAttribute('data-name');
-        const counter = tuiTag.querySelector('span.counter')?.textContent || '0';
+    } else {
 
-        arrayToFill.push({
-          id: id,
-          name: name,
-          counter: counter
-        });
+      const scorersArray: Array<any> = [];
+      const assistsArray: Array<any> = [];
+      const motm: any = {
+        id: this.tuicomboMotm.previousInternalValue.id,
+        name: this.tuicomboMotm.previousInternalValue.name
       }
-    };
+      let result = {}
 
-    // Estrai i dati dai tui-tags per marcatori e assist
-    extractData(tuituiTags, scorersArray);
-    extractData(tuituiassistTags, assistsArray);
+      const tuituiTags = document.querySelectorAll('#tuitui tui-tag.modified');
+      const tuituiassistTags = document.querySelectorAll('#tuituiAssist tui-tag.modified');
 
+      const extractData = (tuiTags: NodeListOf<Element>, arrayToFill: any[]) => {
+        for (let i = 0; i < tuiTags.length; i++) {
+          const tuiTag = tuiTags[i];
+          const id = tuiTag.getAttribute('data-id');
+          const name = tuiTag.getAttribute('data-name');
+          const counter = tuiTag.querySelector('span.counter')?.textContent || '0';
 
-    // Metti insieme i dati in un oggetto unico
-    const result = {
-      scorers: scorersArray,
-      assists: assistsArray,
-      motm: motm
-    };
+          arrayToFill.push({
+            id: id,
+            name: name,
+            counter: counter
+          });
+        }
+      };
 
-    console.log(result);
+      // Estrai i dati dai tui-tags per marcatori e assist
+      extractData(tuituiTags, scorersArray);
+      extractData(tuituiassistTags, assistsArray);
+
+      // Metti insieme i dati in un oggetto unico
+      result = {
+        scorers: scorersArray,
+        assists: assistsArray,
+        motm: motm,
+        yellowCards: this.tuituiYellowCard.previousInternalValue.map(( {id, name, team}: Player) => ({ id, name, team })),
+        redCards: this.tuituiRedCard.previousInternalValue.map(( {id, name, team}: Player) => ({ id, name, team })),
+        injured: this.tuituiInjured.previousInternalValue.map(( {id, name, team}: Player) => ({ id, name, team }))
+      };
+
+      console.log(result);
+
+    }
 
   }
 
@@ -260,4 +290,18 @@ export class MatchComponent implements OnInit, AfterViewInit {
 
     return player;
   }
+
+  readonly tabMenu = [
+    {
+      text: 'Prestazioni',
+      icon: faSquarePollVertical
+    },
+    {
+      text: 'Sanzioni / Infortuni',
+      icon: faBolt
+    }
+  ];
+
+  activeItemIndex = 0;
+
 }
