@@ -57,12 +57,12 @@ export class MatchComponent implements OnInit, AfterViewInit {
   search: string | null = '';
   players: Array<PlayerSearch> = [];
 
-  @ViewChild('tuitui') tuitui !: ElementRef;
-  @ViewChild('tuituiAssist') tuituiAssist !: ElementRef;
+  @ViewChild('tuitui') tuitui !: any;
+  @ViewChild('tuituiAssist') tuituiAssist !: any;
   @ViewChild('tuicomboMotm') tuicomboMotm !: any;
   @ViewChild('tuituiYellowCard') tuituiYellowCard !: any;
   @ViewChild('tuituiRedCard') tuituiRedCard !: any;
-  @ViewChild('tuituiInjured') tuituiInjured !: any;
+  @ViewChild('tuituiInjured') tuituiInjured !: any
   @Input() match!: Fixture;
 
   constructor(private http: HttpClient, private cdRef: ChangeDetectorRef, @Inject(TuiAlertService)
@@ -74,10 +74,10 @@ export class MatchComponent implements OnInit, AfterViewInit {
     this.GetPlayers();
     // Iscriviti ai cambiamenti delle selezioni attive e chiama `AddCounter` quando cambiano
     this.activeScorers.valueChanges.subscribe(() => {
-      this.AddCounter(this.tuitui);
+      this.AddCounter('scorers', this.activeScorers.value);
     });
     this.activeAssist.valueChanges.subscribe(() => {
-      this.AddCounter(this.tuituiAssist);
+      this.AddCounter('assists', this.activeAssist.value);
     });
   }
 
@@ -130,6 +130,12 @@ export class MatchComponent implements OnInit, AfterViewInit {
     });
   }
 
+  GeFixtureData(matchId: any) {
+
+
+
+  }
+
   SortPlayerByName(arrayToSort: any): Array<any> {
     return arrayToSort.sort((a: any, b: any) => a.name.localeCompare(b.name));
   }
@@ -149,6 +155,15 @@ export class MatchComponent implements OnInit, AfterViewInit {
   }
 
   SaveMatchData() {
+
+    const response = this.match;
+    const players = this.players;
+    const { scorers, assists } = this.ProcessGame(response, players);
+    this.activeScorers.setValue(scorers);
+    this.activeAssist.setValue(assists);
+    this.AddCounter('scorers', scorers);
+    this.AddCounter('assists', assists);
+
 
     if (!this.tuicomboMotm.previousInternalValue) {
 
@@ -193,18 +208,37 @@ export class MatchComponent implements OnInit, AfterViewInit {
         scorers: scorersArray,
         assists: assistsArray,
         motm: motm,
-        yellowCards: this.tuituiYellowCard.previousInternalValue.map(( {id, name, team}: Player) => ({ id, name, team })),
-        redCards: this.tuituiRedCard.previousInternalValue.map(( {id, name, team}: Player) => ({ id, name, team })),
-        injured: this.tuituiInjured.previousInternalValue.map(( {id, name, team}: Player) => ({ id, name, team }))
+        yellowCards: !this.tuituiYellowCard.previousInternalValue ? null : this.tuituiYellowCard.previousInternalValue.map(({ id, name, team }: Player) => ({ id, name, team })),
+        redCards: !this.tuituiRedCard.previousInternalValue ? null : this.tuituiRedCard.previousInternalValue.map(({ id, name, team }: Player) => ({ id, name, team })),
+        injured: !this.tuituiInjured.previousInternalValue ? null : this.tuituiInjured.previousInternalValue.map(({ id, name, team }: Player) => ({ id, name, team }))
       };
 
-      console.log(result);
+      //console.log(result);
 
     }
 
   }
 
-  AddCounter(param: any) {
+  ProcessGame(game: any, players: PlayerSearch[]) {
+    const processString = (str: string) => {
+      return str.split(',').filter(s => s).map(s => {
+        const [idStr, countStr] = s.split('x');
+        const player = players.find(p => Number(p.id) === Number(idStr)); // Confronta come numero
+        const count = Number(countStr);
+        return { id: idStr, name: player?.name || '', count }; // Utilizza idStr come stringa
+      });
+    };
+
+    const scorers = processString(game.scorers);
+    const assists = processString(game.assists);
+
+    return { scorers, assists };
+  }
+
+
+  AddCounter(type: 'scorers' | 'assists', playersCount?: { id: string, count: number }[]) {
+
+    var playerCount: number;
     // Aggiungi una chiamata a detectChanges per assicurarti che l'elemento sia completamente renderizzato
     this.cdRef.detectChanges();
 
@@ -215,6 +249,16 @@ export class MatchComponent implements OnInit, AfterViewInit {
       for (let i = 0; i < tuiTags.length; i++) {
         const tuiTag = tuiTags[i];
         const playerData = this.FindPlayerDataForTag(tuiTag); // Trova i dati del calciatore corrispondenti al tui-tag
+
+        if (playersCount) {
+
+          // Trova il conteggio corrispondente dall'array playersCount
+          const playerCountData = playersCount.find(p => p.id == playerData.id);
+          
+          playerCount = playerCountData ? playerCountData.count : 1;
+        }else{
+          playerCount = 1;
+        }
 
         // Imposta gli attributi data-id e data-name
         tuiTag.setAttribute('data-id', playerData.id);
@@ -228,7 +272,8 @@ export class MatchComponent implements OnInit, AfterViewInit {
         const buttonStyle = 'color: white; background-color: transparent; border: none;';
 
         const count = document.createElement('span');
-        count.textContent = '1';
+        
+        count.textContent = !playerCount ? '1' : playerCount.toString();
         count.classList.add('counter');
 
         const createButtonWithIcon = (svgContent: string, onClick: () => void) => {

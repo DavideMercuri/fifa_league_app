@@ -69,7 +69,6 @@ export class FixturesComponent implements OnInit, AfterViewInit {
   getSingleMatchInfo(id: any) {
     this.http.get(`http://localhost:3000/players/fixture?id=${id}`).subscribe({
       next: (res: any) => {
-        
         this.match = res[0];
       }
     });
