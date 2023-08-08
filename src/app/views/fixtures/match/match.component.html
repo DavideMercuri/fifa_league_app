@@ -28,8 +28,6 @@
     <br>
     <br>
 
-
-
 </div>
 <div>
 
@@ -44,9 +42,11 @@
             {{ item.text }}
             <fa-icon style="margin-left: 10px;" [icon]="item.icon"></fa-icon>
         </button>
+        <div style="margin-left: auto;">
+            <button tuiButton [size]="'m'" appearance="accent" (click)="SetDefaultData()">Reset</button>
 
-        <button tuiButton [size]="'m'" class="save-button" (click)="SaveMatchData()" style="margin-left: auto;">Salva</button>
-
+            <button tuiButton style="margin-left: 10px;" [size]="'m'" class="save-button" (click)="SaveMatchData()">Salva</button>
+        </div>
         <ng-container>
 
             <!-- Prima pagina (scheda) -->
@@ -155,13 +155,14 @@
 
                         <div>
                             <p class="multiselect-label" style="margin-left: 10px; font-size: 17px;">Ammoniti
-                                <img style="width:17px; height: 20px; vertical-align: unset; margin-left: 10px;" src="../../../../assets/media/Icons/Yellow_card.svg.png" alt="">
+                                <img style="width:17px; height: 20px; vertical-align: unset; margin-left: 10px;"
+                                    src="../../../../assets/media/Icons/Yellow_card.svg.png" alt="">
                             </p>
                             <tui-multi-select #tuituiYellowCard id="tuituiYellowCard" *tuiLet="items$ | async as items"
                                 placeholder="Selezionare i Marcatori" class="b-form scorers-select" tuiTextfieldSize="l"
-                                [formControl]="activeYellowCards" [stringify]="stringify" [tuiTextfieldLabelOutside]="true"
-                                [expandable]="true" [tuiTextfieldCleaner]="true" (searchChange)="onSearchChange($event)"
-                                (focusedChange)="onSearchChange('')">
+                                [formControl]="activeYellowCards" [stringify]="stringify"
+                                [tuiTextfieldLabelOutside]="true" [expandable]="true" [tuiTextfieldCleaner]="true"
+                                (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
                                 Ammoniti
                                 <tui-data-list-wrapper *tuiDataList [items]="items | tuiHideSelected"
                                     [itemContent]="itemContent"></tui-data-list-wrapper>
@@ -186,17 +187,18 @@
 
                         <div>
                             <p class="multiselect-label" style="margin-left: 10px; font-size: 17px;">Espulsi
-                                <img style="width:17px; height: 20px; vertical-align: unset; margin-left: 10px;" src="../../../../assets/media/Icons/300px-Red_card.svg.png" alt="">
+                                <img style="width:17px; height: 20px; vertical-align: unset; margin-left: 10px;"
+                                    src="../../../../assets/media/Icons/300px-Red_card.svg.png" alt="">
                             </p>
-                                <tui-multi-select #tuituiRedCard id="tuituiRedCard" *tuiLet="items$ | async as items"
-                                    placeholder="Selezionare i Marcatori" class="b-form scorers-select"
-                                    tuiTextfieldSize="l" [formControl]="activeRedCards" [stringify]="stringify"
-                                    [tuiTextfieldLabelOutside]="true" [expandable]="true" [tuiTextfieldCleaner]="true"
-                                    (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
-                                    Espulsi
-                                    <tui-data-list-wrapper *tuiDataList [items]="items | tuiHideSelected"
-                                        [itemContent]="itemContent"></tui-data-list-wrapper>
-                                </tui-multi-select>
+                            <tui-multi-select #tuituiRedCard id="tuituiRedCard" *tuiLet="items$ | async as items"
+                                placeholder="Selezionare i Marcatori" class="b-form scorers-select" tuiTextfieldSize="l"
+                                [formControl]="activeRedCards" [stringify]="stringify" [tuiTextfieldLabelOutside]="true"
+                                [expandable]="true" [tuiTextfieldCleaner]="true" (searchChange)="onSearchChange($event)"
+                                (focusedChange)="onSearchChange('')">
+                                Espulsi
+                                <tui-data-list-wrapper *tuiDataList [items]="items | tuiHideSelected"
+                                    [itemContent]="itemContent"></tui-data-list-wrapper>
+                            </tui-multi-select>
                             <ng-template #itemContent let-data>
                                 <div class="template">
                                     <tui-avatar size="m" class="avatar" [avatarUrl]="data.photo"
@@ -220,15 +222,15 @@
                             <p class="multiselect-label" style="margin-left: 10px; font-size: 17px;">Infortunati
                                 <fa-icon style="margin-left: 10px;" [icon]="faTruckMedical"></fa-icon>
                             </p>
-                                <tui-multi-select #tuituiInjured id="tuituiInjured" *tuiLet="items$ | async as items"
-                                    placeholder="Selezionare i Marcatori" class="b-form scorers-select"
-                                    tuiTextfieldSize="l" [formControl]="activeInjured" [stringify]="stringify"
-                                    [tuiTextfieldLabelOutside]="true" [expandable]="true" [tuiTextfieldCleaner]="true"
-                                    (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
-                                    Selezionare gli Infortunati
-                                    <tui-data-list-wrapper *tuiDataList [items]="items | tuiHideSelected"
-                                        [itemContent]="itemContent"></tui-data-list-wrapper>
-                                </tui-multi-select>
+                            <tui-multi-select #tuituiInjured id="tuituiInjured" *tuiLet="items$ | async as items"
+                                placeholder="Selezionare i Marcatori" class="b-form scorers-select" tuiTextfieldSize="l"
+                                [formControl]="activeInjured" [stringify]="stringify" [tuiTextfieldLabelOutside]="true"
+                                [expandable]="true" [tuiTextfieldCleaner]="true" (searchChange)="onSearchChange($event)"
+                                (focusedChange)="onSearchChange('')">
+                                Selezionare gli Infortunati
+                                <tui-data-list-wrapper *tuiDataList [items]="items | tuiHideSelected"
+                                    [itemContent]="itemContent"></tui-data-list-wrapper>
+                            </tui-multi-select>
                             <ng-template #itemContent let-data>
                                 <div class="template">
                                     <tui-avatar size="m" class="avatar" [avatarUrl]="data.photo"
@@ -248,6 +250,4 @@
 
 
     </tui-tabs>
-
-
 </div>

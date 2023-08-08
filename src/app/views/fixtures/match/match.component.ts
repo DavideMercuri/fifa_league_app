@@ -45,13 +45,24 @@ class PlayerSearch implements Player {
 
 export class MatchComponent implements OnInit, AfterViewInit {
 
+  readonly tabMenu = [
+    {
+      text: 'Prestazioni',
+      icon: faSquarePollVertical
+    },
+    {
+      text: 'Sanzioni / Infortuni',
+      icon: faBolt
+    }
+  ];
+
   faFutbol = faFutbol;
   faMedal = faMedal;
   faPersonRunning = faPersonRunning;
   faRectangle = faSquare;
   faTruckMedical = faTruckMedical;
   faCard = faTablet;
-
+  activeItemIndex = 0;
   value = null;
   tdStyleClass: string = 'tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last';
   search: string | null = '';
@@ -130,12 +141,6 @@ export class MatchComponent implements OnInit, AfterViewInit {
     });
   }
 
-  GeFixtureData(matchId: any) {
-
-
-
-  }
-
   SortPlayerByName(arrayToSort: any): Array<any> {
     return arrayToSort.sort((a: any, b: any) => a.name.localeCompare(b.name));
   }
@@ -154,16 +159,21 @@ export class MatchComponent implements OnInit, AfterViewInit {
     }
   }
 
-  SaveMatchData() {
-
+  SetDefaultData(){
     const response = this.match;
     const players = this.players;
-    const { scorers, assists } = this.ProcessGame(response, players);
+    const { scorers, assists, motm, yellowCard, redCard, injured } = this.ProcessGame(response, players);
     this.activeScorers.setValue(scorers);
     this.activeAssist.setValue(assists);
     this.AddCounter('scorers', scorers);
     this.AddCounter('assists', assists);
+    this.activeMotm.setValue(motm);
+    this.activeYellowCards.setValue(yellowCard);
+    this.activeRedCards.setValue(redCard);
+    this.activeInjured.setValue(injured);
+  }
 
+  SaveMatchData() {
 
     if (!this.tuicomboMotm.previousInternalValue) {
 
@@ -203,47 +213,78 @@ export class MatchComponent implements OnInit, AfterViewInit {
       extractData(tuituiTags, scorersArray);
       extractData(tuituiassistTags, assistsArray);
 
+      console.log(this.activeYellowCards);
+      
+
       // Metti insieme i dati in un oggetto unico
       result = {
         scorers: scorersArray,
         assists: assistsArray,
         motm: motm,
-        yellowCards: !this.tuituiYellowCard.previousInternalValue ? null : this.tuituiYellowCard.previousInternalValue.map(({ id, name, team }: Player) => ({ id, name, team })),
-        redCards: !this.tuituiRedCard.previousInternalValue ? null : this.tuituiRedCard.previousInternalValue.map(({ id, name, team }: Player) => ({ id, name, team })),
-        injured: !this.tuituiInjured.previousInternalValue ? null : this.tuituiInjured.previousInternalValue.map(({ id, name, team }: Player) => ({ id, name, team }))
+        yellowCards: !this.tuituiYellowCard.previousInternalValue ? null : this.tuituiYellowCard.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
+        redCards: !this.tuituiRedCard.previousInternalValue ? null : this.tuituiRedCard.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
+        injured: !this.tuituiInjured.previousInternalValue ? null : this.tuituiInjured.previousInternalValue.map(({ id, name }: Player) => ({ id, name }))
       };
 
-      //console.log(result);
+      console.log(result);
 
     }
 
   }
 
   ProcessGame(game: any, players: PlayerSearch[]) {
-    const processString = (str: string) => {
+    const processCountedString = (str: string) => {
+      if (!str) return [];
       return str.split(',').filter(s => s).map(s => {
         const [idStr, countStr] = s.split('x');
-        const player = players.find(p => Number(p.id) === Number(idStr)); // Confronta come numero
+        const player = players.find(p => Number(p.id) == Number(idStr));
         const count = Number(countStr);
-        return { id: idStr, name: player?.name || '', count }; // Utilizza idStr come stringa
+        return { id: idStr, name: player?.name || '', count };
       });
     };
 
-    const scorers = processString(game.scorers);
-    const assists = processString(game.assists);
+    const processSingleId = (str: string) => {
+      if (!str) return null;
+      const id = Number(str);
+      const player = players.find(p => Number(p.id) == Number(id));
+      return { id: str, name: player?.name, position: player?.position, photo: player?.photo || '' };
+    };
 
-    return { scorers, assists };
+    const processMultipleIds = (str: string) => {
+      if (!str) return [];
+      return str.split(',').filter(s => s).map(s => {
+        const id = Number(s);
+        const player = players.find(p => Number(p.id) == Number(id));
+        return { id: s, name: player?.name || '' };
+      });
+    };
+
+    const scorers = processCountedString(game.scorers);
+    const assists = processCountedString(game.assists);
+    const motm = processSingleId(game.motm);
+    const yellowCard = processMultipleIds(game.yellow_card);
+    const redCard = processMultipleIds(game.red_card);
+    const injured = processMultipleIds(game.injured);
+
+    return { scorers, assists, motm, yellowCard, redCard, injured };
   }
+
 
 
   AddCounter(type: 'scorers' | 'assists', playersCount?: { id: string, count: number }[]) {
 
     var playerCount: number;
+    var tuiTags: any;
     // Aggiungi una chiamata a detectChanges per assicurarti che l'elemento sia completamente renderizzato
     this.cdRef.detectChanges();
 
     setTimeout(() => {
-      const tuiTags = document.querySelectorAll('tui-tag:not(.modified)');
+      if (type == 'scorers') {
+        tuiTags = document.querySelectorAll('#tuitui tui-tag:not(.modified)');
+      }
+      if (type == 'assists') {
+        tuiTags = document.querySelectorAll('#tuituiAssist tui-tag:not(.modified)');
+      }
 
       // Itera attraverso ogni elemento nella collezione
       for (let i = 0; i < tuiTags.length; i++) {
@@ -254,10 +295,8 @@ export class MatchComponent implements OnInit, AfterViewInit {
 
           // Trova il conteggio corrispondente dall'array playersCount
           const playerCountData = playersCount.find(p => p.id == playerData.id);
-          
+
           playerCount = playerCountData ? playerCountData.count : 1;
-        }else{
-          playerCount = 1;
         }
 
         // Imposta gli attributi data-id e data-name
@@ -272,7 +311,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
         const buttonStyle = 'color: white; background-color: transparent; border: none;';
 
         const count = document.createElement('span');
-        
+
         count.textContent = !playerCount ? '1' : playerCount.toString();
         count.classList.add('counter');
 
@@ -335,18 +374,5 @@ export class MatchComponent implements OnInit, AfterViewInit {
 
     return player;
   }
-
-  readonly tabMenu = [
-    {
-      text: 'Prestazioni',
-      icon: faSquarePollVertical
-    },
-    {
-      text: 'Sanzioni / Infortuni',
-      icon: faBolt
-    }
-  ];
-
-  activeItemIndex = 0;
 
 }
