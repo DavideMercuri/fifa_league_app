@@ -1,6 +1,6 @@
 import { faBolt, faFutbol, faMedal, faPersonRunning, faSquare, faSquarePollVertical, faTablet, faTrophy, faTruckMedical } from '@fortawesome/free-solid-svg-icons';
-import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy, Inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AfterViewInit, Component, Input, OnInit, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy, Inject, ElementRef, Renderer2 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { TuiContextWithImplicit, TuiStringHandler } from '@taiga-ui/cdk';
 import { Player } from 'src/interfaces/player.interface';
@@ -8,9 +8,7 @@ import { TUI_DEFAULT_MATCHER } from '@taiga-ui/cdk';
 import { Observable, of, Subject } from 'rxjs';
 import { delay, filter, startWith, switchMap } from 'rxjs/operators';
 import { Fixture } from 'src/interfaces/fixture.interfaces';
-import { TuiAlertService } from '@taiga-ui/core';
-
-
+import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
 
 class PlayerSearch implements Player {
   constructor(
@@ -63,7 +61,8 @@ export class MatchComponent implements OnInit, AfterViewInit {
   faTruckMedical = faTruckMedical;
   faCard = faTablet;
   activeItemIndex = 0;
-  value = null;
+  htGoals =  '0';
+  awGoals = '0';
   tdStyleClass: string = 'tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last';
   search: string | null = '';
   players: Array<PlayerSearch> = [];
@@ -77,9 +76,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
   @Input() match!: Fixture;
 
   constructor(private http: HttpClient, private cdRef: ChangeDetectorRef, @Inject(TuiAlertService)
-  private readonly alerts: TuiAlertService) { }
-
-  ngAfterViewInit(): void { }
+  private readonly alerts: TuiAlertService, private dialogs: TuiDialogService) { }
 
   ngOnInit(): void {
     this.GetPlayers();
@@ -90,6 +87,10 @@ export class MatchComponent implements OnInit, AfterViewInit {
     this.activeAssist.valueChanges.subscribe(() => {
       this.AddCounter('assists', this.activeAssist.value);
     });
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => (this.SetDefaultData()), 0);
   }
 
   readonly stringify: TuiStringHandler<PlayerSearch | TuiContextWithImplicit<PlayerSearch>> = item =>
@@ -159,18 +160,28 @@ export class MatchComponent implements OnInit, AfterViewInit {
     }
   }
 
-  SetDefaultData(){
-    const response = this.match;
-    const players = this.players;
-    const { scorers, assists, motm, yellowCard, redCard, injured } = this.ProcessGame(response, players);
-    this.activeScorers.setValue(scorers);
-    this.activeAssist.setValue(assists);
-    this.AddCounter('scorers', scorers);
-    this.AddCounter('assists', assists);
-    this.activeMotm.setValue(motm);
-    this.activeYellowCards.setValue(yellowCard);
-    this.activeRedCards.setValue(redCard);
-    this.activeInjured.setValue(injured);
+  SetDefaultData() {
+
+    var testo = document.getElementById("tui_interactive_681691675169956");
+    if(testo){
+    testo.style.padding = '0';}
+    if (this.match.played == 'no') { 
+      return;
+    } else {
+      const response = this.match;
+      const players = this.players;
+      const { scorers, assists, motm, yellowCard, redCard, injured } = this.ProcessGame(response, players);
+      this.htGoals = this.match.ht_goals;
+      this.awGoals = this.match.aw_goals;
+      this.activeScorers.setValue(scorers);
+      this.activeAssist.setValue(assists);
+      this.AddCounter('scorers', scorers);
+      this.AddCounter('assists', assists);
+      this.activeMotm.setValue(motm);
+      this.activeYellowCards.setValue(yellowCard);
+      this.activeRedCards.setValue(redCard);
+      this.activeInjured.setValue(injured);
+    }
   }
 
   SaveMatchData() {
@@ -213,20 +224,27 @@ export class MatchComponent implements OnInit, AfterViewInit {
       extractData(tuituiTags, scorersArray);
       extractData(tuituiassistTags, assistsArray);
 
-      console.log(this.activeYellowCards);
-      
-
       // Metti insieme i dati in un oggetto unico
       result = {
+        idGame: this.match.id_game,
+        htGoals: this.htGoals,
+        awGoals: this.awGoals,
         scorers: scorersArray,
         assists: assistsArray,
         motm: motm,
-        yellowCards: !this.tuituiYellowCard.previousInternalValue ? null : this.tuituiYellowCard.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
-        redCards: !this.tuituiRedCard.previousInternalValue ? null : this.tuituiRedCard.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
-        injured: !this.tuituiInjured.previousInternalValue ? null : this.tuituiInjured.previousInternalValue.map(({ id, name }: Player) => ({ id, name }))
+        yellowCards: !this.tuituiYellowCard.previousInternalValue ? '' : this.tuituiYellowCard.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
+        redCards: !this.tuituiRedCard.previousInternalValue ? '' : this.tuituiRedCard.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
+        injured: !this.tuituiInjured.previousInternalValue ? '' : this.tuituiInjured.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
+        played: 'yes'
       };
 
       console.log(result);
+      
+      this.http.put(`http://localhost:3000/players/fixture/save-match?id=${this.match.id_game}`, {result}).subscribe({
+        complete: () => {
+          const dig = this.dialogs.open(this.match)
+        }
+      });
 
     }
 
@@ -292,10 +310,8 @@ export class MatchComponent implements OnInit, AfterViewInit {
         const playerData = this.FindPlayerDataForTag(tuiTag); // Trova i dati del calciatore corrispondenti al tui-tag
 
         if (playersCount) {
-
           // Trova il conteggio corrispondente dall'array playersCount
           const playerCountData = playersCount.find(p => p.id == playerData.id);
-
           playerCount = playerCountData ? playerCountData.count : 1;
         }
 

@@ -9,13 +9,13 @@
                             [src]="TeamLogo(match.home_team)" class="logo-match-style"></td>
                     <td class="{{tdStyleClass}}" style="width: 100px; height: 40px; vertical-align: middle;">
                         {{match.home_team}}</td>
-                    <td class="{{tdStyleClass}}"
-                        style="width: 20px; height: 40px; font-size: 20px; vertical-align: middle;">
-                        {{ match.played == 'yes' ? match.ht_goals : '/' }}</td>
+                    <td class="{{tdStyleClass}}" style="width: 20px; height: 40px; font-size: 20px; vertical-align: middle;">
+                        <tui-input-number class="b-form goals-count" [tuiTextfieldSize]="'l'" [(ngModel)]="htGoals"></tui-input-number>
+                    </td>
                     <td class="{{tdStyleClass}}" style="width: 20px; height: 40px; vertical-align: middle;"> - </td>
-                    <td class="{{tdStyleClass}}"
-                        style="width: 20px; height: 40px; font-size: 20px; vertical-align: middle;">{{ match.played ==
-                        'yes' ? match.aw_goals : '/' }}</td>
+                    <td class="{{tdStyleClass}}" style="width: 20px; height: 40px; font-size: 20px; vertical-align: middle;">
+                        <tui-input-number class="b-form goals-count" [tuiTextfieldSize]="'l'" [(ngModel)]="awGoals"></tui-input-number>
+                    </td>
                     <td class="{{tdStyleClass}}" style="width: 100px; height: 40px; vertical-align: middle;">
                         {{match.away_team }}</td>
                     <td class="{{tdStyleClass}}" style="width: 100px; height: 90px;"><img
@@ -47,7 +47,7 @@
 
             <button tuiButton style="margin-left: 10px;" [size]="'m'" class="save-button" (click)="SaveMatchData()">Salva</button>
         </div>
-        <ng-container>
+        <ng-container class="scrollable-container">
 
             <!-- Prima pagina (scheda) -->
             <div class="tui-row resume-row" [hidden]="activeItemIndex != 0">
@@ -62,7 +62,7 @@
                             </p>
 
                             <tui-multi-select #tuitui id="tuitui" *tuiLet="items$ | async as items"
-                                placeholder="Selezionare i Marcatori" class="b-form scorers-select" tuiTextfieldSize="l"
+                                placeholder="Selezionare i Marcatori" class="b-form scorers-select custom-multi-select" tuiTextfieldSize="l"
                                 [formControl]="activeScorers" [stringify]="stringify" [tuiTextfieldLabelOutside]="true"
                                 [expandable]="true" [tuiTextfieldCleaner]="true" [rows]="30"
                                 (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
@@ -93,7 +93,7 @@
                                 <fa-icon style="margin-left: 10px;" [icon]="faPersonRunning"></fa-icon>
                             </p>
                             <tui-multi-select #tuituiAssist id="tuituiAssist" *tuiLet="items$ | async as assist"
-                                placeholder="Selezionare gli Assist" class="b-form assist-select" tuiTextfieldSize="l"
+                                placeholder="Selezionare gli Assist" class="b-form assist-select custom-multi-select" tuiTextfieldSize="l"
                                 [formControl]="activeAssist" [stringify]="stringify" [tuiTextfieldLabelOutside]="true"
                                 [expandable]="true" [tuiTextfieldCleaner]="true" [rows]="20"
                                 (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
@@ -159,7 +159,7 @@
                                     src="../../../../assets/media/Icons/Yellow_card.svg.png" alt="">
                             </p>
                             <tui-multi-select #tuituiYellowCard id="tuituiYellowCard" *tuiLet="items$ | async as items"
-                                placeholder="Selezionare i Marcatori" class="b-form scorers-select" tuiTextfieldSize="l"
+                                placeholder="Selezionare i Marcatori" class="b-form scorers-select custom-multi-select" tuiTextfieldSize="l"
                                 [formControl]="activeYellowCards" [stringify]="stringify"
                                 [tuiTextfieldLabelOutside]="true" [expandable]="true" [tuiTextfieldCleaner]="true"
                                 (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
@@ -191,7 +191,7 @@
                                     src="../../../../assets/media/Icons/300px-Red_card.svg.png" alt="">
                             </p>
                             <tui-multi-select #tuituiRedCard id="tuituiRedCard" *tuiLet="items$ | async as items"
-                                placeholder="Selezionare i Marcatori" class="b-form scorers-select" tuiTextfieldSize="l"
+                                placeholder="Selezionare i Marcatori" class="b-form scorers-select custom-multi-select" tuiTextfieldSize="l"
                                 [formControl]="activeRedCards" [stringify]="stringify" [tuiTextfieldLabelOutside]="true"
                                 [expandable]="true" [tuiTextfieldCleaner]="true" (searchChange)="onSearchChange($event)"
                                 (focusedChange)="onSearchChange('')">
@@ -223,7 +223,7 @@
                                 <fa-icon style="margin-left: 10px;" [icon]="faTruckMedical"></fa-icon>
                             </p>
                             <tui-multi-select #tuituiInjured id="tuituiInjured" *tuiLet="items$ | async as items"
-                                placeholder="Selezionare i Marcatori" class="b-form scorers-select" tuiTextfieldSize="l"
+                                placeholder="Selezionare i Marcatori" class="b-form scorers-select custom-multi-select" tuiTextfieldSize="l"
                                 [formControl]="activeInjured" [stringify]="stringify" [tuiTextfieldLabelOutside]="true"
                                 [expandable]="true" [tuiTextfieldCleaner]="true" (searchChange)="onSearchChange($event)"
                                 (focusedChange)="onSearchChange('')">
@@ -240,14 +240,10 @@
                                     <tui-badge [value]="data.position" class="badge-position"></tui-badge>
                                 </div>
                             </ng-template>
-
                         </div>
                     </tui-island>
                 </div>
             </div>
-
         </ng-container>
-
-
     </tui-tabs>
 </div>

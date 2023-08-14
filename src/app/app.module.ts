@@ -3,10 +3,10 @@ import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButto
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiIslandModule, TuiMultiSelectModule, TuiSelectModule, TuiTabsModule, TuiTagModule } from "@taiga-ui/kit";
+import { TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiInputNumberModule, TuiIslandModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule } from "@taiga-ui/kit";
 import { TuiAppBarModule, TuiTabBarModule } from '@taiga-ui/addon-mobile';
 import { TuiCalendarModule } from '@taiga-ui/core';
-import {TuiLetModule} from '@taiga-ui/cdk';
+import { TuiLetModule } from '@taiga-ui/cdk';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -39,7 +39,9 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     TuiDialogModule,
     TuiTableModule,
     TuiAlertModule,
+    TuiInputNumberModule,
     TuiActionModule,
+    TuiPaginationModule,
     TuiComboBoxModule,
     TuiAppBarModule,
     TuiCalendarModule,
@@ -64,7 +66,6 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     TuiTextfieldControllerModule,
     TuiDataListWrapperModule,
     HttpClientModule,
-    FontAwesomeModule
   ],
   providers: [
   {
