@@ -1,28 +1,30 @@
-<div style="margin: 50px;">
-<div tuiCarouselButtons class="wrapper row" style="width: 40%">
-    <button tuiIconButton icon="tuiIconChevronLeftLarge" title="Previous" type="button" class="col-2"
-        style="margin-top: 55px;" (click)="carousel.prev()"></button>
-    <tui-carousel #carousel class="carousel col-8" style="padding: 0px">
-        <tui-island *tuiItem>
-            <h2 class="tui-island__title">Monty Python and the Holy Grail</h2>
-            <p>
-                King Arthur and his Knights of the Round Table embark on a surreal, low-budget search for the Holy
-                Grail, encountering many, very silly obstacles.
-            </p>
-            <div>
-            </div>
-        </tui-island>
-        <tui-island *tuiItem>
-        </tui-island>
-        <tui-island *tuiItem class="tui-island_text-align_center">
-            <h2 class="tui-island__title">Failed to load</h2>
-            <p>
-                ciao
-            </p>
-        </tui-island>
-    </tui-carousel>
-    <button tuiIconButton type="button" icon="tuiIconChevronRightLarge" title="Next" (click)="carousel.next()"
-        class="col-2" style="margin-top: 55px;">
-    </button>
-</div>
+<div style="margin: 50px; align-items: center;">
+    <div tuiCarouselButtons class="wrapper row" style="width: 40%">
+        <tui-carousel #carousel class="carousel col-8" style="padding: 0px" [duration]="3000" [index]="index">
+            <tui-island *tuiItem>
+                <h2 class="tui-island__title">{{topScorer?.label}}</h2>
+                <span>
+                    <img src="{{topScorer?.photo}}" style="width: 70px; height: 70px;">
+                    {{!topScorer?.name ? '' : topScorer?.name}}
+                </span>
+                <div>
+                </div>
+            </tui-island>
+            <tui-island *tuiItem>
+                <h2 class="tui-island__title">{{topAssist?.label}}</h2>
+                <span>
+                    <img src="{{topAssist?.photo}}" style="width: 70px; height: 70px;">
+                    {{!topAssist?.name ? '' : topAssist?.name}}
+                </span>
+            </tui-island>
+            <tui-island *tuiItem>
+                <h2 class="tui-island__title">{{topMotm?.label}}</h2>
+                <span>
+                    <img src="{{topMotm?.photo}}" style="width: 70px; height: 70px;">
+                    {{!topMotm?.name ? '' : topMotm?.name}}
+                </span>
+            </tui-island>
+        </tui-carousel>
+        <tui-pagination size="s" class="pagination" [length]="3" [(index)]="index"></tui-pagination>
+    </div>
 </div>
