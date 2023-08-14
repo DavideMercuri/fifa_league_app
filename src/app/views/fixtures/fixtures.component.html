@@ -7,13 +7,13 @@
                 <table class="tui-table tui-table__tr_hover_disabled tui-table_font-size_s">
                     <tbody>
                         <tr class="tui-table__tr tui-table__tr_border_none tui-table__tr_hover_disabled" style="vertical-align: middle;">
-                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 50px; height: 40px;"><img [src]="teamLogo(fixture.home_team)" style="width: 40px; height: 40px;"></td>
-                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 100px; height: 40px;">{{fixture.home_team}}</td>
-                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 20px; height: 40px; font-size: 20px;">{{ fixture.played == 'yes' ? fixture.ht_goals : '/' }}</td>
-                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 20px; height: 40px;"> - </td>
-                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 20px; height: 40px; font-size: 20px;">{{ fixture.played == 'yes' ? fixture.aw_goals : '/' }}</td>
-                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 100px; height: 40px;">{{ fixture.away_team }}</td>
-                            <td class="tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last" style="width: 50px; height: 40px;"><img [src]="teamLogo(fixture.away_team)" style="width: 40px; height: 40px;"></td>
+                            <td class="{{tdStyleClass}}" style="width: 50px; height: 40px;"><img [src]="teamLogo(fixture.home_team)" style="width: 40px; height: 40px;"></td>
+                            <td class="{{tdStyleClass}}" style="width: 100px; height: 40px;">{{fixture.home_team}}</td>
+                            <td class="{{tdStyleClass}}" style="width: 20px; height: 40px; font-size: 20px;">{{ fixture.played == 'yes' ? fixture.ht_goals : '/' }}</td>
+                            <td class="{{tdStyleClass}}" style="width: 20px; height: 40px;"> - </td>
+                            <td class="{{tdStyleClass}}" style="width: 20px; height: 40px; font-size: 20px;">{{ fixture.played == 'yes' ? fixture.aw_goals : '/' }}</td>
+                            <td class="{{tdStyleClass}}" style="width: 100px; height: 40px;">{{ fixture.away_team }}</td>
+                            <td class="{{tdStyleClass}}" style="width: 50px; height: 40px;"><img [src]="teamLogo(fixture.away_team)" style="width: 40px; height: 40px;"></td>
                         </tr>
                     </tbody>
                 </table>

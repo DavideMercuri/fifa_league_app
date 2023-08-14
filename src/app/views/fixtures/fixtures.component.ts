@@ -10,6 +10,8 @@ import { Fixture } from 'src/interfaces/fixture.interfaces';
   styleUrls: ['./fixtures.component.less']
 })
 export class FixturesComponent implements OnInit, AfterViewInit {
+  
+  tdStyleClass: string = 'tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last';
 
   fixtures: Array<Fixture> = [];
   match!: Fixture;
@@ -60,10 +62,8 @@ export class FixturesComponent implements OnInit, AfterViewInit {
         label: '',
         header,
         size,
-        dismissible: false
+        dismissible: true,
       }).subscribe();
-
-
   }
 
   getSingleMatchInfo(id: any) {
