@@ -28,3 +28,23 @@
         <tui-pagination size="s" class="pagination" [length]="3" [(index)]="index"></tui-pagination>
     </div>
 </div>
+
+<div style="margin: 50px; align-items: center;">
+    <div tuiCarouselButtons class="wrapper row" style="width: 60%">
+        <tui-carousel #carousel class="carousel col-8" style="padding: 0px;" [duration]="3000" [index]="indexStats">
+            <tui-island *tuiItem style="text-align: center;">
+                <h2 class="tui-island__title">Vittorie</h2>
+                <canvas id="winsChart"></canvas>
+            </tui-island>
+            <tui-island *tuiItem style="text-align: center;">
+                <h2 class="tui-island__title">Pareggi</h2>
+                <canvas id="drawsChart"></canvas>
+            </tui-island>
+            <tui-island *tuiItem style="text-align: center;">
+                <h2 class="tui-island__title">Sconfitte</h2>
+                <canvas id="lossesChart"></canvas>
+            </tui-island>
+        </tui-carousel>
+        <tui-pagination size="s" class="pagination" [length]="3" [(index)]="indexStats"></tui-pagination>
+    </div>
+</div>

@@ -3,10 +3,12 @@ import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButto
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiInputNumberModule, TuiIslandModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule } from "@taiga-ui/kit";
+import { TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiInputModule, TuiInputNumberModule, TuiIslandModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule } from "@taiga-ui/kit";
 import { TuiAppBarModule, TuiTabBarModule } from '@taiga-ui/addon-mobile';
 import { TuiCalendarModule } from '@taiga-ui/core';
 import { TuiLetModule } from '@taiga-ui/cdk';
+
+import {TUI_LANGUAGE, TUI_ITALIAN_LANGUAGE} from '@taiga-ui/i18n';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,8 +19,10 @@ import { HomeComponent } from "./views/home/home.component";
 import { MatchComponent } from './views/fixtures/match/match.component';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { TuiTagDirectiveDirective } from './views/fixtures/match/tui-tag-directive.directive';
-import { TuiTableModule } from "@taiga-ui/addon-table";
+import { TuiTableFiltersModule, TuiTableModule, TuiTablePaginationModule } from "@taiga-ui/addon-table";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { PlayersComponent } from './views/players/players/players.component';
+import { of } from "rxjs";
 
 
 @NgModule({
@@ -28,7 +32,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     NavbarComponent,
     HomeComponent,
     MatchComponent,
-    TuiTagDirectiveDirective
+    TuiTagDirectiveDirective,
+    PlayersComponent
   ],
   imports: [
     BrowserModule,
@@ -38,14 +43,17 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     TuiRootModule,
     TuiDialogModule,
     TuiTableModule,
+    TuiTablePaginationModule,
     TuiAlertModule,
     TuiInputNumberModule,
     TuiActionModule,
+    TuiInputModule,
     TuiPaginationModule,
     TuiComboBoxModule,
     TuiAppBarModule,
     TuiCalendarModule,
     TuiLoaderModule,
+    TuiTableFiltersModule,
     TuiSvgModule,
     TuiTabsModule,
     TuiButtonModule,
@@ -72,7 +80,14 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     provide: TUI_SANITIZER,
     useClass: NgDompurifySanitizer
   },
-      {provide: TUI_SANITIZER, useClass: NgDompurifySanitizer}
+  {
+    provide: TUI_SANITIZER,
+    useClass: NgDompurifySanitizer
+  },
+  {
+    provide: TUI_LANGUAGE,
+    useValue: of(TUI_ITALIAN_LANGUAGE),
+  },
 ],
   bootstrap: [AppComponent]
 })

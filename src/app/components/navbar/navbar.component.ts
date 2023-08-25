@@ -1,7 +1,7 @@
-import { Component, Inject } from '@angular/core';
-import { TuiAlertService } from '@taiga-ui/core';
+import { Component } from '@angular/core';
 
 interface Item {
+  
   text: string;
   icon: string;
   routerLink?: string;
@@ -52,7 +52,7 @@ export class NavbarComponent {
     this.showSubMenu[index] = false;
   }
 
-  constructor(@Inject(TuiAlertService) private readonly alerts: TuiAlertService) { }
+  constructor() { }
 
 
 }

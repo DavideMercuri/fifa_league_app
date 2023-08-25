@@ -1,6 +1,4 @@
-import { Component, Inject, NgModule } from '@angular/core';
-import { TuiActionModule } from '@taiga-ui/kit';
-import { TuiAlertService } from '@taiga-ui/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -12,8 +10,7 @@ import { TuiAlertService } from '@taiga-ui/core';
 export class AppComponent {
   title = 'fifa_league_app';
 
-  constructor(@Inject(TuiAlertService)
-  private readonly alertService: TuiAlertService,) {
+  constructor() {
 
   }
 }

@@ -17,6 +17,7 @@
 @import "@taiga-ui/styles/markup/tui-space.less";
 @import "@taiga-ui/styles/markup/tui-table.less";
 @import "@taiga-ui/styles/markup/tui-text.less";
+@import '@taiga-ui/core/styles/taiga-ui-local.less';
 
 .navbar {
   color: #fff;
@@ -97,6 +98,8 @@ button:hover .submenu {
   margin-top: 1px;
   padding: 5px;
   padding-top: 10px;
+  margin-left: 5px !important;
+  margin-top: 10px !important;
 }
 
 .logo-match-style{
@@ -175,7 +178,7 @@ fieldset.t-item[_ngcontent-vmu-c17] {
   left: 142px;
 }
 
-div.tui-autofill {
+tui-multi-select div.tui-autofill {
   padding-top: 0px !important;
   height: 55px !important;
 }
@@ -222,4 +225,63 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
   max-height: 250px; /* puoi personalizzare questo valore */
   overflow-y: auto;
 }
+
+.button-fixture{
+  width: 100%; 
+  height: 100px;
+  float: left; 
+  margin: 2px;
+}
+
+.h-40{
+  height: 40px !important;
+}
+
+.w-20{
+  width: 20px !important;
+}
+
+.w-40{
+  width: 40px !important;
+}
+
+.w-50{
+  width: 50px !important;
+}
+
+.w-100{
+  width: 100px !important;
+}
+
+.ftsz-20{
+  font-size: 20px !important;
+}
+
+.v-align-middle{
+  vertical-align: middle !important;
+}
+
+.v-align-bottom{
+  vertical-align: bottom !important;
+}
+
+.txt-center-align{
+  text-align: center !important;
+}
+
+.custom-disabled{
+  opacity: 0.5 !important;
+}
+
+.table > :not(caption) > * > *{
+  padding: 0;
+}
+
+.th-custom-size-players{
+  padding-bottom: 6px !important;
+}
+
+
+
+
 

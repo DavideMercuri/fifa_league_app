@@ -1,19 +1,19 @@
 <div class="mx-4 mt-3 row">
     <ng-container  *ngFor="let fixture of fixtures; let i = index;" class="col-12 col-md-4">
-        <div class="tui-space_right-2 col-12 matchday" *ngIf="i % 3 === 0" style="margin-left: 5px; margin-top: 10px;">
+        <div class="tui-space_right-2 col-12 matchday" *ngIf="i % 3 === 0">
             {{'Giornata ' + fixture.matchday}}
         </div>
-            <button tuiAction type="button" class="action tui-table col-4" style="width: 100%; height: 100px;float: left; margin: 2px" (click)="onClick(content, header, 'fullscreen', fixture.id_game)">
-                <table class="tui-table tui-table__tr_hover_disabled tui-table_font-size_s">
+            <button tuiAction type="button" class="{{fixturesButtonStyleClass}}" (click)="onClick(content, header, 'fullscreen', fixture.id_game)">
+                <table class="{{tableStyleClass}}">
                     <tbody>
-                        <tr class="tui-table__tr tui-table__tr_border_none tui-table__tr_hover_disabled" style="vertical-align: middle;">
-                            <td class="{{tdStyleClass}}" style="width: 50px; height: 40px;"><img [src]="teamLogo(fixture.home_team)" style="width: 40px; height: 40px;"></td>
-                            <td class="{{tdStyleClass}}" style="width: 100px; height: 40px;">{{fixture.home_team}}</td>
-                            <td class="{{tdStyleClass}}" style="width: 20px; height: 40px; font-size: 20px;">{{ fixture.played == 'yes' ? fixture.ht_goals : '/' }}</td>
-                            <td class="{{tdStyleClass}}" style="width: 20px; height: 40px;"> - </td>
-                            <td class="{{tdStyleClass}}" style="width: 20px; height: 40px; font-size: 20px;">{{ fixture.played == 'yes' ? fixture.aw_goals : '/' }}</td>
-                            <td class="{{tdStyleClass}}" style="width: 100px; height: 40px;">{{ fixture.away_team }}</td>
-                            <td class="{{tdStyleClass}}" style="width: 50px; height: 40px;"><img [src]="teamLogo(fixture.away_team)" style="width: 40px; height: 40px;"></td>
+                        <tr class="{{trStyleClass}} v-align-middle">
+                            <td class="{{tdStyleClass}} h-40 w-50"><img class="h-40 w-40" [src]="teamLogo(fixture.home_team)"></td>
+                            <td class="{{tdStyleClass}} h-40 w-100">{{fixture.home_team}}</td>
+                            <td class="{{tdStyleClass}} h-40 w-20 ftsz-20">{{ fixture.played == 'yes' ? fixture.ht_goals : '/' }}</td>
+                            <td class="{{tdStyleClass}} h-40 w-20"> - </td>
+                            <td class="{{tdStyleClass}} h-40 w-20 ftsz-20">{{ fixture.played == 'yes' ? fixture.aw_goals : '/' }}</td>
+                            <td class="{{tdStyleClass}} h-40 w-100">{{ fixture.away_team }}</td>
+                            <td class="{{tdStyleClass}} h-40 w-50"><img class="h-40 w-40" [src]="teamLogo(fixture.away_team)"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -21,8 +21,8 @@
     </ng-container>
 </div>
 
-<ng-template #content dismissible="false">
-    <app-match [match]="match"></app-match>
+<ng-template #content dismissible="false" let-observer>
+    <app-match [match]="match" [observer]="observer"></app-match>
 </ng-template>
 
 <ng-template #header>

@@ -1,6 +1,6 @@
-import { faBolt, faFutbol, faMedal, faPersonRunning, faSquare, faSquarePollVertical, faTablet, faTrophy, faTruckMedical } from '@fortawesome/free-solid-svg-icons';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AfterViewInit, Component, Input, OnInit, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy, Inject, ElementRef, Renderer2 } from '@angular/core';
+import { faBolt, faFutbol, faMedal, faPersonRunning, faSquare, faSquarePollVertical, faTablet, faTruckMedical } from '@fortawesome/free-solid-svg-icons';
+import { HttpClient } from '@angular/common/http';
+import { AfterViewInit, Component, Input, OnInit, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { TuiContextWithImplicit, TuiStringHandler } from '@taiga-ui/cdk';
 import { Player } from 'src/interfaces/player.interface';
@@ -8,7 +8,8 @@ import { TUI_DEFAULT_MATCHER } from '@taiga-ui/cdk';
 import { Observable, of, Subject } from 'rxjs';
 import { delay, filter, startWith, switchMap } from 'rxjs/operators';
 import { Fixture } from 'src/interfaces/fixture.interfaces';
-import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
+import { TuiAlertService } from '@taiga-ui/core';
+import { FixturesComponent } from '../fixtures.component';
 
 class PlayerSearch implements Player {
   constructor(
@@ -57,11 +58,9 @@ export class MatchComponent implements OnInit, AfterViewInit {
   faFutbol = faFutbol;
   faMedal = faMedal;
   faPersonRunning = faPersonRunning;
-  faRectangle = faSquare;
   faTruckMedical = faTruckMedical;
-  faCard = faTablet;
   activeItemIndex = 0;
-  htGoals =  '0';
+  htGoals = '0';
   awGoals = '0';
   tdStyleClass: string = 'tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last';
   search: string | null = '';
@@ -74,9 +73,10 @@ export class MatchComponent implements OnInit, AfterViewInit {
   @ViewChild('tuituiRedCard') tuituiRedCard !: any;
   @ViewChild('tuituiInjured') tuituiInjured !: any
   @Input() match!: Fixture;
+  @Input() observer: any;
 
   constructor(private http: HttpClient, private cdRef: ChangeDetectorRef, @Inject(TuiAlertService)
-  private readonly alerts: TuiAlertService, private dialogs: TuiDialogService) { }
+  private readonly alerts: TuiAlertService, private fixtures: FixturesComponent) { }
 
   ngOnInit(): void {
     this.GetPlayers();
@@ -163,9 +163,10 @@ export class MatchComponent implements OnInit, AfterViewInit {
   SetDefaultData() {
 
     var testo = document.getElementById("tui_interactive_681691675169956");
-    if(testo){
-    testo.style.padding = '0';}
-    if (this.match.played == 'no') { 
+    if (testo) {
+      testo.style.padding = '0';
+    }
+    if (this.match.played == 'no') {
       return;
     } else {
       const response = this.match;
@@ -224,7 +225,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
       extractData(tuituiTags, scorersArray);
       extractData(tuituiassistTags, assistsArray);
 
-      // Metti insieme i dati in un oggetto unico
+      // create result object
       result = {
         idGame: this.match.id_game,
         htGoals: this.htGoals,
@@ -232,17 +233,15 @@ export class MatchComponent implements OnInit, AfterViewInit {
         scorers: scorersArray,
         assists: assistsArray,
         motm: motm,
-        yellowCards: !this.tuituiYellowCard.previousInternalValue ? '' : this.tuituiYellowCard.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
-        redCards: !this.tuituiRedCard.previousInternalValue ? '' : this.tuituiRedCard.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
-        injured: !this.tuituiInjured.previousInternalValue ? '' : this.tuituiInjured.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
+        yellowCards: !this.tuituiYellowCard.previousInternalValue ? [] : this.tuituiYellowCard.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
+        redCards: !this.tuituiRedCard.previousInternalValue ? [] : this.tuituiRedCard.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
+        injured: !this.tuituiInjured.previousInternalValue ? [] : this.tuituiInjured.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
         played: 'yes'
       };
-
-      console.log(result);
-      
-      this.http.put(`http://localhost:3000/players/fixture/save-match?id=${this.match.id_game}`, {result}).subscribe({
+      this.http.put(`http://localhost:3000/players/fixture/save-match?id=${this.match.id_game}`, { result }).subscribe({
         complete: () => {
-          const dig = this.dialogs.open(this.match)
+          this.observer.complete();
+          this.fixtures.getFixtures();
         }
       });
 
