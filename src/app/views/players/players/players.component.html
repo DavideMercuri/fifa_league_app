@@ -14,7 +14,7 @@
         (tuiSortByChange)="onSortByChange($event)">
         <thead>
             <tr tuiThGroup>
-                <th *tuiHead="'name'" tuiTh tuiSortable class="th-custom-size-players">
+                <th *tuiHead="'name'" tuiTh tuiSortable class="th-custom-size-players" [resizable]="true">
                     <span style="margin-left: 20px;">
                     <fa-icon style="margin-right: 12px; font-size: 20px;" [icon]="faUser"></fa-icon>
                     Nome
