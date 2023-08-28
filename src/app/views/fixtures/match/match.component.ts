@@ -8,7 +8,7 @@ import { TUI_DEFAULT_MATCHER } from '@taiga-ui/cdk';
 import { Observable, of, Subject } from 'rxjs';
 import { delay, filter, startWith, switchMap } from 'rxjs/operators';
 import { Fixture } from 'src/interfaces/fixture.interfaces';
-import { TuiAlertService } from '@taiga-ui/core';
+import { TuiAlertService, TuiNotification } from '@taiga-ui/core';
 import { FixturesComponent } from '../fixtures.component';
 
 class PlayerSearch implements Player {
@@ -79,6 +79,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
   private readonly alerts: TuiAlertService, private fixtures: FixturesComponent) { }
 
   ngOnInit(): void {
+    
     this.GetPlayers();
     // Iscriviti ai cambiamenti delle selezioni attive e chiama `AddCounter` quando cambiano
     this.activeScorers.valueChanges.subscribe(() => {
@@ -106,7 +107,6 @@ export class MatchComponent implements OnInit, AfterViewInit {
     startWith(this.players),
   );
 
-  readonly itemsMotm$ = of(this.players).pipe(delay(200));
   readonly activeScorers = new FormControl();
   readonly activeAssist = new FormControl();
   readonly activeMotm = new FormControl();
@@ -130,14 +130,10 @@ export class MatchComponent implements OnInit, AfterViewInit {
     return of(result).pipe(delay(200));
   }
 
-  GetPlayers(arrayToFill?: any) {
+  GetPlayers() {
     this.http.get('http://localhost:3000/players/players_list').subscribe({
       next: (res: any) => {
-        if (arrayToFill) {
-          arrayToFill = this.SortPlayerByName(res);
-        } else {
           this.players = this.SortPlayerByName(res);
-        }
       },
     });
   }
@@ -242,6 +238,9 @@ export class MatchComponent implements OnInit, AfterViewInit {
         complete: () => {
           this.observer.complete();
           this.fixtures.getFixtures();
+          this.alerts
+          .open('Modifica Avvenuta con Successo!!', { label: 'Operazione Effettuata', status: TuiNotification.Success })
+          .subscribe();
         }
       });
 

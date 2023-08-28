@@ -128,9 +128,9 @@
                             <p class="multiselect-label" style="margin-left: 10px; font-size: 17px;">MOTM
                                 <fa-icon style="margin-left: 10px;" [icon]="faMedal"></fa-icon>
                             </p>
-                            <tui-combo-box #tuicomboMotm *tuiLet="items$ | async as items" [formControl]="activeMotm"
+                            <tui-combo-box #tuicomboMotm *tuiLet="items$ | async as items" [formControl]="activeMotm" [tuiTextfieldCleaner]="true"
                                 [valueContent]="motmContent" [stringify]="stringify" (searchChange)="onSearchChange('')"
-                                (focusedChange)="true">
+                                (focusedChange)="onSearchChange('')">
                                 <input tuiTextfield [placeholder]="'Type a name'"
                                     (input)="onSearchChange(extractValueFromEvent($event))" />
                                 <p [hidden]="activeMotm.value != null">Selezionare il Migliore in Campo...</p>
