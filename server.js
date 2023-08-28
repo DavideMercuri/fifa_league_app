@@ -131,7 +131,7 @@ app.get('/players/players_list', (req, res) => {
 // API endpoint to retrieve fixtures data from the database
 app.get('/players/roles', (req, res) => {
 
-  const query = 'SELECT DISTINCT position FROM players_list';
+  const query = 'SELECT DISTINCT position FROM players_list ORDER BY position ASC';
   connection.query(query, (error, results) => {
     if (error) {
       res.status(500).send(error);
@@ -144,7 +144,7 @@ app.get('/players/roles', (req, res) => {
 // API endpoint to retrieve fixtures data from the database
 app.get('/players/teams', (req, res) => {
 
-  const query = 'SELECT DISTINCT team FROM players_list';
+  const query = 'SELECT DISTINCT team FROM players_list ORDER BY team ASC';
   connection.query(query, (error, results) => {
     if (error) {
       res.status(500).send(error);
@@ -313,6 +313,120 @@ app.get('/players/getDraws', (req, res) => {
   connection.query(query, (error, results) => {
     if (error) throw error;
     res.send(results);
+  });
+});
+
+
+// API endpoint to retrieve fixtures data from the database
+app.get('/players/league_table', (req, res) => {
+
+  const query = `
+    WITH Teams AS (
+      SELECT home_team AS team FROM fixtures
+      UNION
+      SELECT away_team AS team FROM fixtures
+  ),
+
+  Victories AS (
+      SELECT team,
+            SUM(home_wins + away_wins) AS wins
+      FROM (
+          SELECT home_team AS team,
+                COUNT(*) AS home_wins,
+                0 AS away_wins
+          FROM fixtures
+          WHERE ht_goals > aw_goals AND played = 'yes'
+          GROUP BY home_team
+          UNION ALL
+          SELECT away_team AS team,
+                0 AS home_wins,
+                COUNT(*) AS away_wins
+          FROM fixtures
+          WHERE aw_goals > ht_goals AND played = 'yes'
+          GROUP BY away_team
+      ) AS Subquery
+      GROUP BY team
+  ),
+
+  Losses AS (
+      SELECT team,
+            SUM(home_losses + away_losses) AS losses
+      FROM (
+          SELECT home_team AS team,
+                COUNT(*) AS home_losses,
+                0 AS away_losses
+          FROM fixtures
+          WHERE ht_goals < aw_goals AND played = 'yes'
+          GROUP BY home_team
+          UNION ALL
+          SELECT away_team AS team,
+                0 AS home_losses,
+                COUNT(*) AS away_losses
+          FROM fixtures
+          WHERE aw_goals < ht_goals AND played = 'yes'
+          GROUP BY away_team
+      ) AS Subquery
+      GROUP BY team
+  ),
+
+  Draws AS (
+      SELECT team,
+            SUM(home_draws + away_draws) AS draws
+      FROM (
+          SELECT home_team AS team,
+                COUNT(*) AS home_draws,
+                0 AS away_draws
+          FROM fixtures
+          WHERE ht_goals = aw_goals AND played = 'yes'
+          GROUP BY home_team
+          UNION ALL
+          SELECT away_team AS team,
+                0 AS home_draws,
+                COUNT(*) AS away_draws
+          FROM fixtures
+          WHERE ht_goals = aw_goals AND played = 'yes'
+          GROUP BY away_team
+      ) AS Subquery
+      GROUP BY team
+  ),
+
+GamesPlayed AS (
+    SELECT team, COUNT(*) AS games_played
+    FROM (
+        SELECT home_team AS team
+        FROM fixtures
+        WHERE played = 'yes'
+        UNION ALL
+        SELECT away_team AS team
+        FROM fixtures
+        WHERE played = 'yes'
+    ) AS Subquery
+    GROUP BY team
+)
+
+      SELECT ROW_NUMBER() OVER (ORDER BY L.points DESC) AS position,
+            T.team,
+            L.id,
+            L.team_logo,
+            L.points,
+            COALESCE(V.wins, 0) AS wins,
+            COALESCE(Ls.losses, 0) AS losses,
+            COALESCE(D.draws, 0) AS draws,
+            COALESCE(G.games_played, 0) AS games_played
+      FROM Teams T
+      JOIN league_table L ON T.team = L.team
+      LEFT JOIN Victories V ON T.team = V.team
+      LEFT JOIN Losses Ls ON T.team = Ls.team
+      LEFT JOIN Draws D ON T.team = D.team
+      LEFT JOIN GamesPlayed G ON T.team = G.team
+      ORDER BY L.points DESC;
+      `;
+  connection.query(query, (error, results) => {
+    if (error) {
+      res.status(500).send(error);
+    } else {
+      res.status(200).send(results);
+    }
   });
 });
 

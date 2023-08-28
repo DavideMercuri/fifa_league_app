@@ -33,7 +33,7 @@ export class NavbarComponent {
     {
       text: 'Classifica',
       icon: 'tuiIconBarChartLarge',
-      routerLink: '/fixtures'
+      routerLink: '/league-table'
     },
     {
       text: 'Squadre',

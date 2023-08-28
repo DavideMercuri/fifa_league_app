@@ -23,6 +23,7 @@ import { TuiTableFiltersModule, TuiTableModule, TuiTablePaginationModule } from 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PlayersComponent } from './views/players/players/players.component';
 import { of } from "rxjs";
+import { LeagueTableComponent } from './views/league-table/league-table/league-table.component';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { of } from "rxjs";
     HomeComponent,
     MatchComponent,
     TuiTagDirectiveDirective,
-    PlayersComponent
+    PlayersComponent,
+    LeagueTableComponent
   ],
   imports: [
     BrowserModule,
