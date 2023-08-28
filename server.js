@@ -2,6 +2,8 @@ const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const util = require('util'); // modulo nativo di Node.js per promisificare funzioni callback-based
+
 
 const app = express();
 
@@ -47,72 +49,72 @@ app.get('/players/fixture', (req, res) => {
   });
 });
 
-app.put('/players/fixture/save-match', (req, res) => {
-  const id = req.query.id; // Obtain the match ID from the query string
+// Promisifica la query per poterla usare con async/await
+const queryAsync = util.promisify(connection.query).bind(connection);
 
-  const ht_goals = req.body.result.htGoals;
-  const aw_goals = req.body.result.awGoals;
-  // Convert scorers and assists to the desired format
-  const formatWithCounter = (array) => array.map(item => `${item.id}x${item.counter}`).join(',');
-  const scorers = formatWithCounter(req.body.result.scorers);
-  const assists = formatWithCounter(req.body.result.assists);
 
-  // Convert yellow_card and red_card
-  const formatWithoutCounter = (array) => array.map(item => item.id).join(',');
-  const yellow_card = formatWithoutCounter(req.body.result.yellowCards);
-  const red_card = formatWithoutCounter(req.body.result.redCards);
-  const injured = formatWithoutCounter(req.body.result.injured);
+app.put('/players/fixture/save-match', async (req, res) => {
+    try {
+      
+      const id = req.query.id; // Obtain the match ID from the query string
 
-  // Extract the id for motm
-  const motm = req.body.result.motm ? req.body.result.motm.id : null;
+      const ht_goals = req.body.result.htGoals;
+      const aw_goals = req.body.result.awGoals;
+      // Convert scorers and assists to the desired format
+      const formatWithCounter = (array) => array.map(item => `${item.id}x${item.counter}`).join(',');
+      const scorers = formatWithCounter(req.body.result.scorers);
+      const assists = formatWithCounter(req.body.result.assists);
+    
+      // Convert yellow_card and red_card
+      const formatWithoutCounter = (array) => array.map(item => item.id).join(',');
+      const yellow_card = formatWithoutCounter(req.body.result.yellowCards);
+      const red_card = formatWithoutCounter(req.body.result.redCards);
+      const injured = formatWithoutCounter(req.body.result.injured);
+    
+      // Extract the id for motm
+      const motm = req.body.result.motm ? req.body.result.motm.id : null;
+    
+      const played = req.body.result.played ? req.body.result.played : null;
+    
+      // Create the SQL query
+      const queryMatchUpdate = `UPDATE fixtures SET ht_goals = ?, aw_goals = ?, scorers = ?, assists = ?, motm = ?, yellow_card = ?, red_card = ?, injured = ?, played = ? WHERE id_game = ?`;
+    
+      
+        await queryAsync(queryMatchUpdate, [ht_goals, aw_goals, scorers, assists, motm, yellow_card, red_card, injured, played, id]);
 
-  const played = req.body.result.played ? req.body.result.played : null;
+        // Funzioni di aiuto per effettuare l'aggiornamento
+        const updatePlayer = async (field, id, value) => {
+            const query = `UPDATE players_list SET ${field} = ${field} + ? WHERE id = ?`;
+            await queryAsync(query, [value, id]);
+        };
 
-  // Create the SQL query
-  const queryMatchUpdate = `UPDATE fixtures SET ht_goals = ?, aw_goals = ?, scorers = ?, assists = ?, motm = ?, yellow_card = ?, red_card = ?, injured = ?, played = ? WHERE id_game = ?`;
+        const updateScorersAndAssists = async (data, field) => {
+            const items = data.split(',');
+            for (let item of items) {
+                const [id, count] = item.split('x').map(Number);
+                await updatePlayer(field, id, count);
+            }
+        };
 
-  // Execute the query
-  connection.query(queryMatchUpdate, [ht_goals, aw_goals, scorers, assists, motm, yellow_card, red_card, injured, played, id], (error, results) => {
-    if (error) {
-      res.status(500).send(error);
-    } else {
-      res.status(200).send(results);
+        const updateOtherFields = async (data, field) => {
+            const items = data.split(',');
+            for (let id of items) {
+                await updatePlayer(field, id, 1);
+            }
+        };
+
+        await updateScorersAndAssists(scorers, 'goals');
+        await updateScorersAndAssists(assists, 'assist');
+        await updateOtherFields(motm, 'motm');
+        await updateOtherFields(yellow_card, 'yellow_card');
+        await updateOtherFields(red_card, 'red_card');
+
+        res.status(200).send({ message: 'Update successful' });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).send(error);
     }
-  });
-
-  // Retrieve the game details to update the league_table
-  connection.query('SELECT home_team, away_team, ht_goals, aw_goals FROM fixtures WHERE id_game = ?', [id], (error, gameDetails) => {
-    if (error || gameDetails.length === 0) {
-      return res.status(500).send(error || 'Game not found');
-    }
-
-    const { home_team, away_team, ht_goals, aw_goals } = gameDetails[0];
-    let homePoints = 0;
-    let awayPoints = 0;
-
-    if (ht_goals > aw_goals) {
-      homePoints += 3;
-    } else if (aw_goals > ht_goals) {
-      awayPoints += 3;
-    } else {
-      homePoints += 1;
-      awayPoints += 1;
-    }
-
-    // Update points for home team
-    connection.query('UPDATE league_table SET points = points + ? WHERE team = ?', [homePoints, home_team], (error) => {
-      if (error) {
-        return res.status(500).send(error);
-      }
-
-      // Update points for away team
-      connection.query('UPDATE league_table SET points = points + ? WHERE team = ?', [awayPoints, away_team], (error) => {
-        if (error) {
-          return res.status(500).send(error);
-        }
-      });
-    });
-  });
 });
 
 // API endpoint to retrieve fixtures data from the database
