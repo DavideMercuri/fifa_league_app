@@ -1,32 +1,41 @@
-<div style="margin: 50px; align-items: center;">
-    <div tuiCarouselButtons class="wrapper row" style="width: 40%">
-        <tui-carousel #carousel class="carousel col-8" style="padding: 0px" [duration]="3000" [index]="index">
-            <tui-island *tuiItem>
-                <h2 class="tui-island__title">{{topScorer?.label}}</h2>
+<div class="wrapper row" style="width: 30%; margin: 30px;" *ngIf="testArray.length == 0">
+    <tui-carousel>
+        <tui-island *tuiItem>
+            <tui-loader [overlay]="true">
+                <h2 class="tui-island__title">Caricamento dati...</h2>
                 <span>
-                    <img src="{{topScorer?.photo}}" style="width: 70px; height: 70px;">
-                    {{!topScorer?.name ? '' : topScorer?.name}}
+                    <img src="https://i.imgur.com/rLQbuSV.png" style="width: 70px; height: 70px;">
                 </span>
-                <div>
+            </tui-loader>
+        </tui-island>
+    </tui-carousel>
+</div>
+
+<div style="width: 30%; margin: 30px;" *ngIf="testArray.length != 0">
+    <tui-carousel [duration]="3000" [(index)]="index">
+        <ng-container *ngFor="let item of testArray">
+            <tui-island *tuiItem>
+                <span>
+                    <h2 style="margin-left: 5px;" class="tui-island__title">{{ item.label }}</h2>
+                </span>
+                <div style="float: left; margin-top: 10px;" class="v-align-bottom">
+                    <img src="{{item.photo}}" style="width: 80px; height: 80px;">
+                </div>
+
+                <div style="margin-left: 105px; margin-top: 25px;">
+                    <p style="font-weight: bold;">{{!item.name ? '' : item?.name}}</p>
+                    <p style="vertical-align: bottom">
+                        <tui-badge style="font-size: 20px;" class="badge-top-stats" size="l" status="primary" [value]="item.stat"
+                            [hoverable]="true"></tui-badge>
+                        <!-- <tui-tag status="primary" [value]="item.stat" style="font-size: 25px; width: 45px;"></tui-tag> -->
+                        <span style="margin-left: 10px;">{{item.subLabel}}</span>
+                    </p>
                 </div>
             </tui-island>
-            <tui-island *tuiItem>
-                <h2 class="tui-island__title">{{topAssist?.label}}</h2>
-                <span>
-                    <img src="{{topAssist?.photo}}" style="width: 70px; height: 70px;">
-                    {{!topAssist?.name ? '' : topAssist?.name}}
-                </span>
-            </tui-island>
-            <tui-island *tuiItem>
-                <h2 class="tui-island__title">{{topMotm?.label}}</h2>
-                <span>
-                    <img src="{{topMotm?.photo}}" style="width: 70px; height: 70px;">
-                    {{!topMotm?.name ? '' : topMotm?.name}}
-                </span>
-            </tui-island>
-        </tui-carousel>
-        <tui-pagination size="s" class="pagination" [length]="3" [(index)]="index"></tui-pagination>
-    </div>
+        </ng-container>
+    </tui-carousel>
+    <tui-pagination size="s" class="pagination" [length]="3" [(index)]="index"
+        style="margin-top: 10px;"></tui-pagination>
 </div>
 
 <div style="margin: 50px; align-items: center;">

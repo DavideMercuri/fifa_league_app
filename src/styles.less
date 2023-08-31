@@ -21,11 +21,8 @@
 
 .navbar {
   color: #fff;
-  background: linear-gradient(
-    0deg,
-    rgba(0, 0, 75, 1) 0%,
-    rgba(48, 66, 198, 0.846673703661152) 100%
-  ) !important;
+  background: linear-gradient(90deg, rgba(0,0,75,1) 0%, rgba(48,66,198,0.846673703661152) 100%) !important;
+	padding: 5px 16px;
   padding: 30px 16px;
   border-radius: 0;
   border: none;
@@ -41,8 +38,17 @@
 }
 
 nav {
-  background-color: rgb(51, 0, 220) !important;
+  color: #fff !important;
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 75, 1) 0%,
+    rgba(48, 66, 198, 0.846673703661152) 100%
+  ) !important;
   backdrop-filter: none var(--tui-disabled-opacity) !important;
+  display:flex;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  font-size: 12px;
 }
 
 :host ::ng-deep tui-tab-bar ._nghost-pfb-c27 {
@@ -76,6 +82,11 @@ button:hover .submenu {
     --tui-action-color: var(--tui-negative);
     --tui-action-background: var(--tui-error-bg);
   }
+}
+
+.badge-top-stats{
+  .gradient(rgba(0, 0, 75, 1) 0%,
+  rgba(48, 66, 198, 0.846673703661152) 100%);
 }
 
 .matchday {
@@ -293,6 +304,8 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
 .th-custom-size-players{
   padding-bottom: 6px !important;
 }
+
+
 
 
 

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { DataService } from 'src/app/data.service';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -9,15 +9,13 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.less']
+  styleUrls: ['./home.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit, AfterViewInit {
 
   constructor(private http: HttpClient, private dataService: DataService) { }
 
-  topScorer: any | undefined;
-  topAssist: any | undefined;
-  topMotm: any | undefined;
   items!: Array<any>;
 
   activeTeams: Array<string> = [];
@@ -53,18 +51,22 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }, 0);
   }
 
+  testArray: any = []
+
   getTopPlayersInfo(category: string): void {
     this.http.get(`http://localhost:3000/players/players_list/top_players?category=${category}`).subscribe({
       next: (res: any) => {
+        console.log(res);
+        
         switch (category) {
           case 'goals':
-            this.topScorer = { ...res[0], ...{ label: 'Miglior Marcatore' } };
+            this.testArray.push({ ...res[0], ...{ label: 'Miglior Marcatore', subLabel: `Goal in Campionato`, stat: res[0].goals} });
             break;
           case 'assist':
-            this.topAssist = { ...res[0], ...{ label: 'Miglior Assistman' } };
+            this.testArray.push({ ...res[0], ...{ label: 'Miglior Assistman', subLabel: `Assist in Campionato`, stat: res[0].assist} });
             break;
           case 'motm':
-            this.topMotm = { ...res[0], ...{ label: 'Miglior Motm' } };
+            this.testArray.push({ ...res[0], ...{ label: 'Miglior Motm', subLabel: `volte Migliore in Campo`, stat: res[0].motm} });
             break;
         }
       }
