@@ -1,4 +1,4 @@
-import { faBolt, faFutbol, faMedal, faPersonRunning, faSquare, faSquarePollVertical, faTablet, faTruckMedical } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faFutbol, faMedal, faPersonRunning, faSquarePollVertical, faTruckMedical } from '@fortawesome/free-solid-svg-icons';
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, Input, OnInit, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
