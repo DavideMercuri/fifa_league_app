@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 
 interface Item {
-  
+
   text: string;
   icon: string;
   routerLink?: string;
@@ -15,7 +15,7 @@ interface Item {
   styleUrls: ['./navbar.component.less']
 })
 
-export class NavbarComponent {
+export class NavbarComponent implements AfterViewInit {
 
   activeItemIndex = 1;
 
@@ -54,5 +54,25 @@ export class NavbarComponent {
 
   constructor() { }
 
+  ngAfterViewInit(): void {
+
+    // Ad esempio, per rimuovere tutti gli attributi che iniziano con "_nghost" da un elemento con ID "myElement":
+    const element = document.getElementById('navbar-custom');
+    if (element) {
+      this.removeAttributesStartingWith(element, "_nghost");
+    }
+  }
+
+  removeAttributesStartingWith(element: Element, prefix: string): void {
+    // Ottieni tutti gli attributi dell'elemento
+    const attributes = Array.from(element.attributes);
+
+    // Filtra gli attributi che iniziano con il prefisso e rimuovili
+    attributes.forEach(attribute => {
+      if (attribute.name.startsWith(prefix)) {
+        element.removeAttribute(attribute.name);
+      }
+    });
+  }
 
 }

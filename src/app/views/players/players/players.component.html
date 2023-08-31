@@ -1,23 +1,29 @@
 <div style="display: flex; margin-left: 40px; margin-top: 30px;">
-    <tui-input tuiTextfield tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" style="width: 10%;" class="tui-space_horizontal-3" [formControl]="nameSearch" (keyup.enter)="FilterPlayers(nameSearch.value, positionSearch.value, teamSearch.value)">Nome</tui-input>
-    <tui-select tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" style="width: 10%;" class="tui-space_horizontal-3" [formControl]="positionSearch" (click)="getDropDown('roles')" (clean)="getDropDown('teams')">
+    <tui-input tuiTextfield tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" style="width: 10%;"
+        class="tui-space_horizontal-3" [formControl]="nameSearch"
+        (keyup.enter)="FilterPlayers(nameSearch.value, positionSearch.value, teamSearch.value)">Nome</tui-input>
+    <tui-select tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" style="width: 10%;" class="tui-space_horizontal-3"
+        [formControl]="positionSearch" (click)="getDropDown('roles')" (clean)="getDropDown('teams')">
         <tui-data-list-wrapper *tuiDataList [items]="itemsRoles"></tui-data-list-wrapper>Ruolo</tui-select>
-    <tui-select tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" style="width: 10%;" class="tui-space_horizontal-3" [formControl]="teamSearch" (click)="getDropDown('teams')">
+    <tui-select tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" style="width: 10%;" class="tui-space_horizontal-3"
+        [formControl]="teamSearch" (click)="getDropDown('teams')">
         <tui-data-list-wrapper *tuiDataList [items]="itemsTeams"></tui-data-list-wrapper>Squadra</tui-select>
-    <button tuiButton [size]="'m'" class="tui-space_horizontal-3" (click)="FilterPlayers(nameSearch.value, positionSearch.value, teamSearch.value)"><fa-icon style="margin-right: 10px;" [icon]="faMagnifyingGlass"></fa-icon>Cerca</button>
+    <button tuiButton [size]="'m'" class="tui-space_horizontal-3"
+        (click)="FilterPlayers(nameSearch.value, positionSearch.value, teamSearch.value)"><fa-icon
+            style="margin-right: 10px;" [icon]="faMagnifyingGlass"></fa-icon>Cerca</button>
 </div>
 
 <tui-loader [overlay]="true" [showLoader]="!!(loading$ | async)">
     <table *ngIf="data$ | async as data" tuiTable class="table"
-        style="margin-left: 50px; margin-top: 30px; width: 95%; font-size: 15px;" [columns]="columns"
+        style="margin-left: 50px; margin-top: 15px; width: 95%; font-size: 15px;" [columns]="columns"
         [direction]="(direction$ | async) || 1" [tuiSortBy]="sorter$ | async" (directionChange)="onDirection()"
         (tuiSortByChange)="onSortByChange($event)">
         <thead>
             <tr tuiThGroup>
                 <th *tuiHead="'name'" tuiTh tuiSortable class="th-custom-size-players" [resizable]="true">
                     <span style="margin-left: 20px;">
-                    <fa-icon style="margin-right: 12px; font-size: 20px;" [icon]="faUser"></fa-icon>
-                    Nome
+                        <fa-icon style="margin-right: 12px; font-size: 20px;" [icon]="faUser"></fa-icon>
+                        Nome
                     </span>
                 </th>
                 <th *tuiHead="'position'" class="txt-center-align th-custom-size-players" tuiTh tuiSortable>
@@ -54,13 +60,16 @@
         <tbody *tuiLet="data | tuiTableSort as sortedData" tuiTbody [data]="sortedData">
             <tr *ngFor="let item of sortedData" tuiTr>
                 <td *tuiCell="'name'" tuiTd class="v-align-bottom" [class.match]="isMatch('name')">
-                    <span><img style="width: 35px; height: 35px; margin-right: 10px; margin-left: 10px;" src="{{item.photo}}">{{ item.name }}</span>
+                    <span><img style="width: 35px; height: 35px; margin-right: 10px; margin-left: 10px;"
+                            src="{{item.photo}}">{{ item.name }}</span>
                 </td>
-                <td *tuiCell="'position'" style="font-weight: bold;" tuiTd class="v-align-middle txt-center-align" [class.match]="isMatch('position')">
+                <td *tuiCell="'position'" style="font-weight: bold;" tuiTd class="v-align-middle txt-center-align"
+                    [class.match]="isMatch('position')">
                     <span>{{ item.position }}</span>
                 </td>
                 <td *tuiCell="'team'" tuiTd class="v-align-middle" [class.match]="isMatch('team')">
-                    <span><img style="width: 22px; height: 22px; margin-right: 10px; margin-left: 10px;" src="{{teamLogo(item.team)}}"> {{ item.team }}</span>
+                    <span><img style="width: 22px; height: 22px; margin-right: 10px; margin-left: 10px;"
+                            src="{{teamLogo(item.team)}}"> {{ item.team }}</span>
                 </td>
                 <td *tuiCell="'goals'" tuiTd class="v-align-middle txt-center-align" [class.match]="isMatch('goals')">
                     <span>{{ item.goals }}</span>
@@ -71,15 +80,18 @@
                 <td *tuiCell="'motm'" tuiTd class="v-align-middle txt-center-align" [class.match]="isMatch('motm')">
                     <span>{{ item.motm }}</span>
                 </td>
-                <td *tuiCell="'yellow_card'" tuiTd class="v-align-middle txt-center-align" [class.match]="isMatch('yellow_card')">
+                <td *tuiCell="'yellow_card'" tuiTd class="v-align-middle txt-center-align"
+                    [class.match]="isMatch('yellow_card')">
                     <span>{{ item.yellow_card }}</span>
                 </td>
-                <td *tuiCell="'red_card'" tuiTd class="v-align-middle txt-center-align" [class.match]="isMatch('red_card')">
+                <td *tuiCell="'red_card'" tuiTd class="v-align-middle txt-center-align"
+                    [class.match]="isMatch('red_card')">
                     <span>{{ item.red_card }}</span>
                 </td>
-                <td *tuiCell="'actions'" tuiTd class="v-align-middle txt-center-align" [class.match]="isMatch('red_card')">
+                <td *tuiCell="'actions'" tuiTd class="v-align-middle txt-center-align"
+                    [class.match]="isMatch('red_card')">
                     <span style="margin-right: 30px;">
-                        <a href=""><fa-icon style="font-size: 20px;" [icon]="faPenToSquare"></fa-icon></a>
+                        <a (click)="onEditClick(content, header, 'm')"><fa-icon style="font-size: 20px;" [icon]="faPenToSquare"></fa-icon></a>
                     </span>
                     <span>
                         <a href=""><fa-icon style="font-size: 20px; color: red;" [icon]="faTrashCan"></fa-icon></a>
@@ -97,3 +109,19 @@
         </tfoot>
     </table>
 </tui-loader>
+
+
+<ng-template #content let-observer>
+    Take a look
+    <div class="buttons">
+        <button size="m" tuiButton type="button" (click)="observer.complete()">
+            Very cool!
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #header>
+    <div class="header">
+        <img alt="Cool" src="https://ng-web-apis.github.io/dist/assets/images/web-api.svg" />
+    </div>
+</ng-template>

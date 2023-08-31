@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { TuiComparator } from '@taiga-ui/addon-table';
 import { TUI_DEFAULT_MATCHER, tuiDefaultSort, tuiIsFalsy, tuiIsPresent } from '@taiga-ui/cdk';
@@ -9,6 +9,8 @@ import { debounceTime, filter, map, share, startWith, switchMap } from 'rxjs/ope
 import { Player } from 'src/interfaces/player.interface';
 import { faFutbol, faIdCard, faMagnifyingGlass, faMedal, faPenToSquare, faPersonRunning, faShieldHalved, faTrashCan, faUser } from '@fortawesome/free-solid-svg-icons';
 import { DataService } from 'src/app/data.service';
+import { TuiDialogContext, TuiDialogService, TuiDialogSize } from '@taiga-ui/core';
+import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
 
 
 type Key = 'name' | 'position' | 'team' | 'goals' | 'assist' | 'motm' | 'yellow_card' | 'red_card';
@@ -23,7 +25,7 @@ type Key = 'name' | 'position' | 'team' | 'goals' | 'assist' | 'motm' | 'yellow_
 
 export class PlayersComponent implements OnInit, AfterViewInit {
 
-  constructor(private http: HttpClient, private dataService: DataService) { }
+  constructor(private http: HttpClient, private dataService: DataService, @Inject(TuiDialogService) private readonly dialogs: TuiDialogService) { }
 
   itemsRoles: Array<string> = [];
   itemsTeams: Array<string> = [];
@@ -41,12 +43,17 @@ export class PlayersComponent implements OnInit, AfterViewInit {
   faMagnifyingGlass = faMagnifyingGlass;
 
   ngOnInit(): void {
-    this.GetPlayers();
-    this.direction$.next(1);
+    setTimeout(() => {
+      this.direction$.next(1);
+      this.GetPlayers();
+    }, 0);
   }
 
   ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.direction$.next(1);
       this.GetPlayers();
+    }, 0);
   }
 
   KEYS: Record<string, Key> = {
@@ -100,12 +107,12 @@ export class PlayersComponent implements OnInit, AfterViewInit {
     startWith(1),
   );
 
-  data$: Observable<readonly Player[]> = 
-  this.request$.pipe(
-    filter(tuiIsPresent),
-    map(player => player.filter(tuiIsPresent)),
-    startWith([]),
-  );
+  data$: Observable<readonly Player[]> =
+    this.request$.pipe(
+      filter(tuiIsPresent),
+      map(player => player.filter(tuiIsPresent)),
+      startWith([]),
+    );
 
   onEnabled(enabled: readonly string[]): void {
     this.enabled = enabled;
@@ -130,20 +137,20 @@ export class PlayersComponent implements OnInit, AfterViewInit {
     return !!this.search && TUI_DEFAULT_MATCHER(value, this.search);
   }
 
-  FilterPlayers(name: string, position: string, team: string){
+  FilterPlayers(name: string, position: string, team: string) {
     var httpParams: HttpParams = new HttpParams();
 
-    if(name != null){
+    if (name != null) {
       httpParams = httpParams.append('name', name);
     }
-    if(position != null){
+    if (position != null) {
       httpParams = httpParams.append('position', position);
     }
-    if(team != null){
+    if (team != null) {
       httpParams = httpParams.append('team', team);
     }
-  
-    this.http.get('http://localhost:3000/players/players_list/filters', {params: httpParams}).subscribe({
+
+    this.http.get('http://localhost:3000/players/players_list/filters', { params: httpParams }).subscribe({
       next: (res: any) => {
         this.players = res;
         this.dataService.setPlayersList(res);
@@ -154,7 +161,7 @@ export class PlayersComponent implements OnInit, AfterViewInit {
 
   GetPlayers() {
     this.http.get('http://localhost:3000/players/players_list').subscribe({
-      next: (res: any) => {        
+      next: (res: any) => {
         this.dataService.setPlayersList(res);
         this.players = this.dataService.getPlayersList();
       },
@@ -167,18 +174,32 @@ export class PlayersComponent implements OnInit, AfterViewInit {
     });
   }
 
-  getDropDown(type: string){
+  getDropDown(type: string) {
 
     this.http.get(`http://localhost:3000/players/${type}`).subscribe({
       next: (res: any) => {
-        if(type == 'roles'){
+        if (type == 'roles') {
           this.itemsRoles = res.map((item: any) => item.position);
-        }else if(type == 'teams'){
+        } else if (type == 'teams') {
           this.itemsTeams = res.map((item: any) => item.team);
         }
       }
     })
 
+  }
+
+  onEditClick(
+    content: PolymorpheusContent<TuiDialogContext>,
+    header: PolymorpheusContent,
+    size: TuiDialogSize,
+  ): void {
+    this.dialogs
+      .open(content, {
+        label: 'What a cool library set',
+        header,
+        size,
+      })
+      .subscribe();
   }
 
   currentSortColumn: string | number | symbol | null = null;
@@ -200,7 +221,7 @@ export class PlayersComponent implements OnInit, AfterViewInit {
     page: number,
     size: number,
   ): Observable<ReadonlyArray<Player | null>> {
-    console.info('Making a request');
+    //console.info('Making a request', this.dataService.getPlayersList());
     let start = page * size;
     let end = start + size;
     let result = [...this.players]
@@ -228,7 +249,9 @@ export class PlayersComponent implements OnInit, AfterViewInit {
   }
 }
 
+
 function sortBy(key: 'name' | 'position' | 'team' | 'goals' | 'assist' | 'motm' | 'yellow_card' | 'red_card', direction: -1 | 1): TuiComparator<Player> {
   return (a, b) =>
     direction * tuiDefaultSort(a[key], b[key]);
+
 }

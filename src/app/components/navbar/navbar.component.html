@@ -1,4 +1,4 @@
-<nav tuiTabBar [(activeItemIndex)]="activeItemIndex">
+<nav id="navbar-custom" tuiTabBar [(activeItemIndex)]="activeItemIndex">
     <button tuiTabBarItem [icon]="'tuiIconHomeLarge'" routerLinkActive="" [routerLink]="'home/'">Home</button>
     <button *ngFor="let item of items; let i = index" tuiTabBarItem [icon]="item.icon" routerLinkActive=""
         [routerLink]="item.routerLink" (mouseenter)="showSubmenu(i)" (mouseleave)="hideSubmenu(i)">
