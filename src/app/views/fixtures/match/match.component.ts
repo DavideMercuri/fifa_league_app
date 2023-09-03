@@ -224,6 +224,8 @@ export class MatchComponent implements OnInit, AfterViewInit {
       // create result object
       result = {
         idGame: this.match.id_game,
+        home_team: this.match.home_team,
+        away_team: this.match.away_team,
         htGoals: this.htGoals,
         awGoals: this.awGoals,
         scorers: scorersArray,
