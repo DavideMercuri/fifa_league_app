@@ -1,4 +1,6 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/auth/auth.service';
 
 interface Item {
 
@@ -16,6 +18,22 @@ interface Item {
 })
 
 export class NavbarComponent implements AfterViewInit {
+
+  isvisible: boolean = false;
+
+  constructor(private router: Router, public authService: AuthService) {}
+
+  ngAfterViewInit(): void {
+
+    setTimeout(() => {
+    // Ad esempio, per rimuovere tutti gli attributi che iniziano con "_nghost" da un elemento con ID "myElement":
+    const element = document.getElementById('navbar-custom');
+    if (element) {
+      this.removeAttributesStartingWith(element, "_nghost");
+    }
+    },0)
+
+  }
 
   activeItemIndex = 1;
 
@@ -52,15 +70,9 @@ export class NavbarComponent implements AfterViewInit {
     this.showSubMenu[index] = false;
   }
 
-  constructor() { }
-
-  ngAfterViewInit(): void {
-
-    // Ad esempio, per rimuovere tutti gli attributi che iniziano con "_nghost" da un elemento con ID "myElement":
-    const element = document.getElementById('navbar-custom');
-    if (element) {
-      this.removeAttributesStartingWith(element, "_nghost");
-    }
+  logout(): void {
+    this.authService.logout();  // Esegui il logout dal servizio
+    this.router.navigate(['/login']);  // Reindirizza all'utente alla pagina di login
   }
 
   removeAttributesStartingWith(element: Element, prefix: string): void {

@@ -1,9 +1,9 @@
 import { NgDompurifySanitizer } from "@tinkoff/ng-dompurify";
-import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButtonModule, TuiDataListModule, TuiTextfieldControllerModule, TuiLabelModule, TuiSvgModule, TuiLoaderModule, TuiAlertService } from "@taiga-ui/core";
+import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButtonModule, TuiDataListModule, TuiTextfieldControllerModule, TuiLabelModule, TuiSvgModule, TuiLoaderModule } from "@taiga-ui/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiInputModule, TuiInputNumberModule, TuiIslandModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule } from "@taiga-ui/kit";
+import { TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiInputModule, TuiInputNumberModule, TuiInputPasswordModule, TuiIslandModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule } from "@taiga-ui/kit";
 import { TuiAppBarModule, TuiTabBarModule } from '@taiga-ui/addon-mobile';
 import { TuiCalendarModule } from '@taiga-ui/core';
 import { TuiLetModule } from '@taiga-ui/cdk';
@@ -24,6 +24,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PlayersComponent } from './views/players/players/players.component';
 import { of } from "rxjs";
 import { LeagueTableComponent } from './views/league-table/league-table/league-table.component';
+import { LoginComponent } from './auth/login/login.component';
 
 
 @NgModule({
@@ -35,7 +36,8 @@ import { LeagueTableComponent } from './views/league-table/league-table/league-t
     MatchComponent,
     TuiTagDirectiveDirective,
     PlayersComponent,
-    LeagueTableComponent
+    LeagueTableComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -50,6 +52,7 @@ import { LeagueTableComponent } from './views/league-table/league-table/league-t
     TuiInputNumberModule,
     TuiActionModule,
     TuiInputModule,
+    TuiInputPasswordModule,
     TuiPaginationModule,
     TuiComboBoxModule,
     TuiAppBarModule,

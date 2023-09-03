@@ -1,8 +1,13 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const mysql = require('mysql');
+const authMiddleware = require('./authMiddleware');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const util = require('util'); // modulo nativo di Node.js per promisificare funzioni callback-based
+const util = require('util');
+const bcrypt = require('bcrypt');  // Per hashare le password
+
+const SECRET_KEY = '7l5Ywkc6gV'; 
 
 
 const app = express();
@@ -14,14 +19,39 @@ const connection = mysql.createConnection({
   password: 'password',
   database: 'players'
 });
+connection.connect();
 
-// Allow CORS requests
+// Promisificazione delle funzioni di mysql
+const query = util.promisify(connection.query).bind(connection);
+
+// Middleware
 app.use(cors());
-
-// Parse incoming request bodies
+app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// Login
+app.post('/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const rows = await query('SELECT * FROM users WHERE username = ?', [username]);
+
+    if (rows.length === 0) {
+      return res.status(400).send({ message: 'Utente non trovato.' });
+    }
+
+    const user = rows[0];
+    if (password == user.password) {
+      const token = jwt.sign({ userId: user.id }, SECRET_KEY, { expiresIn: '1h' });
+      res.send({ token });
+    } else {
+      res.status(400).send({ message: 'Password errata.' });
+    }
+
+  } catch (err) {
+    res.status(500).send({ message: 'Errore durante il login.' });
+  }
+});
 
 // API endpoint to retrieve fixtures data from the database
 app.get('/players/fixtures', (req, res) => {
@@ -34,6 +64,11 @@ app.get('/players/fixtures', (req, res) => {
       res.status(200).send(results);
     }
   });
+});
+
+// Un endpoint protetto come esempio
+app.get('/players/protected', authMiddleware, (req, res) => {
+  res.json({ message: 'Benvenuto nella zona protetta!' });
 });
 
 // API endpoint to retrieve single match info from the database
@@ -54,67 +89,102 @@ const queryAsync = util.promisify(connection.query).bind(connection);
 
 
 app.put('/players/fixture/save-match', async (req, res) => {
-    try {
-      
-      const id = req.query.id; // Obtain the match ID from the query string
+  try {
 
-      const ht_goals = req.body.result.htGoals;
-      const aw_goals = req.body.result.awGoals;
-      // Convert scorers and assists to the desired format
-      const formatWithCounter = (array) => array.map(item => `${item.id}x${item.counter}`).join(',');
-      const scorers = formatWithCounter(req.body.result.scorers);
-      const assists = formatWithCounter(req.body.result.assists);
-    
-      // Convert yellow_card and red_card
-      const formatWithoutCounter = (array) => array.map(item => item.id).join(',');
-      const yellow_card = formatWithoutCounter(req.body.result.yellowCards);
-      const red_card = formatWithoutCounter(req.body.result.redCards);
-      const injured = formatWithoutCounter(req.body.result.injured);
-    
-      // Extract the id for motm
-      const motm = req.body.result.motm ? req.body.result.motm.id : null;
-    
-      const played = req.body.result.played ? req.body.result.played : null;
-    
-      // Create the SQL query
-      const queryMatchUpdate = `UPDATE fixtures SET ht_goals = ?, aw_goals = ?, scorers = ?, assists = ?, motm = ?, yellow_card = ?, red_card = ?, injured = ?, played = ? WHERE id_game = ?`;
-    
-      
-        await queryAsync(queryMatchUpdate, [ht_goals, aw_goals, scorers, assists, motm, yellow_card, red_card, injured, played, id]);
+    const id = req.query.id; // Obtain the match ID from the query string
 
-        // Funzioni di aiuto per effettuare l'aggiornamento
-        const updatePlayer = async (field, id, value) => {
-            const query = `UPDATE players_list SET ${field} = ${field} + ? WHERE id = ?`;
-            await queryAsync(query, [value, id]);
-        };
+    const ht_goals = req.body.result.htGoals;
+    const aw_goals = req.body.result.awGoals;
+    // Convert scorers and assists to the desired format
+    const formatWithCounter = (array) => array.map(item => `${item.id}x${item.counter}`).join(',');
+    const scorers = formatWithCounter(req.body.result.scorers);
+    const assists = formatWithCounter(req.body.result.assists);
 
-        const updateScorersAndAssists = async (data, field) => {
-            const items = data.split(',');
-            for (let item of items) {
-                const [id, count] = item.split('x').map(Number);
-                await updatePlayer(field, id, count);
-            }
-        };
+    // Convert yellow_card and red_card
+    const formatWithoutCounter = (array) => array.map(item => item.id).join(',');
+    const yellow_card = formatWithoutCounter(req.body.result.yellowCards);
+    const red_card = formatWithoutCounter(req.body.result.redCards);
+    const injured = formatWithoutCounter(req.body.result.injured);
 
-        const updateOtherFields = async (data, field) => {
-            const items = data.split(',');
-            for (let id of items) {
-                await updatePlayer(field, id, 1);
-            }
-        };
+    // Extract the id for motm
+    const motm = req.body.result.motm ? req.body.result.motm.id : null;
 
-        await updateScorersAndAssists(scorers, 'goals');
-        await updateScorersAndAssists(assists, 'assist');
-        await updateOtherFields(motm, 'motm');
-        await updateOtherFields(yellow_card, 'yellow_card');
-        await updateOtherFields(red_card, 'red_card');
+    const played = req.body.result.played ? req.body.result.played : null;
 
-        res.status(200).send({ message: 'Update successful' });
+    // Create the SQL query
+    const queryMatchUpdate = `UPDATE fixtures SET ht_goals = ?, aw_goals = ?, scorers = ?, assists = ?, motm = ?, yellow_card = ?, red_card = ?, injured = ?, played = ? WHERE id_game = ?`;
 
-    } catch (error) {
-        console.error(error);
-        res.status(500).send(error);
+
+    await queryAsync(queryMatchUpdate, [ht_goals, aw_goals, scorers, assists, motm, yellow_card, red_card, injured, played, id]);
+
+    // Funzioni di aiuto per effettuare l'aggiornamento
+    const updatePlayer = async (field, id, value) => {
+      const query = `UPDATE players_list SET ${field} = ${field} + ? WHERE id = ?`;
+      await queryAsync(query, [value, id]);
+    };
+
+    const updateScorersAndAssists = async (data, field) => {
+      const items = data.split(',');
+      for (let item of items) {
+        const [id, count] = item.split('x').map(Number);
+        await updatePlayer(field, id, count);
+      }
+    };
+
+    const updateOtherFields = async (data, field) => {
+
+      var items;
+
+      if (typeof data === 'string' && data.includes(",")) {
+        items = data.split(',');
+      } else {
+        items = Array.isArray(data) ? data : [data];  // Make sure it's an array
+      }
+
+      for (let id of items) {
+        await updatePlayer(field, id, 1);
+      }
+    };
+
+    await updateScorersAndAssists(scorers, 'goals');
+    await updateScorersAndAssists(assists, 'assist');
+    await updateOtherFields(motm, 'motm');
+    await updateOtherFields(yellow_card, 'yellow_card');
+    await updateOtherFields(red_card, 'red_card');
+    await updateOtherFields(injured, 'injured');
+
+    // Update league_table
+
+    // 1. Determina il risultato della partita
+    let winning_team = null;
+    let is_draw = false;
+
+    if (ht_goals > aw_goals) {
+      winning_team = req.body.result.home_team;
+    } else if (aw_goals > ht_goals) {
+      winning_team = req.body.result.away_team;
+    } else {
+      is_draw = true;
     }
+
+    // 2. Esegui le query per aggiornare la tabella league_table in base al risultato
+    if (is_draw) {
+      // Pareggio, entrambi i team ricevono +1 punto
+      await queryAsync(`UPDATE league_table SET points = points + 1 WHERE team IN (?, ?)`, [req.body.result.home_team, req.body.result.away_team]);
+    } else {
+      // Uno dei team ha vinto e riceve +3 punti
+      await queryAsync(`UPDATE league_table SET points = points + 3 WHERE team = ?`, [winning_team]);
+    }
+
+    // ... il resto del tuo codice ...
+
+
+    res.status(200).send({ message: 'Update successful' });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error);
+  }
 });
 
 // API endpoint to retrieve fixtures data from the database

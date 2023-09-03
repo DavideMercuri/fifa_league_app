@@ -1,4 +1,4 @@
-<nav id="navbar-custom" tuiTabBar [(activeItemIndex)]="activeItemIndex">
+<nav id="navbar-custom" tuiTabBar [(activeItemIndex)]="activeItemIndex" [hidden]="!authService.isLoggedIn()">
     <button tuiTabBarItem [icon]="'tuiIconHomeLarge'" routerLinkActive="" [routerLink]="'home/'">Home</button>
     <button *ngFor="let item of items; let i = index" tuiTabBarItem [icon]="item.icon" routerLinkActive=""
         [routerLink]="item.routerLink" (mouseenter)="showSubmenu(i)" (mouseleave)="hideSubmenu(i)">
@@ -6,4 +6,5 @@
         <div class="submenu" *ngIf="showSubMenu[i]">
         </div>
     </button>
+    <button tuiTabBarItem icon="tuiIconLogOutLarge" (click)="logout()">Logout</button>
 </nav>
