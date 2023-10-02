@@ -7,13 +7,13 @@ import { TUI_ARROW } from '@taiga-ui/kit';
 import { BehaviorSubject, combineLatest, Observable, timer } from 'rxjs';
 import { debounceTime, filter, map, share, startWith, switchMap } from 'rxjs/operators';
 import { Player } from 'src/interfaces/player.interface';
-import { faFutbol, faIdCard, faMagnifyingGlass, faMedal, faPenToSquare, faPersonRunning, faShieldHalved, faTrashCan, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faFutbol, faIdCard, faMagnifyingGlass, faMedal, faPenToSquare, faPersonRunning, faShieldHalved, faStar, faTrashCan, faUser } from '@fortawesome/free-solid-svg-icons';
 import { DataService } from 'src/app/data.service';
 import { TuiDialogContext, TuiDialogService, TuiDialogSize } from '@taiga-ui/core';
 import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
 
 
-type Key = 'name' | 'position' | 'team' | 'goals' | 'assist' | 'motm' | 'yellow_card' | 'red_card';
+type Key = 'name' | 'overall' | 'position' | 'team' | 'goals' | 'assist' | 'motm' | 'yellow_card' | 'red_card';
 
 @Component({
   selector: 'app-players',
@@ -41,6 +41,7 @@ export class PlayersComponent implements OnInit, AfterViewInit {
   faTrashCan = faTrashCan;
   faIdCard = faIdCard;
   faMagnifyingGlass = faMagnifyingGlass;
+  faStar = faStar;
 
   ngOnInit(): void {
     setTimeout(() => {
@@ -58,6 +59,7 @@ export class PlayersComponent implements OnInit, AfterViewInit {
 
   KEYS: Record<string, Key> = {
     name: 'name',
+    overall: 'overall',
     position: 'position',
     team: 'team',
     goals: 'goals',
@@ -77,6 +79,10 @@ export class PlayersComponent implements OnInit, AfterViewInit {
   readonly positionSearch = new FormControl();
   readonly teamSearch = new FormControl();
 
+  readonly name = new FormControl();
+  readonly position = new FormControl();
+  readonly team = new FormControl();
+
   request$ = combineLatest([
     this.sorter$,
     this.direction$,
@@ -89,11 +95,11 @@ export class PlayersComponent implements OnInit, AfterViewInit {
     share(),
   );
 
-  initial: readonly string[] = ['name', 'position', 'team', 'goals', 'assist', 'motm', 'yellow_card', 'red_card'];
+  initial: readonly string[] = ['name', 'overall', 'position', 'team', 'goals', 'assist', 'motm', 'yellow_card', 'red_card'];
 
   enabled = this.initial;
 
-  columns = ['name', 'position', 'team', 'goals', 'assist', 'motm', 'yellow_card', 'red_card', 'actions'];
+  columns = ['name', 'overall', 'position', 'team', 'goals', 'assist', 'motm', 'yellow_card', 'red_card', 'actions'];
 
   search = '';
 
@@ -195,9 +201,9 @@ export class PlayersComponent implements OnInit, AfterViewInit {
   ): void {
     this.dialogs
       .open(content, {
-        label: 'What a cool library set',
         header,
-        size,
+        size: 'l',
+        dismissible: false,
       })
       .subscribe();
   }
@@ -216,7 +222,7 @@ export class PlayersComponent implements OnInit, AfterViewInit {
   }
 
   private getData(
-    key: 'name' | 'position' | 'team' | 'goals' | 'assist' | 'motm' | 'yellow_card' | 'red_card',
+    key: 'name' | 'overall' | 'position' | 'team' | 'goals' | 'assist' | 'motm' | 'yellow_card' | 'red_card',
     direction: -1 | 1,
     page: number,
     size: number,
@@ -239,10 +245,10 @@ export class PlayersComponent implements OnInit, AfterViewInit {
     switch (teamName) {
       case 'Werder Brema':
         return 'https://i.imgur.com/qZ2N0Pd.png';
-      case 'Real Madrid':
-        return 'https://i.imgur.com/epsvCFz.png';
-      case 'West Ham':
-        return 'https://i.imgur.com/tZa7KjX.png';
+      case 'Manchester City':
+        return 'https://i.imgur.com/KbXtvO6.png';
+      case 'Borussia Dortmund':
+        return 'https://i.imgur.com/3U25w5z.png';
       default:
         return 'https://i.imgur.com/pCC3lju.png';
     }
@@ -250,7 +256,7 @@ export class PlayersComponent implements OnInit, AfterViewInit {
 }
 
 
-function sortBy(key: 'name' | 'position' | 'team' | 'goals' | 'assist' | 'motm' | 'yellow_card' | 'red_card', direction: -1 | 1): TuiComparator<Player> {
+function sortBy(key: 'name' | 'overall' | 'position' | 'team' | 'goals' | 'assist' | 'motm' | 'yellow_card' | 'red_card', direction: -1 | 1): TuiComparator<Player> {
   return (a, b) =>
     direction * tuiDefaultSort(a[key], b[key]);
 

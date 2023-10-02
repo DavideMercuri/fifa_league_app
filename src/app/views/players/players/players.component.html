@@ -26,6 +26,10 @@
                         Nome
                     </span>
                 </th>
+                <th *tuiHead="'overall'" class="txt-center-align th-custom-size-players" tuiTh tuiSortable>
+                    <fa-icon style="margin-right: 10px; font-size: 20px;" [icon]="faStar"></fa-icon>
+                    Tot.
+                </th>
                 <th *tuiHead="'position'" class="txt-center-align th-custom-size-players" tuiTh tuiSortable>
                     <fa-icon style="margin-right: 10px; font-size: 20px;" [icon]="faIdCard"></fa-icon>
                     Ruolo
@@ -63,6 +67,10 @@
                     <span><img style="width: 35px; height: 35px; margin-right: 10px; margin-left: 10px;"
                             src="{{item.photo}}">{{ item.name }}</span>
                 </td>
+                <td *tuiCell="'overall'" style="font-weight: bold;" tuiTd class="v-align-middle txt-center-align"
+                [class.match]="isMatch('overall')">
+                <span>{{ item.overall }}</span>
+            </td>
                 <td *tuiCell="'position'" style="font-weight: bold;" tuiTd class="v-align-middle txt-center-align"
                     [class.match]="isMatch('position')">
                     <span>{{ item.position }}</span>
@@ -91,10 +99,12 @@
                 <td *tuiCell="'actions'" tuiTd class="v-align-middle txt-center-align"
                     [class.match]="isMatch('red_card')">
                     <span style="margin-right: 30px;">
-                        <a (click)="onEditClick(content, header, 'm')"><fa-icon style="font-size: 20px;" [icon]="faPenToSquare"></fa-icon></a>
+                        <a (click)="onEditClick(edit_player, header, 'm')"><fa-icon
+                                style="font-size: 20px; cursor: pointer;" [icon]="faPenToSquare"></fa-icon></a>
                     </span>
                     <span>
-                        <a href=""><fa-icon style="font-size: 20px; color: red;" [icon]="faTrashCan"></fa-icon></a>
+                        <a><fa-icon style="font-size: 20px; color: red; cursor: pointer;"
+                                [icon]="faTrashCan"></fa-icon></a>
                     </span>
                 </td>
             </tr>
@@ -111,17 +121,32 @@
 </tui-loader>
 
 
-<ng-template #content let-observer>
-    Take a look
-    <div class="buttons">
+<ng-template #edit_player let-observer>
+    <div style="display: flex; text-align: initial;">
+        <tui-input formControlName="testValue" [tuiTextfieldCleaner]="true" [tuiTextfieldLabelOutside]="true"
+            tuiTextfieldSize="m" style="width: 50%;">Nome giocatore<input tuiTextfield type="text" />
+        </tui-input>
+        <tui-select tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" style="width: 25%;" class="tui-space_horizontal-3"
+            [formControl]="positionSearch" (click)="getDropDown('roles')" (clean)="getDropDown('teams')">
+            <tui-data-list-wrapper *tuiDataList [items]="itemsRoles"></tui-data-list-wrapper>Ruolo
+        </tui-select>
+        <tui-select tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" style="width: 30%;"
+            [formControl]="teamSearch" (click)="getDropDown('teams')" (clean)="getDropDown('teams')">
+            <tui-data-list-wrapper *tuiDataList [items]="itemsTeams"></tui-data-list-wrapper>Squadra
+        </tui-select>
+        <tui-avatar [avatarUrl]="'https://i.imgur.com/rLQbuSV.png'" new size="xxl" text="alex inkin"></tui-avatar>
+    </div>
+    <div style="display: flex; text-align: initial;">
+
+    </div>
+    <div class="buttons" style="margin-top: 20px; text-align: initial;">
         <button size="m" tuiButton type="button" (click)="observer.complete()">
-            Very cool!
+            Salva
         </button>
     </div>
 </ng-template>
 
 <ng-template #header>
-    <div class="header">
-        <img alt="Cool" src="https://ng-web-apis.github.io/dist/assets/images/web-api.svg" />
+    <div class="header-edit-player">
     </div>
 </ng-template>
