@@ -1,4 +1,4 @@
-import { faBolt, faFutbol, faMedal, faPersonRunning, faSquarePollVertical, faTruckMedical } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faFutbol, faMedal, faPersonRunning, faSquare, faSquarePlus, faSquarePollVertical, faTruckMedical } from '@fortawesome/free-solid-svg-icons';
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, Input, OnInit, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
@@ -59,6 +59,8 @@ export class MatchComponent implements OnInit, AfterViewInit {
   faMedal = faMedal;
   faPersonRunning = faPersonRunning;
   faTruckMedical = faTruckMedical;
+  faSquarePlus = faSquarePlus;
+  faSquare = faSquare;
   activeItemIndex = 0;
   htGoals = '0';
   awGoals = '0';
@@ -71,15 +73,20 @@ export class MatchComponent implements OnInit, AfterViewInit {
   @ViewChild('tuicomboMotm') tuicomboMotm !: any;
   @ViewChild('tuituiYellowCard') tuituiYellowCard !: any;
   @ViewChild('tuituiRedCard') tuituiRedCard !: any;
-  @ViewChild('tuituiInjured') tuituiInjured !: any
+  @ViewChild('tuituiInjured') tuituiInjured !: any;
   @Input() match!: Fixture;
   @Input() observer: any;
+
+  homeTeamInjured: Array<PlayerSearch> = [];
+  awayTeamInjured: Array<PlayerSearch> = [];
+  homeTeamExpelled: Array<PlayerSearch> = [];
+  awayTeamExpelled: Array<PlayerSearch> = [];
 
   constructor(private http: HttpClient, private cdRef: ChangeDetectorRef, @Inject(TuiAlertService)
   private readonly alerts: TuiAlertService, private fixtures: FixturesComponent) { }
 
   ngOnInit(): void {
-    
+
     this.GetPlayers();
     // Iscriviti ai cambiamenti delle selezioni attive e chiama `AddCounter` quando cambiano
     this.activeScorers.valueChanges.subscribe(() => {
@@ -88,10 +95,20 @@ export class MatchComponent implements OnInit, AfterViewInit {
     this.activeAssist.valueChanges.subscribe(() => {
       this.AddCounter('assists', this.activeAssist.value);
     });
+    this.activeInjured.valueChanges.subscribe(() => {
+      this.AddCounter('injured', this.activeInjured.value);
+    });
+    this.activeRedCards.valueChanges.subscribe(() => {
+      this.AddCounter('redCard', this.activeRedCards.value);
+    });
+
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => (this.SetDefaultData()), 0);
+
+    setTimeout(() => (this.generateArrays()), 0);
+
   }
 
   readonly stringify: TuiStringHandler<PlayerSearch | TuiContextWithImplicit<PlayerSearch>> = item =>
@@ -133,7 +150,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
   GetPlayers() {
     this.http.get('http://localhost:3000/players/players_list').subscribe({
       next: (res: any) => {
-          this.players = this.SortPlayerByName(res);
+        this.players = this.SortPlayerByName(res);
       },
     });
   }
@@ -147,10 +164,10 @@ export class MatchComponent implements OnInit, AfterViewInit {
     switch (teamName) {
       case 'Werder Brema':
         return 'https://i.imgur.com/qZ2N0Pd.png';
-      case 'Real Madrid':
-        return 'https://i.imgur.com/epsvCFz.png';
-      case 'West Ham':
-        return 'https://i.imgur.com/tZa7KjX.png';
+      case 'Manchester City':
+        return 'https://i.imgur.com/KbXtvO6.png';
+      case 'Borussia Dortmund':
+        return 'https://i.imgur.com/3U25w5z.png';
       default:
         return '';
     }
@@ -167,7 +184,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
     } else {
       const response = this.match;
       const players = this.players;
-      const { scorers, assists, motm, yellowCard, redCard, injured } = this.ProcessGame(response, players);
+      const { scorers, assists, motm, yellowCard, redCard, injured, notation_injured, notation_expelled } = this.ProcessGame(response, players);
       this.htGoals = this.match.ht_goals;
       this.awGoals = this.match.aw_goals;
       this.activeScorers.setValue(scorers);
@@ -178,30 +195,32 @@ export class MatchComponent implements OnInit, AfterViewInit {
       this.activeYellowCards.setValue(yellowCard);
       this.activeRedCards.setValue(redCard);
       this.activeInjured.setValue(injured);
+      this.AddCounter('redCard', redCard);
+      this.AddCounter('injured', injured);
     }
+
   }
 
   SaveMatchData() {
 
     if (!this.tuicomboMotm.previousInternalValue) {
-
       this.alerts
-        .open('Aggiungere il migliore in campo!', { label: 'MOTM Mancante' })
-        .subscribe();
+        .open('Aggiungere il migliore in campo!', { label: 'MOTM Mancante' }).subscribe();
 
     } else {
-
       const scorersArray: Array<any> = [];
       const assistsArray: Array<any> = [];
+      const redCardsArray: Array<any> = [];
+      const injuredArray: Array<any> = [];
       const motm: any = {
         id: this.tuicomboMotm.previousInternalValue.id,
         name: this.tuicomboMotm.previousInternalValue.name
       }
-      let result = {}
-
+      let result = {};
       const tuituiTags = document.querySelectorAll('#tuitui tui-tag.modified');
       const tuituiassistTags = document.querySelectorAll('#tuituiAssist tui-tag.modified');
-
+      const tuituiRedCard = document.querySelectorAll('#tuituiRedCard tui-tag.modified');
+      const tuituiInjured = document.querySelectorAll('#tuituiInjured tui-tag.modified');
       const extractData = (tuiTags: NodeListOf<Element>, arrayToFill: any[]) => {
         for (let i = 0; i < tuiTags.length; i++) {
           const tuiTag = tuiTags[i];
@@ -216,10 +235,11 @@ export class MatchComponent implements OnInit, AfterViewInit {
           });
         }
       };
-
       // Estrai i dati dai tui-tags per marcatori e assist
       extractData(tuituiTags, scorersArray);
       extractData(tuituiassistTags, assistsArray);
+      extractData(tuituiRedCard, redCardsArray);
+      extractData(tuituiInjured, injuredArray);
 
       // create result object
       result = {
@@ -232,22 +252,18 @@ export class MatchComponent implements OnInit, AfterViewInit {
         assists: assistsArray,
         motm: motm,
         yellowCards: !this.tuituiYellowCard.previousInternalValue ? [] : this.tuituiYellowCard.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
-        redCards: !this.tuituiRedCard.previousInternalValue ? [] : this.tuituiRedCard.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
-        injured: !this.tuituiInjured.previousInternalValue ? [] : this.tuituiInjured.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
+        redCards: redCardsArray,
+        injured: injuredArray,
         played: 'yes'
       };
       this.http.put(`http://localhost:3000/players/fixture/save-match?id=${this.match.id_game}`, { result }).subscribe({
         complete: () => {
           this.observer.complete();
           this.fixtures.getFixtures();
-          this.alerts
-          .open('Modifica Avvenuta con Successo!!', { label: 'Operazione Effettuata', status: TuiNotification.Success })
-          .subscribe();
+          this.alerts.open('Modifica Avvenuta con Successo!!', { label: 'Operazione Effettuata', status: TuiNotification.Success }).subscribe();
         }
       });
-
     }
-
   }
 
   ProcessGame(game: any, players: PlayerSearch[]) {
@@ -281,15 +297,40 @@ export class MatchComponent implements OnInit, AfterViewInit {
     const assists = processCountedString(game.assists);
     const motm = processSingleId(game.motm);
     const yellowCard = processMultipleIds(game.yellow_card);
-    const redCard = processMultipleIds(game.red_card);
-    const injured = processMultipleIds(game.injured);
+    const redCard = processCountedString(game.red_card);
+    const injured = processCountedString(game.injured);
+    var notation_injured = processCountedString(game.notation_injured);
+    var notation_expelled = processCountedString(game.notation_expelled);
 
-    return { scorers, assists, motm, yellowCard, redCard, injured };
+
+    return { scorers, assists, motm, yellowCard, redCard, injured, notation_injured, notation_expelled };
   }
 
 
+  private getPlayersFromNotations(notation: string, teamName: string) {
 
-  AddCounter(type: 'scorers' | 'assists', playersCount?: { id: string, count: number }[]) {
+    console.log('Notation:', notation);
+    console.log('Team Name:', teamName);
+
+    if (!notation) return [];
+    const ids = notation.split(',').filter(item => item !== "");    
+
+    return this.players.filter(player => ids.includes(String(player.id)) && player.team === teamName);
+  }
+
+
+  generateArrays() {
+
+    this.homeTeamInjured = this.getPlayersFromNotations(this.match.notation_injured, this.match.home_team);
+    this.awayTeamInjured = this.getPlayersFromNotations(this.match.notation_injured, this.match.away_team);
+
+    this.homeTeamExpelled = this.getPlayersFromNotations(this.match.notation_expelled, this.match.home_team);
+    this.awayTeamExpelled = this.getPlayersFromNotations(this.match.notation_expelled, this.match.away_team);
+
+  }
+
+
+  AddCounter(type: 'scorers' | 'assists' | 'redCard' | 'injured', playersCount?: { id: string, count: number }[]) {
 
     var playerCount: number;
     var tuiTags: any;
@@ -302,6 +343,12 @@ export class MatchComponent implements OnInit, AfterViewInit {
       }
       if (type == 'assists') {
         tuiTags = document.querySelectorAll('#tuituiAssist tui-tag:not(.modified)');
+      }
+      if (type == 'redCard') {
+        tuiTags = document.querySelectorAll('#tuituiRedCard tui-tag:not(.modified)');
+      }
+      if (type == 'injured') {
+        tuiTags = document.querySelectorAll('#tuituiInjured tui-tag:not(.modified)');
       }
 
       // Itera attraverso ogni elemento nella collezione

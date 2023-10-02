@@ -4,6 +4,7 @@ import { TuiDialogContext, TuiDialogService, TuiDialogSize } from '@taiga-ui/cor
 import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
 import { Fixture } from 'src/interfaces/fixture.interfaces';
 import { Router } from '@angular/router';
+import { faCircleExclamation, faSquarePlus, faTruckMedical } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-fixtures',
@@ -19,6 +20,10 @@ export class FixturesComponent implements OnInit {
 
   fixtures: Array<Fixture> = [];
   match!: Fixture;
+
+  faTruckMedical = faTruckMedical;
+  faSquarePlus = faSquarePlus;
+  faCircleExclamation = faCircleExclamation;
 
   constructor(private http: HttpClient, @Inject(TuiDialogService) private readonly dialogs: TuiDialogService) { }
 
@@ -41,10 +46,10 @@ export class FixturesComponent implements OnInit {
     switch (teamName) {
       case 'Werder Brema':
         return 'https://i.imgur.com/qZ2N0Pd.png';
-      case 'Real Madrid':
-        return 'https://i.imgur.com/epsvCFz.png';
-      case 'West Ham':
-        return 'https://i.imgur.com/tZa7KjX.png';
+      case 'Manchester City':
+        return 'https://i.imgur.com/KbXtvO6.png';
+      case 'Borussia Dortmund':
+        return 'https://i.imgur.com/3U25w5z.png';
       default:
         return '';
     }

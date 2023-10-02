@@ -11,6 +11,8 @@ export interface Fixture {
   red_card: string;
   injured: string;
   played: string;
+  notation_injured: string;
+  notation_expelled: string;
   matchday: string;
 
 }

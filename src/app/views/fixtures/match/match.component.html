@@ -27,8 +27,58 @@
                 </tr>
             </tbody>
         </table>
-    </ng-container>
 
+        <div class="col-12 col-md-4" style="font-size: 12px;" style="margin-bottom: 2%; margin-top: 2%; width: 100%">
+
+            <div class="col-12" style="display: flex;">
+
+                <div class="col-md-4" style="text-align: left;">
+
+                    <ul>
+                        <li *ngFor="let injPlayerHome of homeTeamInjured">
+                            <span>
+                                <fa-icon class="v-align-middle" style="margin-left: 20px; color: #000" [icon]="faTruckMedical"></fa-icon><span class="notation-name">{{injPlayerHome.name}}</span>
+                            </span>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li *ngFor="let expPlayerHome of homeTeamExpelled">
+                            <span>
+                                <fa-icon class="v-align-middle" style="margin-left: 20px; color: red" [icon]="faSquare"></fa-icon><span class="notation-name">{{expPlayerHome.name}}</span>
+                            </span>
+                        </li>
+                    </ul>
+                    
+                </div>
+    
+                <div class="col-md-4"></div>
+    
+                <div class="col-md-4" style="text-align: left; margin-left: 10%;">
+
+                    <ul>
+                        <li *ngFor="let injPlayerAway of awayTeamInjured">
+                            <span>
+                                <fa-icon class="v-align-middle" style="margin-left: 20px; color: #000" [icon]="faTruckMedical"></fa-icon><span class="notation-name">{{injPlayerAway.name}}</span>
+                            </span>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li *ngFor="let expPlayerAway of awayTeamExpelled">
+                            <span>
+                                <fa-icon class="v-align-middle" style="margin-left: 20px; color: red" [icon]="faSquare"></fa-icon><span class="notation-name">{{expPlayerAway.name}}</span>
+                            </span>
+                        </li>
+                    </ul>
+                        
+                </div>
+
+            </div>
+
+
+
+        </div>
+
+    </ng-container>
     <br>
     <br>
 
@@ -165,7 +215,7 @@
                                     src="../../../../assets/media/Icons/Yellow_card.svg.png" alt="">
                             </p>
                             <tui-multi-select #tuituiYellowCard id="tuituiYellowCard" *tuiLet="items$ | async as items"
-                                placeholder="Selezionare i Marcatori" class="b-form scorers-select custom-multi-select"
+                                placeholder="Selezionare gli Ammoniti" class="b-form scorers-select custom-multi-select"
                                 tuiTextfieldSize="l" [formControl]="activeYellowCards" [stringify]="stringify"
                                 [tuiTextfieldLabelOutside]="true" [expandable]="true" [tuiTextfieldCleaner]="true"
                                 (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
@@ -196,16 +246,16 @@
                                 <img style="width:17px; height: 20px; vertical-align: unset; margin-left: 10px;"
                                     src="../../../../assets/media/Icons/300px-Red_card.svg.png" alt="">
                             </p>
-                            <tui-multi-select #tuituiRedCard id="tuituiRedCard" *tuiLet="items$ | async as items"
-                                placeholder="Selezionare i Marcatori" class="b-form scorers-select custom-multi-select"
+                            <tui-multi-select #tuituiRedCard id="tuituiRedCard" *tuiLet="items$ | async as redCard"
+                                placeholder="Selezionare gli Espulsi" class="b-form scorers-select custom-multi-select"
                                 tuiTextfieldSize="l" [formControl]="activeRedCards" [stringify]="stringify"
                                 [tuiTextfieldLabelOutside]="true" [expandable]="true" [tuiTextfieldCleaner]="true"
                                 (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
                                 Espulsi
-                                <tui-data-list-wrapper *tuiDataList [items]="items | tuiHideSelected"
+                                <tui-data-list-wrapper *tuiDataList [items]="redCard | tuiHideSelected"
                                     [itemContent]="itemContent"></tui-data-list-wrapper>
                             </tui-multi-select>
-                            <ng-template #itemContent let-data>
+                            <ng-template #injuredContent let-data>
                                 <div class="template">
                                     <tui-avatar size="m" class="avatar" [avatarUrl]="data.photo"
                                         [text]="data.toString()">
@@ -228,16 +278,16 @@
                             <p class="multiselect-label" style="margin-left: 10px; font-size: 17px;">Infortunati
                                 <fa-icon style="margin-left: 10px;" [icon]="faTruckMedical"></fa-icon>
                             </p>
-                            <tui-multi-select #tuituiInjured id="tuituiInjured" *tuiLet="items$ | async as items"
-                                placeholder="Selezionare i Marcatori" class="b-form scorers-select custom-multi-select"
+                            <tui-multi-select #tuituiInjured id="tuituiInjured" *tuiLet="items$ | async as injured"
+                                placeholder="Selezionare gli infortunati" class="b-form scorers-select custom-multi-select"
                                 tuiTextfieldSize="l" [formControl]="activeInjured" [stringify]="stringify"
                                 [tuiTextfieldLabelOutside]="true" [expandable]="true" [tuiTextfieldCleaner]="true"
                                 (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
                                 Selezionare gli Infortunati
-                                <tui-data-list-wrapper *tuiDataList [items]="items | tuiHideSelected"
-                                    [itemContent]="itemContent"></tui-data-list-wrapper>
+                                <tui-data-list-wrapper *tuiDataList [items]="injured | tuiHideSelected"
+                                    [itemContent]="injuredContent"></tui-data-list-wrapper>
                             </tui-multi-select>
-                            <ng-template #itemContent let-data>
+                            <ng-template #injuredContent let-data>
                                 <div class="template">
                                     <tui-avatar size="m" class="avatar" [avatarUrl]="data.photo"
                                         [text]="data.toString()">

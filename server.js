@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const util = require('util');
 const bcrypt = require('bcrypt');  // Per hashare le password
 
-const SECRET_KEY = '7l5Ywkc6gV'; 
+const SECRET_KEY = '7l5Ywkc6gV';
 
 
 const app = express();
@@ -92,28 +92,22 @@ app.put('/players/fixture/save-match', async (req, res) => {
   try {
 
     const id = req.query.id; // Obtain the match ID from the query string
-
     const ht_goals = req.body.result.htGoals;
     const aw_goals = req.body.result.awGoals;
     // Convert scorers and assists to the desired format
     const formatWithCounter = (array) => array.map(item => `${item.id}x${item.counter}`).join(',');
     const scorers = formatWithCounter(req.body.result.scorers);
     const assists = formatWithCounter(req.body.result.assists);
-
     // Convert yellow_card and red_card
     const formatWithoutCounter = (array) => array.map(item => item.id).join(',');
     const yellow_card = formatWithoutCounter(req.body.result.yellowCards);
-    const red_card = formatWithoutCounter(req.body.result.redCards);
-    const injured = formatWithoutCounter(req.body.result.injured);
-
+    const red_card = formatWithCounter(req.body.result.redCards);
+    const injured = formatWithCounter(req.body.result.injured);
     // Extract the id for motm
     const motm = req.body.result.motm ? req.body.result.motm.id : null;
-
     const played = req.body.result.played ? req.body.result.played : null;
-
     // Create the SQL query
     const queryMatchUpdate = `UPDATE fixtures SET ht_goals = ?, aw_goals = ?, scorers = ?, assists = ?, motm = ?, yellow_card = ?, red_card = ?, injured = ?, played = ? WHERE id_game = ?`;
-
 
     await queryAsync(queryMatchUpdate, [ht_goals, aw_goals, scorers, assists, motm, yellow_card, red_card, injured, played, id]);
 
@@ -122,7 +116,6 @@ app.put('/players/fixture/save-match', async (req, res) => {
       const query = `UPDATE players_list SET ${field} = ${field} + ? WHERE id = ?`;
       await queryAsync(query, [value, id]);
     };
-
     const updateScorersAndAssists = async (data, field) => {
       const items = data.split(',');
       for (let item of items) {
@@ -130,17 +123,14 @@ app.put('/players/fixture/save-match', async (req, res) => {
         await updatePlayer(field, id, count);
       }
     };
-
     const updateOtherFields = async (data, field) => {
 
       var items;
-
       if (typeof data === 'string' && data.includes(",")) {
         items = data.split(',');
       } else {
         items = Array.isArray(data) ? data : [data];  // Make sure it's an array
       }
-
       for (let id of items) {
         await updatePlayer(field, id, 1);
       }
@@ -150,11 +140,53 @@ app.put('/players/fixture/save-match', async (req, res) => {
     await updateScorersAndAssists(assists, 'assist');
     await updateOtherFields(motm, 'motm');
     await updateOtherFields(yellow_card, 'yellow_card');
-    await updateOtherFields(red_card, 'red_card');
-    await updateOtherFields(injured, 'injured');
+    await updateScorersAndAssists(red_card, 'red_card');
+    await updateScorersAndAssists(injured, 'injured');
+
+
+    const processNotations = async (notationField, dataField) => {
+      const data = dataField.split(',').map(item => {
+          const [playerId, length] = item.split('x').map(Number);
+          return { playerId, length };
+      });
+
+      for (let { playerId, length } of data) {
+          const teamOfPlayerQuery = `SELECT team FROM players_list WHERE id = ?`;
+          const playerTeamResult = await queryAsync(teamOfPlayerQuery, [playerId]);
+          
+          if (playerTeamResult.length) {
+              const playerTeam = playerTeamResult[0].team;
+              
+              const subsequentMatchesQuery = `
+                  SELECT f2.id_game
+                  FROM fixtures AS f1
+                  JOIN fixtures AS f2 ON (
+                      (f2.home_team = ? OR f2.away_team = ?) AND 
+                      f2.matchday > f1.matchday
+                  )
+                  WHERE f1.id_game = ?
+                  ORDER BY f2.matchday ASC
+                  LIMIT ?`;
+
+              const subsequentMatches = await queryAsync(subsequentMatchesQuery, [playerTeam, playerTeam, id, length]);
+
+              for (let match of subsequentMatches) {
+                  const updateMatch = `
+                      UPDATE fixtures 
+                      SET ${notationField} = CONCAT(IFNULL(${notationField},''), ?, ',') 
+                      WHERE id_game = ?`;
+
+                  await queryAsync(updateMatch, [playerId, match.id_game]);
+              }
+          }
+      }
+    };
+
+    await processNotations('notation_expelled', red_card);
+    await processNotations('notation_injured', injured);
+
 
     // Update league_table
-
     // 1. Determina il risultato della partita
     let winning_team = null;
     let is_draw = false;
@@ -166,7 +198,6 @@ app.put('/players/fixture/save-match', async (req, res) => {
     } else {
       is_draw = true;
     }
-
     // 2. Esegui le query per aggiornare la tabella league_table in base al risultato
     if (is_draw) {
       // Pareggio, entrambi i team ricevono +1 punto
@@ -175,12 +206,7 @@ app.put('/players/fixture/save-match', async (req, res) => {
       // Uno dei team ha vinto e riceve +3 punti
       await queryAsync(`UPDATE league_table SET points = points + 3 WHERE team = ?`, [winning_team]);
     }
-
-    // ... il resto del tuo codice ...
-
-
     res.status(200).send({ message: 'Update successful' });
-
   } catch (error) {
     console.error(error);
     res.status(500).send(error);
@@ -262,7 +288,6 @@ app.get('/players/players_list/filters', (req, res) => {
     }
   });
 });
-
 
 // API endpoint to retrieve top scorer info from the database
 app.get('/players/players_list/top_players', (req, res) => {

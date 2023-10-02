@@ -8,12 +8,17 @@
                     <tbody>
                         <tr class="{{trStyleClass}} v-align-middle">
                             <td class="{{tdStyleClass}} h-40 w-50"><img class="h-40 w-40" [src]="teamLogo(fixture.home_team)"></td>
-                            <td class="{{tdStyleClass}} h-40 w-100">{{fixture.home_team}}</td>
-                            <td class="{{tdStyleClass}} h-40 w-20 ftsz-20">{{ fixture.played == 'yes' ? fixture.ht_goals : '/' }}</td>
-                            <td class="{{tdStyleClass}} h-40 w-20"> - </td>
-                            <td class="{{tdStyleClass}} h-40 w-20 ftsz-20">{{ fixture.played == 'yes' ? fixture.aw_goals : '/' }}</td>
-                            <td class="{{tdStyleClass}} h-40 w-100">{{ fixture.away_team }}</td>
+                            <td class="{{tdStyleClass}} h-40 w-100 v-align-middle">{{fixture.home_team}}</td>
+                            <td class="{{tdStyleClass}} h-40 w-20 ftsz-20 v-align-middle">{{ fixture.played == 'yes' ? fixture.ht_goals : '/' }}</td>
+                            <td class="{{tdStyleClass}} h-40 w-20 v-align-middle"> - </td>
+                            <td class="{{tdStyleClass}} h-40 w-20 ftsz-20 v-align-middle">{{ fixture.played == 'yes' ? fixture.aw_goals : '/' }}</td>
+                            <td class="{{tdStyleClass}} h-40 w-100 v-align-middle">{{ fixture.away_team }}</td>
                             <td class="{{tdStyleClass}} h-40 w-50"><img class="h-40 w-40" [src]="teamLogo(fixture.away_team)"></td>
+                        </tr>
+                        <tr>
+                            <td class="match-status-info" colspan="7">
+                                <fa-icon *ngIf="fixture.notation_expelled && fixture.played == 'no' || fixture.notation_injured && fixture.played == 'no' " class="exclamation-info-home" [icon]="faCircleExclamation"></fa-icon>    
+                            </td>
                         </tr>
                     </tbody>
                 </table>
