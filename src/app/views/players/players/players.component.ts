@@ -172,7 +172,6 @@ export class PlayersComponent implements OnInit, AfterViewInit {
         this.players = this.dataService.getPlayersList();
       },
       error: (err: any) => {
-        console.log(err);
       },
       complete: () => {
         console.info('load complete');

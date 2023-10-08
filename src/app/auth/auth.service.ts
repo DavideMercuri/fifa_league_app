@@ -9,7 +9,6 @@ export class AuthService {
 
   constructor(private http: HttpClient) {
     const token = localStorage.getItem('jwt_token');
-    console.log('Token dal localStorage:', token);
     if (token) {
       this.isAuthenticated = true;
     }

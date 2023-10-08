@@ -309,9 +309,6 @@ export class MatchComponent implements OnInit, AfterViewInit {
 
   private getPlayersFromNotations(notation: string, teamName: string) {
 
-    console.log('Notation:', notation);
-    console.log('Team Name:', teamName);
-
     if (!notation) return [];
     const ids = notation.split(',').filter(item => item !== "");    
 

@@ -56,7 +56,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   getTopPlayersInfo(category: string): void {
     this.http.get(`http://localhost:3000/players/players_list/top_players?category=${category}`).subscribe({
       next: (res: any) => {
-        console.log(res);
         
         switch (category) {
           case 'goals':
@@ -79,7 +78,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.dataService.setPlayersList(res);
       },
       error: (err: any) => {
-        console.log(err);
       }
     });
   }
