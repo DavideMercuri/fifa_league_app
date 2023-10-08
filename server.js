@@ -253,9 +253,10 @@ app.get('/players/teams', (req, res) => {
 });
 
 // API endpoint to retrieve fixtures data from the database
-app.get('/players/teams-detail', (req, res) => {
+app.get('/players/team-detail', (req, res) => {
 
-  const query = 'SELECT * FROM players.teams;';
+  const id = req.query.id;
+  const query = `SELECT * FROM teams WHERE team_id = ${id}`;
   connection.query(query, (error, results) => {
     if (error) {
       res.status(500).send(error);
@@ -425,7 +426,6 @@ app.get('/players/getDraws', (req, res) => {
     res.send(results);
   });
 });
-
 
 // API endpoint to retrieve fixtures data from the database
 app.get('/players/league_table', (req, res) => {

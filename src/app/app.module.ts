@@ -1,5 +1,5 @@
 import { NgDompurifySanitizer } from "@tinkoff/ng-dompurify";
-import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButtonModule, TuiDataListModule, TuiTextfieldControllerModule, TuiLabelModule, TuiSvgModule, TuiLoaderModule } from "@taiga-ui/core";
+import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButtonModule, TuiDataListModule, TuiTextfieldControllerModule, TuiLabelModule, TuiSvgModule, TuiLoaderModule, TuiFormatNumberPipeModule } from "@taiga-ui/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -25,6 +25,7 @@ import { PlayersComponent } from './views/players/players/players.component';
 import { of } from "rxjs";
 import { LeagueTableComponent } from './views/league-table/league-table/league-table.component';
 import { LoginComponent } from './auth/login/login.component';
+import { TeamDetailComponent } from './views/team-detail/team-detail.component';
 
 
 @NgModule({
@@ -37,7 +38,8 @@ import { LoginComponent } from './auth/login/login.component';
     TuiTagDirectiveDirective,
     PlayersComponent,
     LeagueTableComponent,
-    LoginComponent
+    LoginComponent,
+    TeamDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -50,6 +52,7 @@ import { LoginComponent } from './auth/login/login.component';
     TuiTablePaginationModule,
     TuiAlertModule,
     TuiInputNumberModule,
+    TuiFormatNumberPipeModule,
     TuiActionModule,
     TuiInputModule,
     TuiInputPasswordModule,
