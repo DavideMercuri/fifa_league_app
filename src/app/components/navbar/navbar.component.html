@@ -1,8 +1,8 @@
 <nav id="navbar-custom" tuiTabBar [(activeItemIndex)]="activeItemIndex" [hidden]="!authService.isLoggedIn()">
     <button tuiTabBarItem [icon]="'tuiIconHomeLarge'" routerLinkActive="" [routerLink]="'home/'">Home</button>
-    <div [ngClass]="item.text == 'Squadre' ? 'disabled-click' : ''" *ngFor="let item of items; let i = index"
+    <div *ngFor="let item of items; let i = index"
         (mouseenter)="handleMouseEnterOnContainer(item, i)" (mouseleave)="hideSubmenu(i)">
-        <button tuiTabBarItem [icon]="item.icon" routerLinkActive="" [routerLink]="item.routerLink">
+        <button tuiTabBarItem [icon]="item.icon" routerLinkActive="" [routerLink]="item.routerLink" [disabled]="item.text == 'Squadre'">
             {{ item.text }}
         </button>
         <div class="submenu-square" style="z-index: 999;" *ngIf="showSubMenu[i] && item.text == 'Squadre'">

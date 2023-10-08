@@ -21,21 +21,6 @@ interface Item {
 export class NavbarComponent implements AfterViewInit {
 
   isvisible: boolean = false;
-
-  constructor(private router: Router, public authService: AuthService) { }
-
-  ngAfterViewInit(): void {
-
-    setTimeout(() => {
-      // Ad esempio, per rimuovere tutti gli attributi che iniziano con "_nghost" da un elemento con ID "myElement":
-      const element = document.getElementById('navbar-custom');
-      if (element) {
-        this.removeAttributesStartingWith(element, "_nghost");
-      }
-    }, 0)
-
-  }
-
   activeItemIndex = 1;
   itemsTeams: Array<any> = [];
 
@@ -60,12 +45,25 @@ export class NavbarComponent implements AfterViewInit {
       icon: 'tuiIconUsersLarge',
       routerLink: '',
       subMenu: [
-        { text: 'Werder Brema', routerLink: '/teams/2' },
-        { text: 'Manchester City', routerLink: '/teams/1' },
-        { text: 'Borussia Dortmund', routerLink: '/teams/3' },
+        { text: 'Werder Brema', routerLink: 'team-detail/2' },
+        { text: 'Manchester City', routerLink: 'team-detail/1' },
+        { text: 'Borussia Dortmund', routerLink: 'team-detail/3' },
       ]
     },
   ];
+
+  constructor(private router: Router, public authService: AuthService) { }
+
+  ngAfterViewInit(): void {
+
+    setTimeout(() => {
+      // Ad esempio, per rimuovere tutti gli attributi che iniziano con "_nghost" da un elemento con ID "myElement":
+      const element = document.getElementById('navbar-custom');
+      if (element) {
+        this.removeAttributesStartingWith(element, "_nghost");
+      }
+    }, 0);
+  }
 
   showSubMenu: boolean[] = [];
 
