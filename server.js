@@ -146,18 +146,18 @@ app.put('/players/fixture/save-match', async (req, res) => {
 
     const processNotations = async (notationField, dataField) => {
       const data = dataField.split(',').map(item => {
-          const [playerId, length] = item.split('x').map(Number);
-          return { playerId, length };
+        const [playerId, length] = item.split('x').map(Number);
+        return { playerId, length };
       });
 
       for (let { playerId, length } of data) {
-          const teamOfPlayerQuery = `SELECT team FROM players_list WHERE id = ?`;
-          const playerTeamResult = await queryAsync(teamOfPlayerQuery, [playerId]);
-          
-          if (playerTeamResult.length) {
-              const playerTeam = playerTeamResult[0].team;
-              
-              const subsequentMatchesQuery = `
+        const teamOfPlayerQuery = `SELECT team FROM players_list WHERE id = ?`;
+        const playerTeamResult = await queryAsync(teamOfPlayerQuery, [playerId]);
+
+        if (playerTeamResult.length) {
+          const playerTeam = playerTeamResult[0].team;
+
+          const subsequentMatchesQuery = `
                   SELECT f2.id_game
                   FROM fixtures AS f1
                   JOIN fixtures AS f2 ON (
@@ -168,17 +168,17 @@ app.put('/players/fixture/save-match', async (req, res) => {
                   ORDER BY f2.matchday ASC
                   LIMIT ?`;
 
-              const subsequentMatches = await queryAsync(subsequentMatchesQuery, [playerTeam, playerTeam, id, length]);
+          const subsequentMatches = await queryAsync(subsequentMatchesQuery, [playerTeam, playerTeam, id, length]);
 
-              for (let match of subsequentMatches) {
-                  const updateMatch = `
+          for (let match of subsequentMatches) {
+            const updateMatch = `
                       UPDATE fixtures 
                       SET ${notationField} = CONCAT(IFNULL(${notationField},''), ?, ',') 
                       WHERE id_game = ?`;
 
-                  await queryAsync(updateMatch, [playerId, match.id_game]);
-              }
+            await queryAsync(updateMatch, [playerId, match.id_game]);
           }
+        }
       }
     };
 
@@ -243,6 +243,19 @@ app.get('/players/roles', (req, res) => {
 app.get('/players/teams', (req, res) => {
 
   const query = 'SELECT DISTINCT team FROM players_list ORDER BY team ASC';
+  connection.query(query, (error, results) => {
+    if (error) {
+      res.status(500).send(error);
+    } else {
+      res.status(200).send(results);
+    }
+  });
+});
+
+// API endpoint to retrieve fixtures data from the database
+app.get('/players/teams-detail', (req, res) => {
+
+  const query = 'SELECT * FROM players.teams;';
   connection.query(query, (error, results) => {
     if (error) {
       res.status(500).send(error);

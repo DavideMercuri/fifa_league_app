@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -21,21 +22,22 @@ export class NavbarComponent implements AfterViewInit {
 
   isvisible: boolean = false;
 
-  constructor(private router: Router, public authService: AuthService) {}
+  constructor(private router: Router, public authService: AuthService) { }
 
   ngAfterViewInit(): void {
 
     setTimeout(() => {
-    // Ad esempio, per rimuovere tutti gli attributi che iniziano con "_nghost" da un elemento con ID "myElement":
-    const element = document.getElementById('navbar-custom');
-    if (element) {
-      this.removeAttributesStartingWith(element, "_nghost");
-    }
-    },0)
+      // Ad esempio, per rimuovere tutti gli attributi che iniziano con "_nghost" da un elemento con ID "myElement":
+      const element = document.getElementById('navbar-custom');
+      if (element) {
+        this.removeAttributesStartingWith(element, "_nghost");
+      }
+    }, 0)
 
   }
 
   activeItemIndex = 1;
+  itemsTeams: Array<any> = [];
 
   readonly items = [
     {
@@ -56,19 +58,42 @@ export class NavbarComponent implements AfterViewInit {
     {
       text: 'Squadre',
       icon: 'tuiIconUsersLarge',
-      routerLink: '/fixtures'
+      routerLink: '',
+      subMenu: [
+        { text: 'Werder Brema', routerLink: '/teams/2' },
+        { text: 'Manchester City', routerLink: '/teams/1' },
+        { text: 'Borussia Dortmund', routerLink: '/teams/3' },
+      ]
     },
   ];
 
   showSubMenu: boolean[] = [];
 
-  showSubmenu(index: number): void {
-    this.showSubMenu[index] = true;
+  showSubmenu(i: number): void {
+    clearTimeout(this.hideDelayTimer);
+    this.showSubMenu[i] = true;
   }
 
-  hideSubmenu(index: number): void {
-    this.showSubMenu[index] = false;
+  private hideDelayTimer: any;
+
+  hideSubmenu(i: number): void {
+    this.hideDelayTimer = setTimeout(() => {
+      this.showSubMenu[i] = false;
+    }, 100);
   }
+
+  handleMouseEnterOnContainer(item: any, i: number): void {
+    if (item.text !== 'Squadre') {
+      this.hideSubmenuImmediately(i);  // Nota questa nuova funzione
+    } else {
+      this.showSubmenu(i);
+    }
+  }
+
+  hideSubmenuImmediately(i: number): void {
+    this.showSubMenu[i] = false;
+  }
+
 
   logout(): void {
     this.authService.logout();  // Esegui il logout dal servizio
@@ -85,6 +110,20 @@ export class NavbarComponent implements AfterViewInit {
         element.removeAttribute(attribute.name);
       }
     });
+  }
+
+  teamLogo(teamName: string): string {
+
+    switch (teamName) {
+      case 'Werder Brema':
+        return 'https://i.imgur.com/qZ2N0Pd.png';
+      case 'Manchester City':
+        return 'https://i.imgur.com/KbXtvO6.png';
+      case 'Borussia Dortmund':
+        return 'https://i.imgur.com/3U25w5z.png';
+      default:
+        return '';
+    }
   }
 
 }

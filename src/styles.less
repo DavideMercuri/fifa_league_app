@@ -51,6 +51,27 @@ nav {
   font-size: 12px;
 }
 
+#navbar-custom {
+  display: flex;
+  justify-content: space-between;
+}
+
+#navbar-custom > div {
+    flex: 1;
+    display: flex;
+}
+
+.div-container{
+  justify-content: center;
+  align-items: center;
+}
+
+.button-height{
+  overflow: visible;
+  height: calc(100% + 55px); /* Sostituisci <altezza del submenu> con l'altezza effettiva del tuo div del submenu */
+  position: relative; /* Necessario per posizionare correttamente il div del submenu */
+}
+
 :host ::ng-deep tui-tab-bar ._nghost-pfb-c27 {
   color: black !important;
   opacity: unset !important;
@@ -67,6 +88,38 @@ nav {
 
 button:hover .submenu {
   display: block;
+}
+
+.submenu-square{
+  margin-top: 60px;
+  margin-left: 30px;
+  position: fixed;
+  background-color: #FFFFFF; /* Sfondo bianco */
+  border: 1px solid #dee0e4; /* Bordo grigio chiaro */
+  border-radius: 5px; /* Angoli leggermente arrotondati */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Ombra leggera per dare un effetto elevato */
+  min-width: 200px; /* Larghezza minima del div */
+  transition: 0.3s ease; /* Transizione fluida per eventuali animazioni */
+  min-height: 168px;
+}
+
+.disabled-click{
+
+  cursor: default;
+}
+
+div.submenu-square a {
+  color: #333; /* Colore del testo per i link */
+  padding: 8px 12px; /* Spazio intorno ai link */
+  text-decoration: none; /* Rimuove la sottolineatura */
+  display: block; /* Rende ogni link un blocco, utile per la spaziatura e l'hover */
+  font-size: 13px;
+  font-weight: 300;
+  height: 56px;
+}
+
+div.submenu-square a:hover {
+  background-color: #E4E8ED;
 }
 
 .action {
