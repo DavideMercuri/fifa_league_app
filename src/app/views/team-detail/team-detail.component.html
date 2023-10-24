@@ -1,39 +1,68 @@
-<div style="width: 95%; height: 90px; margin-top: 15px; margin-left: 50px" [style.backgroundColor]="getTeamColor(team.team_name)">
-    <img [src]="team.team_logo" alt="" style="width: 85px; height: 85px; margin-left: 10px; margin-top: 2.5px;">
+<div *ngIf="team" class="tui-row" style="width: 95%; height: 105px; margin-top: 15px; margin-left: 50px" [style.backgroundColor]="team && team.team_main_color ? team.team_main_color : ''" [style.color]="team && team.team_text_color ? team.team_text_color : ''">
+    <div class="tui-col_md-auto">
+        <img [src]="team.team_logo" alt="" class="team-logo-small-detail">
+    </div>
+    <div class="tui-col_md-3" style="margin-top: 15px;">
+        <p class="ftsz-30" style="margin-left: 10px;">{{team.team_name}}</p>
+        <!-- <p style="margin-left: 15px; margin-top: 30px;"><span>Capitano: </span>{{team.captain}}</p> -->
+        <div style="margin-left: 10px; margin-top: 35px; font-weight: bold; font-size: 16px;">Valore Club: <span></span><span style="font-weight: normal;">{{team.club_value | tuiFormatNumber: {thousandSeparator: '.', decimalSeparator: ','} }}</span></div>
+    </div>
+    <div class="tui-col_md-auto" style="margin-top: 10px;">
+        <div style="margin-top: 5px; font-size: 16px; font-weight: bold;">Trofei Vinti</div>
+        <div style="margin-top: 10px;">
+            <div style="font-size: 14px;"><fa-icon style="margin-right: 10px;" [icon]="faShieldHalved"></fa-icon>Campionati: {{team.league_win}}</div>
+            <div style="font-size: 14px; margin-top: 5px;"><fa-icon style="margin-right: 10px;" [icon]="faTrophy"></fa-icon>Coppe: {{team.cup_win}}</div>    
+        </div>
+    </div>
+    <div class="tui-col_md-auto" style="margin-top: 35px; margin-left: 22%; font-size: 14px;">
+        <div style="margin-top: 7px; font-weight: bold;">Saldo Squadra: <span style="font-weight: normal;">{{team.money | tuiFormatNumber: {thousandSeparator: '.', decimalSeparator: ','} }}</span></div>
+        <div style="margin-top: 7px; font-weight: bold;">Stipendi: <span style="font-weight: normal;">{{team.salary | tuiFormatNumber: {thousandSeparator: '.', decimalSeparator: ','} }}</span></div>
+    </div>
+    <div class="tui-col_md-auto" style="margin-top: 15px; margin-left: 17%; font-size: 20px;">
+        <span>
+            <a href="" style="margin-right: 25px;"><fa-icon [style.color]="team.team_text_color" [title]="'Gestisci Finanze'" [icon]="faFileInvoiceDollar"></fa-icon></a>
+        </span>
+        <span>
+            <a style="margin-right: 25px; cursor: pointer;" (click)="onClick(content, undefined, 'm')"><fa-icon [style.color]="team.team_text_color" [title]="'Assegna Premio'" [icon]="faAward"></fa-icon></a>
+        </span>
+        <span>
+            <a href=""><fa-icon [style.color]="team.team_text_color" [title]="'Modifica Squadra'" [icon]="faGear"></fa-icon></a>
+        </span>
+    </div>
 </div>
 
 <!-- Tabella -->
 
 <tui-loader [overlay]="true" [showLoader]="!!(loading$ | async)">
     <table *ngIf="data$ | async as data" tuiTable class="table"
-        style="margin-left: 50px; margin-top: 15px; width: 95%; font-size: 15px;" [columns]="columns"
+        style="margin-left: 50px; margin-top: 10px; width: 95%; font-size: 15px;" [columns]="columns"
         [direction]="(direction$ | async) || 1" [tuiSortBy]="sorter$ | async" (directionChange)="onDirection()"
         (tuiSortByChange)="onSortByChange($event)">
         <thead>
-            <tr tuiThGroup [style.backgroundColor]="getTeamColor(team.team_name)">
+            <tr tuiThGroup [style.backgroundColor]="team && team.team_main_color ? team.team_main_color : ''">
                 <th *tuiHead="'name'" tuiTh tuiSortable class="th-custom-size-players" [resizable]="true">
-                    <span [style.color]="getTeamText(team.team_name)" style="margin-left: 20px;">
+                    <span [style.color]="team && team.team_text_color ? team.team_text_color : ''" style="margin-left: 20px;">
                         <fa-icon style="margin-right: 12px; font-size: 20px;" [icon]="faUser"></fa-icon>
                         Nome
                     </span>
                 </th>
-                <th [style.color]="getTeamText(team.team_name)" *tuiHead="'overall'" class="txt-center-align th-custom-size-players" tuiTh tuiSortable>
+                <th [style.color]="team && team.team_text_color ? team.team_text_color : ''" *tuiHead="'overall'" class="txt-center-align th-custom-size-players" tuiTh tuiSortable>
                     <fa-icon style="margin-right: 10px; font-size: 20px;" [icon]="faStar"></fa-icon>
                     Tot.
                 </th>
-                <th [style.color]="getTeamText(team.team_name)" *tuiHead="'position'" class="txt-center-align th-custom-size-players" tuiTh tuiSortable>
+                <th [style.color]="team && team.team_text_color ? team.team_text_color : ''" *tuiHead="'position'" class="txt-center-align th-custom-size-players" tuiTh tuiSortable>
                     <fa-icon style="margin-right: 10px; font-size: 20px;" [icon]="faIdCard"></fa-icon>
                     Ruolo
                 </th>
-                <th [style.color]="getTeamText(team.team_name)" *tuiHead="'salary'" class="txt-center-align th-custom-size-players" tuiTh tuiSortable>
+                <th [style.color]="team && team.team_text_color ? team.team_text_color : ''" *tuiHead="'salary'" class="txt-center-align th-custom-size-players" tuiTh tuiSortable>
                     <fa-icon style="margin-right: 10px; font-size: 20px;" [icon]="faCommentDollar"></fa-icon>
                     Stipendio
                 </th>
-                <th [style.color]="getTeamText(team.team_name)" *tuiHead="'player_value'" class="txt-center-align th-custom-size-players" tuiTh tuiSortable>
+                <th [style.color]="team && team.team_text_color ? team.team_text_color : ''" *tuiHead="'player_value'" class="txt-center-align th-custom-size-players" tuiTh tuiSortable>
                     <fa-icon style="margin-right: 10px; font-size: 20px;" [icon]="faSackDollar"></fa-icon>
                     Valore
                 </th>
-                <th [style.color]="getTeamText(team.team_name)" *tuiHead="'actions'" class="txt-center-align th-custom-size-players" tuiTh tuiSortable>
+                <th [style.color]="team && team.team_text_color ? team.team_text_color : ''" *tuiHead="'actions'" class="txt-center-align th-custom-size-players" tuiTh tuiSortable>
                     Azioni
                 </th>
             </tr>
@@ -42,27 +71,52 @@
             <tr *ngFor="let item of sortedData" tuiTr>
                 <td *tuiCell="'name'" tuiTd class="v-align-bottom" [class.match]="isMatch('name')">
                     <span><img style="width: 35px; height: 35px; margin-right: 10px; margin-left: 10px;"
-                            src="{{item.photo}}">{{ item.name }}</span>
+                            src="{{item.photo}}">{{ item.name }}
+                            <span *ngIf="item.name == team.captain" style="float:right; margin-right: 20px;">
+                                <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+                                        width="35px" height="35px" viewBox="0 0 1000.000000 1000.000000"
+                                        preserveAspectRatio="xMidYMid meet">
+                                        <g transform="translate(0.000000,1000.000000) scale(0.100000,-0.100000)"
+                                        [attr.fill]="team.team_main_color" stroke="none">
+                                        <path d="M4745 8963 c-285 -23 -497 -55 -715 -110 -1389 -345 -2488 -1418
+                                            -2870 -2803 -102 -368 -146 -737 -136 -1140 14 -617 145 -1147 417 -1690 693
+                                            -1382 2113 -2231 3659 -2187 587 17 1119 147 1635 400 402 198 731 433 1056
+                                            757 323 322 549 634 748 1030 296 591 433 1203 418 1865 -15 617 -147 1153
+                                            -418 1694 -626 1250 -1861 2077 -3254 2181 -128 9 -443 11 -540 3z m870 -2203
+                                            c937 -39 1625 -147 1926 -302 85 -43 125 -80 138 -125 5 -17 9 -487 10 -1044
+                                            0 -558 4 -1138 7 -1289 5 -204 4 -285 -5 -312 -111 -336 -2113 -553 -3851
+                                            -417 -666 52 -1155 146 -1400 269 -92 47 -130 84 -140 142 -5 24 -10 627 -11
+                                            1340 l-3 1297 30 38 c68 85 302 173 644 243 544 110 1206 165 2045 168 204 1
+                                            478 -3 610 -8z"/>
+                                        <path d="M4695 6643 c-960 -21 -1854 -145 -2190 -304 -93 -44 -96 -51 -28 -87
+                                            252 -132 892 -237 1743 -283 281 -16 1103 -16 1395 -1 893 47 1577 157 1857
+                                            298 38 19 68 39 68 44 0 16 -82 57 -185 93 -492 169 -1541 264 -2660 240z"/>
+                                        <path d="M4915 5586 c-196 -38 -357 -119 -485 -246 -99 -98 -149 -169 -197
+                                            -284 -62 -147 -77 -229 -77 -421 1 -151 4 -181 27 -269 105 -393 406 -632 822
+                                            -653 213 -10 414 26 568 103 40 20 73 38 75 39 2 2 -94 372 -114 437 -5 15
+                                            -16 12 -92 -26 -148 -74 -179 -81 -337 -81 -135 1 -142 2 -205 31 -82 39 -131
+                                            81 -169 147 -84 148 -91 381 -17 542 49 109 155 189 284 216 77 16 241 6 312
+                                            -19 30 -10 88 -36 129 -56 40 -21 75 -36 76 -34 2 2 31 98 65 213 33 116 63
+                                            216 65 223 7 19 -182 106 -275 127 -100 23 -360 29 -455 11z"/>
+                                        </g>
+                                </svg>
+                            </span>
+                    </span>
                 </td>
-                <td *tuiCell="'overall'" style="font-weight: bold;" tuiTd class="v-align-middle txt-center-align"
-                    [class.match]="isMatch('overall')">
+                <td *tuiCell="'overall'" style="font-weight: bold;" tuiTd class="v-align-middle txt-center-align" [class.match]="isMatch('overall')">
                     <span>{{ item.overall }}</span>
                 </td>
-                <td *tuiCell="'position'" style="font-weight: bold;" tuiTd class="v-align-middle txt-center-align"
-                    [class.match]="isMatch('position')">
+                <td *tuiCell="'position'" style="font-weight: bold;" tuiTd class="v-align-middle txt-center-align" [class.match]="isMatch('position')">
                     <span>{{ item.position }}</span>
                 </td>
-                <td *tuiCell="'salary'" style="font-weight: bold;" tuiTd class="v-align-middle txt-center-align"
-                    [class.match]="isMatch('position')">
+                <td *tuiCell="'salary'" style="font-weight: bold;" tuiTd class="v-align-middle txt-center-align" [class.match]="isMatch('position')">
                     <span>{{ item.salary | tuiFormatNumber: {thousandSeparator: '.', decimalSeparator: ','} }}</span>
                 </td>
-                <td *tuiCell="'player_value'" style="font-weight: bold;" tuiTd class="v-align-middle txt-center-align"
-                    [class.match]="isMatch('position')">
+                <td *tuiCell="'player_value'" style="font-weight: bold;" tuiTd class="v-align-middle txt-center-align" [class.match]="isMatch('position')">
                     <span>{{ item.player_value | tuiFormatNumber: {thousandSeparator: '.', decimalSeparator: ','}
                         }}</span>
                 </td>
-                <td *tuiCell="'actions'" tuiTd class="v-align-middle txt-center-align"
-                    [class.match]="isMatch('red_card')">
+                <td *tuiCell="'actions'" tuiTd class="v-align-middle txt-center-align" [class.match]="isMatch('red_card')">
                     <span>
                         <a><fa-icon style="font-size: 20px; cursor: pointer;" [icon]="faSackDollar"></fa-icon></a>
                     </span>
@@ -72,10 +126,18 @@
         <tfoot>
             <tr>
                 <td [colSpan]="columns.length">
-                    <tui-table-pagination class="tui-space_top-2" [total]="(total$ | async) || 0"
-                        (pageChange)="onPage($event)" (sizeChange)="onSize($event)"></tui-table-pagination>
+                    <tui-table-pagination class="tui-space_top-2" [total]="(total$ | async) || 0" (pageChange)="onPage($event)" (sizeChange)="onSize($event)"></tui-table-pagination>
                 </td>
             </tr>
         </tfoot>
     </table>
 </tui-loader>
+
+
+<ng-template #content let-observer>
+<div style="float: right;">
+    <button size="m" tuiButton type="button" (click)="observer.complete()">
+        Salva
+    </button>
+</div>
+</ng-template>

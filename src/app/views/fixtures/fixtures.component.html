@@ -3,7 +3,7 @@
         <div class="tui-space_right-2 col-12 matchday" *ngIf="i % 3 === 0">
             {{'Giornata ' + fixture.matchday}}
         </div>
-            <button tuiAction type="button" class="{{fixturesButtonStyleClass}}" (click)="onClick(content, header, 'fullscreen', fixture.id_game)">
+            <button tuiAction type="button" appScrollToNotPlayed [played]="fixture.played" class="{{fixturesButtonStyleClass}}" (click)="onClick(content, header, 'fullscreen', fixture.id_game)">
                 <table class="{{tableStyleClass}}">
                     <tbody>
                         <tr class="{{trStyleClass}} v-align-middle">
@@ -32,3 +32,7 @@
 
 <ng-template #header>
 </ng-template>
+
+<button tuiAction *ngIf="showScrollTopButton" class="scroll-to-top" (click)="scrollToTop()">
+    <fa-icon style="font-size: 30px;" [icon]="faCircleUp"></fa-icon>
+</button>

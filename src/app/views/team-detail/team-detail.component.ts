@@ -2,15 +2,16 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { AfterViewInit, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { faUser, faFutbol, faMedal, faPersonRunning, faShieldHalved, faPenToSquare, faTrashCan, faIdCard, faMagnifyingGlass, faStar, faSackDollar, faCommentDollar } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faFutbol, faMedal, faPersonRunning, faShieldHalved, faPenToSquare, faTrashCan, faIdCard, faMagnifyingGlass, faStar, faSackDollar, faCommentDollar, faTrophy, faFileInvoiceDollar, faGear, faAward } from '@fortawesome/free-solid-svg-icons';
 import { TuiComparator } from '@taiga-ui/addon-table';
 import { tuiIsFalsy, tuiIsPresent, TUI_DEFAULT_MATCHER, tuiDefaultSort } from '@taiga-ui/cdk';
-import { TuiDialogService } from '@taiga-ui/core';
+import { TuiDialogContext, TuiDialogService, TuiDialogSize } from '@taiga-ui/core';
 import { TUI_ARROW } from '@taiga-ui/kit';
 import { BehaviorSubject, Observable, Subscription, combineLatest, debounceTime, filter, map, share, startWith, switchMap, timer } from 'rxjs';
 import { DataService } from 'src/app/data.service';
 import { Player } from 'src/interfaces/player.interface';
 import { Team } from 'src/interfaces/team.interfaces';
+import {PolymorpheusContent} from '@tinkoff/ng-polymorpheus';
 
 type Key = 'name' | 'overall' | 'position' | 'salary' | 'player_value';
 
@@ -32,12 +33,18 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
   faStar = faStar;
   faSackDollar = faSackDollar;
   faCommentDollar = faCommentDollar;
+  faShieldHalved = faShieldHalved;
+  faTrophy = faTrophy;
+  faFileInvoiceDollar = faFileInvoiceDollar;
+  faGear = faGear;
+  faAward = faAward;
 
   constructor(private route: ActivatedRoute, private dataService: DataService, private http: HttpClient, @Inject(TuiDialogService) private readonly dialogs: TuiDialogService) { }
   ngAfterViewInit(): void {
 
-      this.loadDataBasedOnId(this.teamId);
-      this.FilterPlayers('', '', this.team.team_name);
+    this.loadDataBasedOnId(this.teamId);
+    if(this.team)
+    this.FilterPlayers('', '', this.team.team_name);
 
   }
 
@@ -49,7 +56,7 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
       this.loadDataBasedOnId(this.teamId);
       setTimeout(() => {
         this.FilterPlayers('', '', this.team.team_name);
-      },100)
+      }, 100)
 
 
     });
@@ -164,7 +171,6 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
 
     this.http.get('http://localhost:3000/players/players_list/filters', { params: httpParams }).subscribe({
       next: (res: any) => {
-        console.log(res);
 
         this.players = res;
         this.dataService.setPlayersList(res);
@@ -205,31 +211,19 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
     return timer(3000).pipe(map(() => result));
   }
 
-  getTeamColor(teamname: string): any {
-    switch (teamname) {
-      case "Werder Brema":
-        return '#179152'
-      case "Manchester City":
-        return '#96c1e7';
-      case "Borussia Dortmund":
-        return '#fcd917';
-      default:
-        return '';
-    }
-  }
-
-    getTeamText(teamname: string): any {
-    switch (teamname) {
-      case "Werder Brema":
-        return '#fff'
-      case "Manchester City":
-        return '#fff';
-      case "Borussia Dortmund":
-        return '#000';
-      default:
-        return '';
-    }
-  }
+  onClick(
+    content: PolymorpheusContent<TuiDialogContext>,
+    header: PolymorpheusContent,
+    size: TuiDialogSize,
+): void {
+    this.dialogs
+        .open(content, {
+            label: 'Aggiungi Premio Competizione',
+            header,
+            size,
+        })
+        .subscribe();
+}
 
 }
 

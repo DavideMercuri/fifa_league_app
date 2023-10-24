@@ -242,10 +242,10 @@ export class PlayersComponent implements OnInit, AfterViewInit {
   teamLogo(teamName: string): string {
 
     switch (teamName) {
-      case 'Werder Brema':
-        return 'https://i.imgur.com/qZ2N0Pd.png';
-      case 'Manchester City':
-        return 'https://i.imgur.com/KbXtvO6.png';
+      case 'Arsenal':
+        return 'https://i.imgur.com/jHecsme.png';
+      case 'Real Madrid':
+        return 'https://i.imgur.com/epsvCFz.png';
       case 'Borussia Dortmund':
         return 'https://i.imgur.com/3U25w5z.png';
       default:

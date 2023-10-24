@@ -45,8 +45,8 @@ export class NavbarComponent implements AfterViewInit {
       icon: 'tuiIconUsersLarge',
       routerLink: '',
       subMenu: [
-        { text: 'Werder Brema', routerLink: 'team-detail/2' },
-        { text: 'Manchester City', routerLink: 'team-detail/1' },
+        { text: 'Arsenal', routerLink: 'team-detail/2' },
+        { text: 'Real Madrid', routerLink: 'team-detail/1' },
         { text: 'Borussia Dortmund', routerLink: 'team-detail/3' },
       ]
     },
@@ -113,10 +113,10 @@ export class NavbarComponent implements AfterViewInit {
   teamLogo(teamName: string): string {
 
     switch (teamName) {
-      case 'Werder Brema':
-        return 'https://i.imgur.com/qZ2N0Pd.png';
-      case 'Manchester City':
-        return 'https://i.imgur.com/KbXtvO6.png';
+      case 'Arsenal':
+        return 'https://i.imgur.com/jHecsme.png';
+      case 'Real Madrid':
+        return 'https://i.imgur.com/epsvCFz.png';
       case 'Borussia Dortmund':
         return 'https://i.imgur.com/3U25w5z.png';
       default:

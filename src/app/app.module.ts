@@ -1,9 +1,9 @@
 import { NgDompurifySanitizer } from "@tinkoff/ng-dompurify";
-import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButtonModule, TuiDataListModule, TuiTextfieldControllerModule, TuiLabelModule, TuiSvgModule, TuiLoaderModule, TuiFormatNumberPipeModule } from "@taiga-ui/core";
+import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButtonModule, TuiDataListModule, TuiTextfieldControllerModule, TuiLabelModule, TuiSvgModule, TuiLoaderModule, TuiFormatNumberPipeModule, TuiTooltipModule, TuiExpandModule, TuiDropdownModule } from "@taiga-ui/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiInputModule, TuiInputNumberModule, TuiInputPasswordModule, TuiIslandModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule } from "@taiga-ui/kit";
+import { TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiElasticContainerModule, TuiInputModule, TuiInputNumberModule, TuiInputPasswordModule, TuiIslandModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule } from "@taiga-ui/kit";
 import { TuiAppBarModule, TuiTabBarModule } from '@taiga-ui/addon-mobile';
 import { TuiCalendarModule } from '@taiga-ui/core';
 import { TuiLetModule } from '@taiga-ui/cdk';
@@ -26,6 +26,9 @@ import { of } from "rxjs";
 import { LeagueTableComponent } from './views/league-table/league-table/league-table.component';
 import { LoginComponent } from './auth/login/login.component';
 import { TeamDetailComponent } from './views/team-detail/team-detail.component';
+import { ScrollToNotPlayedDirective } from './scroll-to-not-played.directive';
+import { CustomMultiSelectComponent } from './components/custom-multi-select/custom-multi-select.component';
+import { CustomInputTagComponent } from './components/custom-input-tag/custom-input-tag.component';
 
 
 @NgModule({
@@ -39,7 +42,10 @@ import { TeamDetailComponent } from './views/team-detail/team-detail.component';
     PlayersComponent,
     LeagueTableComponent,
     LoginComponent,
-    TeamDetailComponent
+    TeamDetailComponent,
+    ScrollToNotPlayedDirective,
+    CustomMultiSelectComponent,
+    CustomInputTagComponent
   ],
   imports: [
     BrowserModule,
@@ -55,6 +61,8 @@ import { TeamDetailComponent } from './views/team-detail/team-detail.component';
     TuiFormatNumberPipeModule,
     TuiActionModule,
     TuiInputModule,
+    TuiDropdownModule,
+    TuiTooltipModule,
     TuiInputPasswordModule,
     TuiPaginationModule,
     TuiComboBoxModule,
@@ -81,7 +89,10 @@ import { TeamDetailComponent } from './views/team-detail/team-detail.component';
     TuiDataListModule,
     TuiTextfieldControllerModule,
     TuiDataListWrapperModule,
+    TuiElasticContainerModule,
+    TuiExpandModule,
     HttpClientModule,
+    
   ],
   providers: [
   {
@@ -98,5 +109,7 @@ import { TeamDetailComponent } from './views/team-detail/team-detail.component';
   },
 ],
   bootstrap: [AppComponent]
+  ,
+  exports: [ScrollToNotPlayedDirective]
 })
 export class AppModule { }

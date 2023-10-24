@@ -17,12 +17,16 @@
 @import "@taiga-ui/styles/markup/tui-space.less";
 @import "@taiga-ui/styles/markup/tui-table.less";
 @import "@taiga-ui/styles/markup/tui-text.less";
-@import '@taiga-ui/core/styles/taiga-ui-local.less';
+@import "@taiga-ui/core/styles/taiga-ui-local.less";
 
 .navbar {
   color: #fff;
-  background: linear-gradient(90deg, rgba(0,0,75,1) 0%, rgba(48,66,198,0.846673703661152) 100%) !important;
-	padding: 5px 16px;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 75, 1) 0%,
+    rgba(48, 66, 198, 0.846673703661152) 100%
+  ) !important;
+  padding: 5px 16px;
   padding: 30px 16px;
   border-radius: 0;
   border: none;
@@ -45,7 +49,7 @@ nav {
     rgba(48, 66, 198, 0.846673703661152) 100%
   ) !important;
   backdrop-filter: none var(--tui-disabled-opacity) !important;
-  display:flex;
+  display: flex;
   padding-bottom: 5px;
   padding-top: 5px;
   font-size: 12px;
@@ -57,18 +61,20 @@ nav {
 }
 
 #navbar-custom > div {
-    flex: 1;
-    display: flex;
+  flex: 1;
+  display: flex;
 }
 
-.div-container{
+.div-container {
   justify-content: center;
   align-items: center;
 }
 
-.button-height{
+.button-height {
   overflow: visible;
-  height: calc(100% + 55px); /* Sostituisci <altezza del submenu> con l'altezza effettiva del tuo div del submenu */
+  height: calc(
+    100% + 55px
+  ); /* Sostituisci <altezza del submenu> con l'altezza effettiva del tuo div del submenu */
   position: relative; /* Necessario per posizionare correttamente il div del submenu */
 }
 
@@ -90,11 +96,11 @@ button:hover .submenu {
   display: block;
 }
 
-.submenu-square{
+.submenu-square {
   margin-top: 60px;
   margin-left: 30px;
   position: fixed;
-  background-color: #FFFFFF; /* Sfondo bianco */
+  background-color: #ffffff; /* Sfondo bianco */
   border: 1px solid #dee0e4; /* Bordo grigio chiaro */
   border-radius: 5px; /* Angoli leggermente arrotondati */
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Ombra leggera per dare un effetto elevato */
@@ -103,7 +109,7 @@ button:hover .submenu {
   min-height: 168px;
 }
 
-.disabled-click{
+.disabled-click {
   cursor: default;
 }
 
@@ -118,7 +124,7 @@ div.submenu-square a {
 }
 
 div.submenu-square a:hover {
-  background-color: #E4E8ED;
+  background-color: #e4e8ed;
 }
 
 .action {
@@ -136,7 +142,7 @@ div.submenu-square a:hover {
   }
 }
 
-.badge-top-stats{
+.badge-top-stats {
   .gradient(rgba(0, 0, 75, 1) 0%,
   rgba(48, 66, 198, 0.846673703661152) 100%);
 }
@@ -165,7 +171,7 @@ div.submenu-square a:hover {
   margin-top: 10px !important;
 }
 
-.logo-match-style{
+.logo-match-style {
   width: 80px !important;
   height: 80px !important;
 }
@@ -267,11 +273,11 @@ tui-combo-box .t-input {
   width: 95% !important;
 }
 
-.save-button .t-wrapper{
+.save-button .t-wrapper {
   background-color: #34b41f;
 }
 
-.goals-count{
+.goals-count {
   text-align: center !important;
 }
 
@@ -280,7 +286,9 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
 }
 
 .scrollable-container {
-  max-height: calc(100vh - 50px); /* puoi personalizzare l'altezza come preferisci */
+  max-height: calc(
+    100vh - 50px
+  ); /* puoi personalizzare l'altezza come preferisci */
   overflow-y: auto;
 }
 
@@ -289,75 +297,79 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
   overflow-y: auto;
 }
 
-.button-fixture{
-  width: 100%; 
+.button-fixture {
+  width: 100%;
   height: 100px;
-  float: left; 
+  float: left;
   margin: 2px;
 }
 
-.h-40{
+.h-40 {
   height: 40px !important;
 }
 
-.w-20{
+.w-20 {
   width: 20px !important;
 }
 
-.w-40{
+.w-40 {
   width: 40px !important;
 }
 
-.w-50{
+.w-50 {
   width: 50px !important;
 }
 
-.w-100{
+.w-100 {
   width: 100px !important;
 }
 
-.ftsz-20{
+.ftsz-20 {
   font-size: 20px !important;
 }
 
-.ftsz-25{
+.ftsz-25 {
   font-size: 25px !important;
 }
 
-.ftsz-15{
+.ftsz-30 {
+  font-size: 30px !important;
+}
+
+.ftsz-15 {
   font-size: 15px !important;
 }
 
-.ftsz-15-b{
+.ftsz-15-b {
   font-size: 18px !important;
   font-weight: bold !important;
 }
 
-.font-b{
+.font-b {
   font-weight: bold !important;
 }
 
-.v-align-middle{
+.v-align-middle {
   vertical-align: middle !important;
 }
 
-.v-align-bottom{
+.v-align-bottom {
   vertical-align: bottom !important;
 }
 
-.txt-center-align{
+.txt-center-align {
   text-align: center !important;
 }
 
-.custom-disabled{
+.custom-disabled {
   opacity: 0.5 !important;
 }
 
-.table > :not(caption) > * > *{
+.table > :not(caption) > * > * {
   padding: 0;
 }
 
-.th-custom-size-players{
+.th-custom-size-players {
   padding-bottom: 6px !important;
 }
 
@@ -369,18 +381,18 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
   background: #ffdd2d;
 }
 
-.match-status-info{
+.match-status-info {
   text-align: right;
 }
 
-.exclamation-info-home{
+.exclamation-info-home {
   color: red;
   font-size: 18px;
   font-weight: bold;
   margin-right: 15px;
 }
 
-.notation-name{
+.notation-name {
   display: inline-block; /* Questo permette al span di rispettare il max-width */
   max-width: 130px; /* Adattare secondo le esigenze */
   white-space: nowrap;
@@ -390,9 +402,16 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
   vertical-align: middle;
 }
 
+.team-logo-small-detail {
+  width: 85px;
+  height: 85px;
+  margin-left: 10px;
+  margin-top: 8px;
+}
 
-
-
-
-
-
+.scroll-to-top {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  /* Aggiungi ulteriori stili come dimensioni, colori, ecc. secondo le tue preferenze */
+}

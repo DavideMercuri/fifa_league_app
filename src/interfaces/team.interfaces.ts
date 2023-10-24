@@ -9,4 +9,7 @@ export interface Team {
     captain: string;
     team_logo: string;
     club_value: number;
+    team_main_color: string;
+    team_secondary_color: string;
+    team_text_color: string;
 }
