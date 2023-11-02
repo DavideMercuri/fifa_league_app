@@ -15,7 +15,7 @@
                             <td class="{{tdStyleClass}} h-40 w-100 v-align-middle">{{ fixture.away_team }}</td>
                             <td class="{{tdStyleClass}} h-40 w-50"><img class="h-40 w-40" [src]="teamLogo(fixture.away_team)"></td>
                         </tr>
-                        <tr>
+                        <tr style="position: relative; width: 100%;">
                             <td class="match-status-info" colspan="7">
                                 <fa-icon *ngIf="fixture.notation_expelled && fixture.played == 'no' || fixture.notation_injured && fixture.played == 'no' " class="exclamation-info-home" [icon]="faCircleExclamation"></fa-icon>    
                             </td>
