@@ -1,4 +1,4 @@
-import { faBolt, faFutbol, faMedal, faPersonRunning, faSquare, faSquarePlus, faSquarePollVertical, faTruckMedical } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faFutbol, faMedal, faPersonRunning, faPlus, faSquare, faSquarePlus, faSquarePollVertical, faTruckMedical } from '@fortawesome/free-solid-svg-icons';
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, Input, OnInit, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
@@ -61,6 +61,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
   faTruckMedical = faTruckMedical;
   faSquarePlus = faSquarePlus;
   faSquare = faSquare;
+  faPlus = faPlus;
   activeItemIndex = 0;
   htGoals = '0';
   awGoals = '0';
@@ -69,6 +70,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
   players: Array<PlayerSearch> = [];
 
   @ViewChild('tuitui') tuitui !: any;
+  @ViewChild('tuituiSelect') tuituiSelect !: any;
   @ViewChild('tuituiAssist') tuituiAssist !: any;
   @ViewChild('tuicomboMotm') tuicomboMotm !: any;
   @ViewChild('tuituiYellowCard') tuituiYellowCard !: any;
@@ -91,15 +93,19 @@ export class MatchComponent implements OnInit, AfterViewInit {
     // Iscriviti ai cambiamenti delle selezioni attive e chiama `AddCounter` quando cambiano
     this.activeScorers.valueChanges.subscribe(() => {
       this.AddCounter('scorers', this.activeScorers.value);
+      this.onSearchChange('');
     });
     this.activeAssist.valueChanges.subscribe(() => {
       this.AddCounter('assists', this.activeAssist.value);
+      this.onSearchChange('');
     });
     this.activeInjured.valueChanges.subscribe(() => {
       this.AddCounter('injured', this.activeInjured.value);
+      this.onSearchChange('');
     });
     this.activeRedCards.valueChanges.subscribe(() => {
       this.AddCounter('redCard', this.activeRedCards.value);
+      this.onSearchChange('');
     });
 
   }
@@ -110,6 +116,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
     setTimeout(() => (this.generateArrays()), 0);
 
   }
+
 
   readonly stringify: TuiStringHandler<PlayerSearch | TuiContextWithImplicit<PlayerSearch>> = item =>
     'name' in item ? item.name : item.$implicit.name;
@@ -132,7 +139,9 @@ export class MatchComponent implements OnInit, AfterViewInit {
   readonly activeInjured = new FormControl();
 
   onSearchChange(searchQuery: string | null): void {
+
     this.search$.next(searchQuery);
+
   }
 
   extractValueFromEvent(event: Event): string | null {
@@ -159,8 +168,9 @@ export class MatchComponent implements OnInit, AfterViewInit {
     return arrayToSort.sort((a: any, b: any) => a.name.localeCompare(b.name));
   }
 
-  logga(){
-    console.log(this.tuitui);
+  logga() {
+    console.log(this.activeScorers);
+
   }
 
   TeamLogo(teamName: string): string {
@@ -221,10 +231,10 @@ export class MatchComponent implements OnInit, AfterViewInit {
         name: this.tuicomboMotm.previousInternalValue.name
       }
       let result = {};
-      const tuituiTags = document.querySelectorAll('#tuitui tui-tag.modified');
-      const tuituiassistTags = document.querySelectorAll('#tuituiAssist tui-tag.modified');
-      const tuituiRedCard = document.querySelectorAll('#tuituiRedCard tui-tag.modified');
-      const tuituiInjured = document.querySelectorAll('#tuituiInjured tui-tag.modified');
+      const tuituiTags = document.querySelectorAll('#tuitui.modified');
+      const tuituiassistTags = document.querySelectorAll('#tuituiAssist.modified');
+      const tuituiRedCard = document.querySelectorAll('#tuituiRedCard.modified');
+      const tuituiInjured = document.querySelectorAll('#tuituiInjured.modified');
       const extractData = (tuiTags: NodeListOf<Element>, arrayToFill: any[]) => {
         for (let i = 0; i < tuiTags.length; i++) {
           const tuiTag = tuiTags[i];
@@ -314,7 +324,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
   private getPlayersFromNotations(notation: string, teamName: string) {
 
     if (!notation) return [];
-    const ids = notation.split(',').filter(item => item !== "");    
+    const ids = notation.split(',').filter(item => item !== "");
 
     return this.players.filter(player => ids.includes(String(player.id)) && player.team === teamName);
   }
@@ -330,6 +340,30 @@ export class MatchComponent implements OnInit, AfterViewInit {
 
   }
 
+  removePlayerFromActiveForm(formToUpdate: string, playerId: string): void {
+    switch (formToUpdate) {
+      case 'scorers':
+        const updatedScorers = this.activeScorers.value.filter((player: { id: string; }) => player.id !== playerId);
+        this.activeScorers.setValue(updatedScorers);
+        break;
+      case 'assists':
+        const updatedAssist = this.activeAssist.value.filter((player: { id: string; }) => player.id !== playerId);
+        this.activeAssist.setValue(updatedAssist);
+        break;
+      case 'redCard':
+        const updatedredCard = this.activeRedCards.value.filter((player: { id: string; }) => player.id !== playerId);
+        this.activeRedCards.setValue(updatedredCard);
+        break;
+      case 'injured':
+        const updatedInjured = this.activeInjured.value.filter((player: { id: string; }) => player.id !== playerId);
+        this.activeInjured.setValue(updatedInjured);
+        break;
+      default:
+        break;
+    }
+
+  }
+
 
   AddCounter(type: 'scorers' | 'assists' | 'redCard' | 'injured', playersCount?: { id: string, count: number }[]) {
 
@@ -340,16 +374,17 @@ export class MatchComponent implements OnInit, AfterViewInit {
 
     setTimeout(() => {
       if (type == 'scorers') {
-        tuiTags = document.querySelectorAll('#tuitui tui-tag:not(.modified)');
+        tuiTags = document.querySelectorAll('#tuitui:not(.modified)');
+
       }
       if (type == 'assists') {
-        tuiTags = document.querySelectorAll('#tuituiAssist tui-tag:not(.modified)');
+        tuiTags = document.querySelectorAll('#tuituiAssist:not(.modified)');
       }
       if (type == 'redCard') {
-        tuiTags = document.querySelectorAll('#tuituiRedCard tui-tag:not(.modified)');
+        tuiTags = document.querySelectorAll('#tuituiRedCard:not(.modified)');
       }
       if (type == 'injured') {
-        tuiTags = document.querySelectorAll('#tuituiInjured tui-tag:not(.modified)');
+        tuiTags = document.querySelectorAll('#tuituiInjured:not(.modified)');
       }
 
       // Itera attraverso ogni elemento nella collezione
@@ -403,7 +438,12 @@ export class MatchComponent implements OnInit, AfterViewInit {
               cancelable: true,
             });
             closeButton.dispatchEvent(clickEvent);
+            this.removePlayerFromActiveForm(type, playerData.id);
           }
+        });
+
+        closeButton.addEventListener('click', () => {
+          this.removePlayerFromActiveForm(type, playerData.id);
         });
 
         if (divElement) {

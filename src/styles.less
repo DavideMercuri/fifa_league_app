@@ -185,8 +185,15 @@ fieldset.t-item[_ngcontent-vmu-c17] {
   align-items: center;
 }
 
+div.t-input.t-input_template.ng-star-inserted{
+  margin-top:10px;
+  padding: 10px;
+}
+
 .avatar {
-  margin: 0 0.5rem 0 -0.25rem;
+  //margin: 0 0.5rem 0 -0.25rem;
+  width: 10px;
+  height: 10px;
 }
 
 .player-name {
@@ -203,11 +210,13 @@ fieldset.t-item[_ngcontent-vmu-c17] {
   text-overflow: ellipsis;
   max-width: 180px;
   width: 180px;
-  font-size: 15px;
+  font-size: 12px;
 }
 
 #tuitui .t-tag {
   background-color: var(--tui-support-04);
+  padding-left: 25px;
+  padding-right: 25px;
 }
 
 #tuituiAssist .t-tag {
@@ -271,6 +280,16 @@ tui-combo-box .t-input {
 
 .tui-island-resume {
   width: 95% !important;
+  max-height: 400px;
+}
+
+.tag-container {
+  margin-top: 5px;
+  max-height: 255px;
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  box-sizing: border-box;
 }
 
 .save-button .t-wrapper {
@@ -293,8 +312,13 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
 }
 
 .custom-multi-select {
-  max-height: 250px; /* puoi personalizzare questo valore */
+  max-height: 400px;
+  width: 345px;
   overflow-y: auto;
+}
+
+.custom-multi-select div.t-tag{
+  display: none;
 }
 
 .button-fixture {
@@ -382,14 +406,15 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
 }
 
 .match-status-info {
-  text-align: right;
+  position: absolute;
+  right: 0;
 }
 
 .exclamation-info-home {
   color: red;
   font-size: 18px;
   font-weight: bold;
-  margin-right: 15px;
+  margin-right: 20px;
 }
 
 .notation-name {

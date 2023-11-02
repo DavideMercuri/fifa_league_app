@@ -105,93 +105,81 @@
 
             <!-- Prima pagina (scheda) -->
             <div class="tui-row resume-row" [hidden]="activeItemIndex != 0">
+
+                <!-- Scorers Selection -->
                 <div class="tui-col_md-4">
-
-                    <button (click)="logga()">CLICCA</button>
                     <tui-island class="tui-island-resume">
-
-                        <!-- Scorers Selection -->
-
-                        <div>
                             <p class="multiselect-label" style="margin-left: 10px; font-size: 17px;">Marcatori
                                 <fa-icon style="margin-left: 10px;" [icon]="faFutbol"></fa-icon>
                             </p>
-
-                            <tui-multi-select #tuitui id="tuitui" *tuiLet="items$ | async as items"
-                                placeholder="Selezionare i Marcatori" class="b-form scorers-select custom-multi-select"
-                                tuiTextfieldSize="l" [formControl]="activeScorers" [stringify]="stringify"
-                                [tuiTextfieldLabelOutside]="true" [expandable]="true" [tuiTextfieldCleaner]="true"
-                                [rows]="30" (searchChange)="onSearchChange($event)"
-                                (focusedChange)="onSearchChange('')">
-                                Selezionare i Marcatori...
-                                <tui-data-list-wrapper *tuiDataList [items]="items | tuiHideSelected"
-                                    [itemContent]="itemContent"></tui-data-list-wrapper>
+                            <tui-multi-select #tuituiSelect *tuiLet="items$ | async as items" class="b-form scorers-select custom-multi-select"
+                                tuiTextfieldSize="s" [formControl]="activeScorers" [stringify]="stringify" [tuiTextfieldCleaner]="true" [expandable]="false"
+                                [valueContent]="!activeScorers.value ? 'Selezionati: 0' : 'Selezionati: ' + activeScorers.value.length"
+                                (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
+                                {{!activeScorers.value || activeScorers.value.length == 0 ? 'Selezionare i Marcatori...' : ''}}
+                                <tui-data-list-wrapper *tuiDataList [items]="items | tuiHideSelected" [itemContent]="itemContent"></tui-data-list-wrapper>
                             </tui-multi-select>
-
                             <ng-template #itemContent let-data>
                                 <div class="template">
-                                    <tui-avatar size="m" class="avatar" [avatarUrl]="data.photo"
-                                        [text]="data.toString()">
-                                    </tui-avatar>
+                                    <tui-avatar size="m" class="avatar" [avatarUrl]="data.photo" [text]="data.toString()"></tui-avatar>
                                     <span class="player-name">{{ data.name }}</span>
                                     <tui-badge [value]="data.position" class="badge-position"></tui-badge>
                                 </div>
                             </ng-template>
-
-                        </div>
+                            <div #tuitui class="tags tag-container">
+                                <tui-tag id="tuitui" class="tag" *ngFor="let tag of activeScorers.value;" size="l" [hoverable]="true" [removable]="true" [value]="tag.name" style="margin-top: 4px; width: 345px">
+                                </tui-tag>
+                            </div>
                     </tui-island>
                 </div>
+
+                <!-- Assists Selection -->
                 <div class="tui-col_md-4">
                     <tui-island class="tui-island-resume">
-                        <!-- Assists Selection -->
-
-                        <div>
                             <p class="multiselect-label" style="margin-left: 10px; font-size: 17px;">Assist
-                                <fa-icon style="margin-left: 10px;" [icon]="faPersonRunning"></fa-icon>
+                                <fa-icon style="margin-left: 10px;" [icon]="faFutbol"></fa-icon>
                             </p>
-                            <tui-multi-select #tuituiAssist id="tuituiAssist" *tuiLet="items$ | async as assist"
-                                placeholder="Selezionare gli Assist" class="b-form assist-select custom-multi-select"
-                                tuiTextfieldSize="l" [formControl]="activeAssist" [stringify]="stringify"
-                                [tuiTextfieldLabelOutside]="true" [expandable]="true" [tuiTextfieldCleaner]="true"
-                                [rows]="20" (searchChange)="onSearchChange($event)"
-                                (focusedChange)="onSearchChange('')">
-                                Selezionare gli Assist...
-                                <tui-data-list-wrapper *tuiDataList [items]="assist | tuiHideSelected"
-                                    [itemContent]="assistContent">
-                                </tui-data-list-wrapper>
+                            <tui-multi-select #tuituiAssistSelect *tuiLet="items$ | async as assist" class="b-form assist-select custom-multi-select"
+                                tuiTextfieldSize="s" [formControl]="activeAssist" [stringify]="stringify" [tuiTextfieldCleaner]="true" [expandable]="false"
+                                [valueContent]="!activeAssist.value ? 'Selezionati: 0' : 'Selezionati: ' + activeAssist.value.length"
+                                (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
+                                {{!activeAssist.value || activeAssist.value.length == 0 ? 'Selezionare gli Assist...' : ''}}
+                                <tui-data-list-wrapper *tuiDataList [items]="assist | tuiHideSelected" [itemContent]="itemContent"></tui-data-list-wrapper>
                             </tui-multi-select>
-                            <ng-template #assistContent let-data>
+                            <ng-template #itemContent let-data>
                                 <div class="template">
-                                    <tui-avatar size="m" class="avatar" [avatarUrl]="data.photo"
-                                        [text]="data.toString()">
-                                    </tui-avatar>
+                                    <tui-avatar size="m" class="avatar" [avatarUrl]="data.photo" [text]="data.toString()"></tui-avatar>
                                     <span class="player-name">{{ data.name }}</span>
                                     <tui-badge [value]="data.position" class="badge-position"></tui-badge>
                                 </div>
                             </ng-template>
-
-                        </div>
+                            <div #tuituiAssist class="tags tag-container">
+                                <tui-tag id="tuituiAssist" class="tag" *ngFor="let tag of activeAssist.value;" size="l" [hoverable]="true" [removable]="true" [value]="tag.name" style="margin-top: 4px; width: 345px">
+                                </tui-tag>
+                            </div>
                     </tui-island>
                 </div>
+
+                
                 <div class="tui-col_md-4">
-                    <tui-island class="tui-island-resume">
+                    <tui-island class="tui-island-resume" style="height: 76px;">
                         <!-- MOTM Selection -->
                         <div>
                             <p class="multiselect-label" style="margin-left: 10px; font-size: 17px;">MOTM
                                 <fa-icon style="margin-left: 10px;" [icon]="faMedal"></fa-icon>
                             </p>
                             <tui-combo-box #tuicomboMotm *tuiLet="items$ | async as items" [formControl]="activeMotm" [tuiTextfieldCleaner]="true"
-                                [valueContent]="motmContent" [stringify]="stringify" (searchChange)="onSearchChange('')"
+                                [valueContent]="motmContent" [stringify]="stringify" (searchChange)="onSearchChange('')" tuiTextfieldSize="s"
                                 (focusedChange)="onSearchChange('')">
-                                <input tuiTextfield [placeholder]="'Type a name'"
+                                <input tuiTextfield [placeholder]="'Selezionare il Migliore in Campo...'"
                                     (input)="onSearchChange(extractValueFromEvent($event))" />
-                                <p [hidden]="activeMotm.value != null">Selezionare il Migliore in Campo...</p>
+                                <p style="margin-top: 18px;" [hidden]="activeMotm.value != null">Selezionare il Migliore in Campo...</p>
                                 <tui-data-list-wrapper *tuiDataList [items]="items"
                                     [itemContent]="motmContent"></tui-data-list-wrapper>
                             </tui-combo-box>
                             <ng-template #motmContent let-data>
                                 <div class="template">
-                                    <tui-avatar size="m" class="avatar" [avatarUrl]="data.photo"
+                                    <tui-avatar size="s" class="avatar" [avatarUrl]="data.photo"
                                         [text]="data.toString()">
                                     </tui-avatar>
                                     <span class="player-name-motm">{{ data.name }}</span>
@@ -206,24 +194,21 @@
             <!-- Seconda pagina (scheda) -->
 
             <div class="tui-row resume-row" [hidden]="activeItemIndex != 1">
+
+                <!-- Yellow Card Selection -->
                 <div class="tui-col_md-4">
                     <tui-island class="tui-island-resume">
-
-                        <!-- Yellow Card Selection -->
-
                         <div>
                             <p class="multiselect-label" style="margin-left: 10px; font-size: 17px;">Ammoniti
                                 <img style="width:17px; height: 20px; vertical-align: unset; margin-left: 10px;"
                                     src="../../../../assets/media/Icons/Yellow_card.svg.png" alt="">
                             </p>
-                            <tui-multi-select #tuituiYellowCard id="tuituiYellowCard" *tuiLet="items$ | async as items"
-                                placeholder="Selezionare gli Ammoniti" class="b-form scorers-select custom-multi-select"
-                                tuiTextfieldSize="l" [formControl]="activeYellowCards" [stringify]="stringify"
-                                [tuiTextfieldLabelOutside]="true" [expandable]="true" [tuiTextfieldCleaner]="true"
+                            <tui-multi-select #tuituiYellowCardSelect *tuiLet="items$ | async as items" class="b-form yellowCard-select custom-multi-select"
+                                tuiTextfieldSize="s" [formControl]="activeYellowCards" [stringify]="stringify" [tuiTextfieldCleaner]="true" [expandable]="false"
+                                [valueContent]="!activeYellowCards.value ? 'Selezionati: 0' : 'Selezionati: ' + activeYellowCards.value.length"
                                 (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
-                                Ammoniti
-                                <tui-data-list-wrapper *tuiDataList [items]="items | tuiHideSelected"
-                                    [itemContent]="itemContent"></tui-data-list-wrapper>
+                                {{!activeYellowCards.value || activeYellowCards.value.length == 0 ? 'Selezionare gli Ammoniti...' : ''}}
+                                <tui-data-list-wrapper *tuiDataList [items]="items | tuiHideSelected" [itemContent]="itemContent"></tui-data-list-wrapper>
                             </tui-multi-select>
                             <ng-template #itemContent let-data>
                                 <div class="template">
@@ -234,28 +219,29 @@
                                     <tui-badge [value]="data.position" class="badge-position"></tui-badge>
                                 </div>
                             </ng-template>
-
+                            <div #tuituiYellowCard class="tags tag-container">
+                                <tui-tag id="tuituiYellowCard" class="tag" *ngFor="let tag of activeYellowCards.value;" size="l" [hoverable]="true" [removable]="true" [value]="tag.name" style="margin-top: 4px; width: 345px">
+                                </tui-tag>
+                            </div>
                         </div>
                     </tui-island>
                 </div>
+
+                
+                <!-- Red Card Selection -->
                 <div class="tui-col_md-4">
                     <tui-island class="tui-island-resume">
-
-                        <!-- Red Card Selection -->
-
                         <div>
                             <p class="multiselect-label" style="margin-left: 10px; font-size: 17px;">Espulsi
                                 <img style="width:17px; height: 20px; vertical-align: unset; margin-left: 10px;"
                                     src="../../../../assets/media/Icons/300px-Red_card.svg.png" alt="">
                             </p>
-                            <tui-multi-select #tuituiRedCard id="tuituiRedCard" *tuiLet="items$ | async as redCard"
-                                placeholder="Selezionare gli Espulsi" class="b-form scorers-select custom-multi-select"
-                                tuiTextfieldSize="l" [formControl]="activeRedCards" [stringify]="stringify"
-                                [tuiTextfieldLabelOutside]="true" [expandable]="true" [tuiTextfieldCleaner]="true"
+                            <tui-multi-select #tuituiRedCardSelect *tuiLet="items$ | async as items" class="b-form yellowCard-select custom-multi-select"
+                                tuiTextfieldSize="s" [formControl]="activeRedCards" [stringify]="stringify" [tuiTextfieldCleaner]="true" [expandable]="false"
+                                [valueContent]="!activeRedCards.value ? 'Selezionati: 0' : 'Selezionati: ' + activeRedCards.value.length"
                                 (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
-                                Espulsi
-                                <tui-data-list-wrapper *tuiDataList [items]="redCard | tuiHideSelected"
-                                    [itemContent]="itemContent"></tui-data-list-wrapper>
+                                {{!activeRedCards.value || activeRedCards.value.length == 0 ? 'Selezionare gli Espulsi...' : ''}}
+                                <tui-data-list-wrapper *tuiDataList [items]="items | tuiHideSelected" [itemContent]="itemContent"></tui-data-list-wrapper>
                             </tui-multi-select>
                             <ng-template #injuredContent let-data>
                                 <div class="template">
@@ -266,7 +252,10 @@
                                     <tui-badge [value]="data.position" class="badge-position"></tui-badge>
                                 </div>
                             </ng-template>
-
+                            <div #tuituiRedCard class="tags tag-container">
+                                <tui-tag id="tuituiRedCard" class="tag" *ngFor="let tag of activeRedCards.value;" size="l" [hoverable]="true" [removable]="true" [value]="tag.name" style="margin-top: 4px; width: 345px">
+                                </tui-tag>
+                            </div>
                         </div>
                     </tui-island>
                 </div>
@@ -280,14 +269,12 @@
                             <p class="multiselect-label" style="margin-left: 10px; font-size: 17px;">Infortunati
                                 <fa-icon style="margin-left: 10px;" [icon]="faTruckMedical"></fa-icon>
                             </p>
-                            <tui-multi-select #tuituiInjured id="tuituiInjured" *tuiLet="items$ | async as injured"
-                                placeholder="Selezionare gli infortunati" class="b-form scorers-select custom-multi-select"
-                                tuiTextfieldSize="l" [formControl]="activeInjured" [stringify]="stringify"
-                                [tuiTextfieldLabelOutside]="true" [expandable]="true" [tuiTextfieldCleaner]="true"
+                            <tui-multi-select #tuituiInjuredSelect *tuiLet="items$ | async as items" class="b-form yellowCard-select custom-multi-select"
+                                tuiTextfieldSize="s" [formControl]="activeInjured" [stringify]="stringify" [tuiTextfieldCleaner]="true" [expandable]="false"
+                                [valueContent]="!activeInjured.value ? 'Selezionati: 0' : 'Selezionati: ' + activeInjured.value.length"
                                 (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
-                                Selezionare gli Infortunati
-                                <tui-data-list-wrapper *tuiDataList [items]="injured | tuiHideSelected"
-                                    [itemContent]="injuredContent"></tui-data-list-wrapper>
+                                {{!activeInjured.value || activeInjured.value.length == 0 ? 'Selezionare gli Infortunati...' : ''}}
+                                <tui-data-list-wrapper *tuiDataList [items]="items | tuiHideSelected" [itemContent]="itemContent"></tui-data-list-wrapper>
                             </tui-multi-select>
                             <ng-template #injuredContent let-data>
                                 <div class="template">
@@ -298,6 +285,10 @@
                                     <tui-badge [value]="data.position" class="badge-position"></tui-badge>
                                 </div>
                             </ng-template>
+                            <div #tuituiInjured class="tags tag-container">
+                                <tui-tag id="tuituiInjured" class="tag" *ngFor="let tag of activeInjured.value;" size="l" [hoverable]="true" [removable]="true" [value]="tag.name" style="margin-top: 4px; width: 345px">
+                                </tui-tag>
+                            </div>
                         </div>
                     </tui-island>
                 </div>
