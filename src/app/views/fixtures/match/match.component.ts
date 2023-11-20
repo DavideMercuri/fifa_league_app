@@ -74,6 +74,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
   @ViewChild('tuituiAssist') tuituiAssist !: any;
   @ViewChild('tuicomboMotm') tuicomboMotm !: any;
   @ViewChild('tuituiYellowCard') tuituiYellowCard !: any;
+  @ViewChild('tuituiYellowCardSelect') tuituiYellowCardSelect !: any;
   @ViewChild('tuituiRedCard') tuituiRedCard !: any;
   @ViewChild('tuituiInjured') tuituiInjured !: any;
   @Input() match!: Fixture;
@@ -168,11 +169,6 @@ export class MatchComponent implements OnInit, AfterViewInit {
     return arrayToSort.sort((a: any, b: any) => a.name.localeCompare(b.name));
   }
 
-  logga() {
-    console.log(this.activeScorers);
-
-  }
-
   TeamLogo(teamName: string): string {
 
     switch (teamName) {
@@ -180,8 +176,8 @@ export class MatchComponent implements OnInit, AfterViewInit {
         return 'https://i.imgur.com/jHecsme.png';
       case 'Real Madrid':
         return 'https://i.imgur.com/epsvCFz.png';
-      case 'Borussia Dortmund':
-        return 'https://i.imgur.com/3U25w5z.png';
+      case 'Inter':
+        return 'https://i.imgur.com/Q5tOZ9Q.png';
       default:
         return '';
     }
@@ -265,7 +261,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
         scorers: scorersArray,
         assists: assistsArray,
         motm: motm,
-        yellowCards: !this.tuituiYellowCard.previousInternalValue ? [] : this.tuituiYellowCard.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
+        yellowCards: !this.tuituiYellowCardSelect.previousInternalValue ? [] : this.tuituiYellowCardSelect.previousInternalValue.map(({ id, name }: Player) => ({ id, name })),
         redCards: redCardsArray,
         injured: injuredArray,
         played: 'yes'

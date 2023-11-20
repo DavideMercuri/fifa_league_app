@@ -73,8 +73,8 @@ export class FixturesComponent implements OnInit, AfterViewInit, OnDestroy  {
         return 'https://i.imgur.com/jHecsme.png';
       case 'Real Madrid':
         return 'https://i.imgur.com/epsvCFz.png';
-      case 'Borussia Dortmund':
-        return 'https://i.imgur.com/3U25w5z.png';
+      case 'Inter':
+        return 'https://i.imgur.com/Q5tOZ9Q.png';
       default:
         return '';
     }

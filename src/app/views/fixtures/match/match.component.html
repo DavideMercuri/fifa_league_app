@@ -161,7 +161,7 @@
                 </div>
 
                 
-                <div class="tui-col_md-4">
+                <div class="tui-col_md-4 centered-input-content">
                     <tui-island class="tui-island-resume" style="height: 76px;">
                         <!-- MOTM Selection -->
                         <div>
@@ -171,7 +171,7 @@
                             <tui-combo-box #tuicomboMotm *tuiLet="items$ | async as items" [formControl]="activeMotm" [tuiTextfieldCleaner]="true"
                                 [valueContent]="motmContent" [stringify]="stringify" (searchChange)="onSearchChange('')" tuiTextfieldSize="s"
                                 (focusedChange)="onSearchChange('')">
-                                <input tuiTextfield [placeholder]="'Selezionare il Migliore in Campo...'"
+                                <input tuiTextfield [placeholder]="'Selezionare il Migliore in Campo...'" class="centered-input-content"
                                     (input)="onSearchChange(extractValueFromEvent($event))" />
                                 <p style="margin-top: 18px;" [hidden]="activeMotm.value != null">Selezionare il Migliore in Campo...</p>
                                 <tui-data-list-wrapper *tuiDataList [items]="items"
