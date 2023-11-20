@@ -47,7 +47,7 @@ export class NavbarComponent implements AfterViewInit {
       subMenu: [
         { text: 'Arsenal', routerLink: 'team-detail/2' },
         { text: 'Real Madrid', routerLink: 'team-detail/1' },
-        { text: 'Borussia Dortmund', routerLink: 'team-detail/3' },
+        { text: 'Inter', routerLink: 'team-detail/3' },
       ]
     },
   ];
@@ -117,8 +117,8 @@ export class NavbarComponent implements AfterViewInit {
         return 'https://i.imgur.com/jHecsme.png';
       case 'Real Madrid':
         return 'https://i.imgur.com/epsvCFz.png';
-      case 'Borussia Dortmund':
-        return 'https://i.imgur.com/3U25w5z.png';
+      case 'Inter':
+        return 'https://i.imgur.com/Q5tOZ9Q.png';
       default:
         return '';
     }

@@ -3,7 +3,7 @@ import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButto
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiElasticContainerModule, TuiInputModule, TuiInputNumberModule, TuiInputPasswordModule, TuiIslandModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule } from "@taiga-ui/kit";
+import { TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiCheckboxBlockModule, TuiCheckboxLabeledModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiElasticContainerModule, TuiInputModule, TuiInputNumberModule, TuiInputPasswordModule, TuiIslandModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule } from "@taiga-ui/kit";
 import { TuiAppBarModule, TuiTabBarModule } from '@taiga-ui/addon-mobile';
 import { TuiCalendarModule } from '@taiga-ui/core';
 import { TuiLetModule } from '@taiga-ui/cdk';
@@ -27,8 +27,7 @@ import { LeagueTableComponent } from './views/league-table/league-table/league-t
 import { LoginComponent } from './auth/login/login.component';
 import { TeamDetailComponent } from './views/team-detail/team-detail.component';
 import { ScrollToNotPlayedDirective } from './scroll-to-not-played.directive';
-import { CustomMultiSelectComponent } from './components/custom-multi-select/custom-multi-select.component';
-import { CustomInputTagComponent } from './components/custom-input-tag/custom-input-tag.component';
+import { TrophyAwardMenuComponent } from './views/team-detail/trophy-award-menu/trophy-award-menu.component';
 
 
 @NgModule({
@@ -44,8 +43,7 @@ import { CustomInputTagComponent } from './components/custom-input-tag/custom-in
     LoginComponent,
     TeamDetailComponent,
     ScrollToNotPlayedDirective,
-    CustomMultiSelectComponent,
-    CustomInputTagComponent
+    TrophyAwardMenuComponent,
   ],
   imports: [
     BrowserModule,
@@ -62,10 +60,12 @@ import { CustomInputTagComponent } from './components/custom-input-tag/custom-in
     TuiActionModule,
     TuiInputModule,
     TuiDropdownModule,
+    TuiCheckboxBlockModule,
     TuiTooltipModule,
     TuiInputPasswordModule,
     TuiPaginationModule,
     TuiComboBoxModule,
+    TuiCheckboxLabeledModule,
     TuiAppBarModule,
     TuiCalendarModule,
     TuiLoaderModule,

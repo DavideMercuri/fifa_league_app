@@ -185,13 +185,12 @@ fieldset.t-item[_ngcontent-vmu-c17] {
   align-items: center;
 }
 
-div.t-input.t-input_template.ng-star-inserted{
-  margin-top:10px;
+.centered-input-content div.t-input.t-input_template.ng-star-inserted {
+  margin-top: 10px;
   padding: 10px;
 }
 
 .avatar {
-  //margin: 0 0.5rem 0 -0.25rem;
   width: 10px;
   height: 10px;
 }
@@ -293,7 +292,11 @@ tui-combo-box .t-input {
 }
 
 .save-button .t-wrapper {
-  background-color: #34b41f;
+  background-color: #34b41f !important;
+}
+
+.back-button-bg .t-wrapper{
+  background-color: #a09f9f !important;
 }
 
 .goals-count {
@@ -317,7 +320,7 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
   overflow-y: auto;
 }
 
-.custom-multi-select div.t-tag{
+.custom-multi-select div.t-tag {
   display: none;
 }
 
@@ -440,3 +443,153 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
   right: 10px;
   /* Aggiungi ulteriori stili come dimensioni, colori, ecc. secondo le tue preferenze */
 }
+
+//dialog-trophy-style
+
+.content {
+  display: flex;
+  align-items: center;
+  vertical-align: bottom;
+}
+
+.label {
+  font: var(--tui-font-text-s);
+  color: var(--tui-text-03);
+}
+
+.text {
+  font: var(--tui-font-text-s);
+  margin-top: @space;
+  color: var(--tui-text-02);
+}
+
+.inner {
+  margin: 1rem 0;
+  white-space: normal;
+
+  &_flex {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    width: 15rem;
+  }
+}
+
+.checkbox-first-margin{
+  margin-right: 20px;
+  vertical-align: middle;
+}
+
+img.tui-space_right-3 {
+  margin-right: 12px;
+  width: 30px;
+  height: 30px;
+}
+
+.custom-select.content {
+  display: flex;
+  align-items: center;
+}
+
+.custom-select.label {
+  margin-left: 8px; /* Adjust as needed */
+}
+
+.prizes-badge{
+  right: -30px;
+}
+
+.prizes-badge-ucl{
+  margin-left: 18px;
+}
+
+.gold {
+  background: linear-gradient(145deg, #ffd700, #d4af37);
+}
+
+.silver {
+  background: linear-gradient(145deg, #dedede, #a8a9ad);
+}
+
+.bronze {
+  background: linear-gradient(145deg, #f9b168, #a77044);
+}
+
+.scorers-badge {
+  background: #34b41f !important;
+}
+
+.assist-badge {
+  background: #ff8a00 !important;
+}
+
+.ucl {
+    background: linear-gradient(
+    90deg,
+    rgba(0, 0, 75, 1) 0%,
+    rgba(48, 66, 198, 0.846673703661152) 100%
+  ) !important;
+}
+
+[tuiWrapper][data-appearance="primary"] {
+  background: #50cc46;
+  --tui-primary-hover: #3c9535;
+}
+
+.award-select .t-cleaner{
+  margin-top: 20px !important;
+}
+
+.labeled-checkbox-custom .t-content {
+  margin-top: 3px !important;
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centra il contenitore del testo */
+  position: relative;
+  margin: 10px 0; /* Aggiungi margine sopra e sotto per dare spazio */
+}
+
+.separator-text {
+  padding: 0 20px; /* Spazio intorno al testo */
+  position: relative;
+  z-index: 1; /* Pone il testo sopra le linee */
+  background: #fff; /* Colore dello sfondo del form */
+  font-size: 12px;
+}
+
+.separator-line {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border-top: 1px solid #000; /* colore e spessore della linea */
+  width: 100%; /* Larghezza della linea */
+}
+
+/* Questo è necessario per evitare che la linea passi sopra il testo */
+.separator-text::before,
+.separator-text::after {
+  content: '';
+  display: block;
+  width: 50%; /* Ogni linea occupa metà del contenitore */
+  height: 1px;
+  background: #000; /* Colore della linea */
+  position: absolute;
+  top: 50%;
+  z-index: -1;
+}
+
+.separator-text::before {
+  left: 0;
+  margin-left: -50%; /* Allinea la linea a sinistra */
+}
+
+.separator-text::after {
+  right: 0;
+  margin-right: -50%; /* Allinea la linea a destra */
+}
+
+
+

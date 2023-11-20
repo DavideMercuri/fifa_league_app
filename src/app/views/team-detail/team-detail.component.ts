@@ -11,7 +11,7 @@ import { BehaviorSubject, Observable, Subscription, combineLatest, debounceTime,
 import { DataService } from 'src/app/data.service';
 import { Player } from 'src/interfaces/player.interface';
 import { Team } from 'src/interfaces/team.interfaces';
-import {PolymorpheusContent} from '@tinkoff/ng-polymorpheus';
+import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
 
 type Key = 'name' | 'overall' | 'position' | 'salary' | 'player_value';
 
@@ -43,8 +43,8 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
 
     this.loadDataBasedOnId(this.teamId);
-    if(this.team)
-    this.FilterPlayers('', '', this.team.team_name);
+    if (this.team)
+      this.FilterPlayers('', '', this.team.team_name);
 
   }
 
@@ -56,7 +56,7 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
       this.loadDataBasedOnId(this.teamId);
       setTimeout(() => {
         this.FilterPlayers('', '', this.team.team_name);
-      }, 100)
+      }, 1000)
 
 
     });
@@ -200,7 +200,6 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
     page: number,
     size: number,
   ): Observable<ReadonlyArray<Player | null>> {
-    //console.info('Making a request', this.dataService.getPlayersList());
     let start = page * size;
     let end = start + size;
     let result = [...this.players]
@@ -215,16 +214,14 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
     content: PolymorpheusContent<TuiDialogContext>,
     header: PolymorpheusContent,
     size: TuiDialogSize,
-): void {
+  ): void {
     this.dialogs
-        .open(content, {
-            label: 'Aggiungi Premio Competizione',
-            header,
-            size,
-        })
-        .subscribe();
-}
-
+      .open(content, {
+        size: 'l',
+        dismissible: false,
+      })
+      .subscribe();
+  }
 }
 
 function sortBy(key: 'name' | 'overall' | 'position' | 'salary' | 'player_value', direction: -1 | 1): TuiComparator<Player> {

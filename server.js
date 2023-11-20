@@ -540,6 +540,20 @@ GamesPlayed AS (
   });
 });
 
+app.put('/players/team_detail/update-team-money', async (req, res) => {
+
+  const { id, sum } = req.body;
+
+  const query = 'UPDATE teams SET money = money + ? WHERE team_id = ?';
+    connection.query(query, [sum, id], (error, results) => {
+      if (error) {
+        res.status(500).send(error);
+      } else {
+        res.status(200).send(results);
+      }
+    });
+  });
+
 // Start the server
 app.listen(3000, () => {
   console.log('Server listening on port 3000');
