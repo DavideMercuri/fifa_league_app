@@ -12,9 +12,10 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'fixtures', component: FixturesComponent, canActivate: [AuthGuard] },
-  { path: 'players', component: PlayersComponent, canActivate: [AuthGuard]},
-  { path: 'league-table', component: LeagueTableComponent, canActivate: [AuthGuard]},
+  { path: 'players', component: PlayersComponent, canActivate: [AuthGuard] },
+  { path: 'league-table', component: LeagueTableComponent, canActivate: [AuthGuard] },
   { path: 'team-detail/:id', component: TeamDetailComponent, canActivate: [AuthGuard] },
+  { path: '**', redirectTo: '/home' }
 ];
 
 @NgModule({

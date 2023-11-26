@@ -1,4 +1,4 @@
-<div class="wrapper row" style="width: 30%; margin: 30px;" *ngIf="testArray.length == 0">
+<div class="wrapper row w-30-perc" style="margin: 30px;" *ngIf="topPlayersList.length == 0">
     <tui-carousel>
         <tui-island *tuiItem>
             <tui-loader [overlay]="true">
@@ -11,9 +11,9 @@
     </tui-carousel>
 </div>
 
-<div style="width: 30%; margin: 30px;" *ngIf="testArray.length != 0">
+<div class="w-30-perc" style="margin: 30px;" *ngIf="topPlayersList.length != 0">
     <tui-carousel [duration]="3000" [(index)]="index">
-        <ng-container *ngFor="let item of testArray">
+        <ng-container *ngFor="let item of topPlayersList">
             <tui-island *tuiItem>
                 <span>
                     <h2 style="margin-left: 5px;" class="tui-island__title">{{ item.label }}</h2>
@@ -25,9 +25,8 @@
                 <div style="margin-left: 105px; margin-top: 25px;">
                     <p style="font-weight: bold;">{{!item.name ? '' : item?.name}}</p>
                     <p style="vertical-align: bottom">
-                        <tui-badge style="font-size: 20px;" class="badge-top-stats" size="l" status="primary" [value]="item.stat"
-                            [hoverable]="true"></tui-badge>
-                        <!-- <tui-tag status="primary" [value]="item.stat" style="font-size: 25px; width: 45px;"></tui-tag> -->
+                        <tui-badge style="font-size: 20px;" class="badge-top-stats" size="l" status="primary"
+                            [value]="item.stat" [hoverable]="true"></tui-badge>
                         <span style="margin-left: 10px;">{{item.subLabel}}</span>
                     </p>
                 </div>
@@ -42,17 +41,17 @@
 </div>
 
 <div style="margin: 50px; align-items: center;">
-    <div tuiCarouselButtons class="wrapper row" style="width: 60%">
+    <div tuiCarouselButtons class="wrapper row w-60-perc">
         <tui-carousel #carousel class="carousel col-8" style="padding: 0px;" [duration]="3000" [index]="indexStats">
-            <tui-island *tuiItem style="text-align: center;">
+            <tui-island *tuiItem class="txt-center-align">
                 <h2 class="tui-island__title">Vittorie</h2>
                 <canvas id="winsChart"></canvas>
             </tui-island>
-            <tui-island *tuiItem style="text-align: center;">
+            <tui-island *tuiItem class="txt-center-align">
                 <h2 class="tui-island__title">Pareggi</h2>
                 <canvas id="drawsChart"></canvas>
             </tui-island>
-            <tui-island *tuiItem style="text-align: center;">
+            <tui-island *tuiItem class="txt-center-align">
                 <h2 class="tui-island__title">Sconfitte</h2>
                 <canvas id="lossesChart"></canvas>
             </tui-island>

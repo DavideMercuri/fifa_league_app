@@ -25,6 +25,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   awayDraws: Array<number> = [];
   homeLosses: Array<number> = [];
   awayLosses: Array<number> = [];
+  topPlayersList: any = [];
 
   index = 0;
   indexStats = 0;
@@ -48,24 +49,22 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.createChart();
-    }, 0);
+    }, 1000);
   }
-
-  testArray: any = []
 
   getTopPlayersInfo(category: string): void {
     this.http.get(`http://localhost:3000/players/players_list/top_players?category=${category}`).subscribe({
       next: (res: any) => {
-        
+
         switch (category) {
           case 'goals':
-            this.testArray.push({ ...res[0], ...{ label: 'Miglior Marcatore', subLabel: `Goal in Campionato`, stat: res[0].goals} });
+            this.topPlayersList.push({ ...res[0], ...{ label: 'Miglior Marcatore', subLabel: `Goal in Campionato`, stat: res[0].goals } });
             break;
           case 'assist':
-            this.testArray.push({ ...res[0], ...{ label: 'Miglior Assistman', subLabel: `Assist in Campionato`, stat: res[0].assist} });
+            this.topPlayersList.push({ ...res[0], ...{ label: 'Miglior Assistman', subLabel: `Assist in Campionato`, stat: res[0].assist } });
             break;
           case 'motm':
-            this.testArray.push({ ...res[0], ...{ label: 'Miglior Motm', subLabel: `volte Migliore in Campo`, stat: res[0].motm} });
+            this.topPlayersList.push({ ...res[0], ...{ label: 'Miglior Motm', subLabel: `volte Migliore in Campo`, stat: res[0].motm } });
             break;
         }
       }

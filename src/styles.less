@@ -72,10 +72,8 @@ nav {
 
 .button-height {
   overflow: visible;
-  height: calc(
-    100% + 55px
-  ); /* Sostituisci <altezza del submenu> con l'altezza effettiva del tuo div del submenu */
-  position: relative; /* Necessario per posizionare correttamente il div del submenu */
+  height: calc(100% + 55px);
+  position: relative;
 }
 
 :host ::ng-deep tui-tab-bar ._nghost-pfb-c27 {
@@ -100,12 +98,12 @@ button:hover .submenu {
   margin-top: 60px;
   margin-left: 30px;
   position: fixed;
-  background-color: #ffffff; /* Sfondo bianco */
-  border: 1px solid #dee0e4; /* Bordo grigio chiaro */
-  border-radius: 5px; /* Angoli leggermente arrotondati */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Ombra leggera per dare un effetto elevato */
-  min-width: 200px; /* Larghezza minima del div */
-  transition: 0.3s ease; /* Transizione fluida per eventuali animazioni */
+  background-color: #ffffff;
+  border: 1px solid #dee0e4;
+  border-radius: 5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  transition: 0.3s ease;
   min-height: 168px;
 }
 
@@ -114,10 +112,10 @@ button:hover .submenu {
 }
 
 div.submenu-square a {
-  color: #333; /* Colore del testo per i link */
-  padding: 8px 12px; /* Spazio intorno ai link */
-  text-decoration: none; /* Rimuove la sottolineatura */
-  display: block; /* Rende ogni link un blocco, utile per la spaziatura e l'hover */
+  color: #333;
+  padding: 8px 12px;
+  text-decoration: none;
+  display: block;
   font-size: 13px;
   font-weight: 300;
   height: 56px;
@@ -295,7 +293,7 @@ tui-combo-box .t-input {
   background-color: #34b41f !important;
 }
 
-.back-button-bg .t-wrapper{
+.back-button-bg .t-wrapper {
   background-color: #a09f9f !important;
 }
 
@@ -304,13 +302,11 @@ tui-combo-box .t-input {
 }
 
 input .t-input.ng-untouched.ng-pristine.ng-valid {
-  padding-top: 0; /* Modifica questo valore come preferisci */
+  padding-top: 0;
 }
 
 .scrollable-container {
-  max-height: calc(
-    100vh - 50px
-  ); /* puoi personalizzare l'altezza come preferisci */
+  max-height: calc(100vh - 50px);
   overflow-y: auto;
 }
 
@@ -331,6 +327,21 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
   margin: 2px;
 }
 
+.img-size-s{
+  width: 22px;
+  height: 22px;
+}
+
+.img-size-m{
+  width: 30px;
+  height: 30px;
+}
+
+.img-size-l{
+  width: 30px;
+  height: 30px;
+}
+
 .h-40 {
   height: 40px !important;
 }
@@ -339,12 +350,20 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
   width: 20px !important;
 }
 
+.w-30-perc {
+  width: 30% !important;
+}
+
 .w-40 {
   width: 40px !important;
 }
 
 .w-50 {
   width: 50px !important;
+}
+
+.w-60-perc {
+  width: 60% !important;
 }
 
 .w-100 {
@@ -421,8 +440,8 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
 }
 
 .notation-name {
-  display: inline-block; /* Questo permette al span di rispettare il max-width */
-  max-width: 130px; /* Adattare secondo le esigenze */
+  display: inline-block;
+  max-width: 130px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -441,7 +460,6 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
   position: fixed;
   bottom: 10px;
   right: 10px;
-  /* Aggiungi ulteriori stili come dimensioni, colori, ecc. secondo le tue preferenze */
 }
 
 //dialog-trophy-style
@@ -475,7 +493,7 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
   }
 }
 
-.checkbox-first-margin{
+.checkbox-first-margin {
   margin-right: 20px;
   vertical-align: middle;
 }
@@ -492,14 +510,14 @@ img.tui-space_right-3 {
 }
 
 .custom-select.label {
-  margin-left: 8px; /* Adjust as needed */
+  margin-left: 8px;
 }
 
-.prizes-badge{
+.prizes-badge {
   right: -30px;
 }
 
-.prizes-badge-ucl{
+.prizes-badge-ucl {
   margin-left: 18px;
 }
 
@@ -524,19 +542,19 @@ img.tui-space_right-3 {
 }
 
 .ucl {
-    background: linear-gradient(
+  background: linear-gradient(
     90deg,
     rgba(0, 0, 75, 1) 0%,
     rgba(48, 66, 198, 0.846673703661152) 100%
   ) !important;
 }
 
-[tuiWrapper][data-appearance="primary"] {
+.labeled-checkbox-custom [tuiWrapper][data-appearance="primary"] {
   background: #50cc46;
   --tui-primary-hover: #3c9535;
 }
 
-.award-select .t-cleaner{
+.award-select .t-cleaner {
   margin-top: 20px !important;
 }
 
@@ -547,16 +565,16 @@ img.tui-space_right-3 {
 .separator {
   display: flex;
   align-items: center;
-  justify-content: center; /* Centra il contenitore del testo */
+  justify-content: center;
   position: relative;
-  margin: 10px 0; /* Aggiungi margine sopra e sotto per dare spazio */
+  margin: 10px 0;
 }
 
 .separator-text {
-  padding: 0 20px; /* Spazio intorno al testo */
+  padding: 0 20px;
   position: relative;
-  z-index: 1; /* Pone il testo sopra le linee */
-  background: #fff; /* Colore dello sfondo del form */
+  z-index: 1;
+  background: #fff;
   font-size: 12px;
 }
 
@@ -564,18 +582,17 @@ img.tui-space_right-3 {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  border-top: 1px solid #000; /* colore e spessore della linea */
-  width: 100%; /* Larghezza della linea */
+  border-top: 1px solid #000;
+  width: 100%;
 }
 
-/* Questo è necessario per evitare che la linea passi sopra il testo */
 .separator-text::before,
 .separator-text::after {
-  content: '';
+  content: "";
   display: block;
-  width: 50%; /* Ogni linea occupa metà del contenitore */
+  width: 50%;
   height: 1px;
-  background: #000; /* Colore della linea */
+  background: #000;
   position: absolute;
   top: 50%;
   z-index: -1;
@@ -583,13 +600,10 @@ img.tui-space_right-3 {
 
 .separator-text::before {
   left: 0;
-  margin-left: -50%; /* Allinea la linea a sinistra */
+  margin-left: -50%;
 }
 
 .separator-text::after {
   right: 0;
-  margin-right: -50%; /* Allinea la linea a destra */
+  margin-right: -50%;
 }
-
-
-
