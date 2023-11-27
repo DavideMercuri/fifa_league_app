@@ -5,7 +5,7 @@ const authMiddleware = require('./authMiddleware');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const util = require('util');
-const bcrypt = require('bcrypt');  // Per hashare le password
+const bcrypt = require('bcrypt');
 
 const SECRET_KEY = '7l5Ywkc6gV';
 
@@ -290,8 +290,6 @@ app.get('/players/players_list/filters', (req, res) => {
     }
 
     query += ' ' + conditions.join(' AND ');
-
-    console.log();
   }
 
   connection.query(query, queryParams, (error, results) => {
@@ -542,17 +540,22 @@ GamesPlayed AS (
 
 app.put('/players/team_detail/update-team-money', async (req, res) => {
 
-  const { id, sum } = req.body;
+  const { id, sum, payment } = req.body;
+  var query;
 
-  const query = 'UPDATE teams SET money = money + ? WHERE team_id = ?';
-    connection.query(query, [sum, id], (error, results) => {
-      if (error) {
-        res.status(500).send(error);
-      } else {
-        res.status(200).send(results);
-      }
-    });
+  if (payment) {
+    query = 'UPDATE teams SET money = ? WHERE team_id = ?;';
+  } else {
+    query = 'UPDATE teams SET money = money + ? WHERE team_id = ?;';
+  }
+  connection.query(query, [sum, id], (error, results) => {
+    if (error) {
+      res.status(500).send(error);
+    } else {
+      res.status(200).send(results);
+    }
   });
+});
 
 // Start the server
 app.listen(3000, () => {

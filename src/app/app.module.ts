@@ -3,7 +3,7 @@ import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButto
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiCheckboxBlockModule, TuiCheckboxLabeledModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiElasticContainerModule, TuiInputModule, TuiInputNumberModule, TuiInputPasswordModule, TuiIslandModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule } from "@taiga-ui/kit";
+import { TuiAccordionModule, TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiCheckboxBlockModule, TuiCheckboxLabeledModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiElasticContainerModule, TuiInputFilesModule, TuiInputModule, TuiInputNumberModule, TuiInputPasswordModule, TuiIslandModule, TuiMarkerIconModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule } from "@taiga-ui/kit";
 import { TuiAppBarModule, TuiTabBarModule } from '@taiga-ui/addon-mobile';
 import { TuiCalendarModule } from '@taiga-ui/core';
 import { TuiLetModule } from '@taiga-ui/cdk';
@@ -28,6 +28,9 @@ import { LoginComponent } from './auth/login/login.component';
 import { TeamDetailComponent } from './views/team-detail/team-detail.component';
 import { ScrollToNotPlayedDirective } from './scroll-to-not-played.directive';
 import { TrophyAwardMenuComponent } from './views/team-detail/trophy-award-menu/trophy-award-menu.component';
+import { SalariesPaymentComponent } from './views/team-detail/salaries-payment/salaries-payment.component';
+import { InsertPlayerComponent } from './views/players/players/insert-player/insert-player.component';
+import { EditPlayerComponent } from './views/players/players/edit-player/edit-player.component';
 
 
 @NgModule({
@@ -44,6 +47,9 @@ import { TrophyAwardMenuComponent } from './views/team-detail/trophy-award-menu/
     TeamDetailComponent,
     ScrollToNotPlayedDirective,
     TrophyAwardMenuComponent,
+    SalariesPaymentComponent,
+    InsertPlayerComponent,
+    EditPlayerComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,8 +65,11 @@ import { TrophyAwardMenuComponent } from './views/team-detail/trophy-award-menu/
     TuiFormatNumberPipeModule,
     TuiActionModule,
     TuiInputModule,
+    TuiInputFilesModule,
     TuiDropdownModule,
     TuiCheckboxBlockModule,
+    TuiMarkerIconModule,
+    TuiAccordionModule,
     TuiTooltipModule,
     TuiInputPasswordModule,
     TuiPaginationModule,

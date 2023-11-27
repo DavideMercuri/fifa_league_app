@@ -7,7 +7,7 @@ import { TUI_ARROW } from '@taiga-ui/kit';
 import { BehaviorSubject, combineLatest, Observable, timer } from 'rxjs';
 import { debounceTime, filter, map, share, startWith, switchMap } from 'rxjs/operators';
 import { Player } from 'src/interfaces/player.interface';
-import { faFutbol, faIdCard, faMagnifyingGlass, faMedal, faPenToSquare, faPersonRunning, faShieldHalved, faStar, faTrashCan, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faFutbol, faIdCard, faMagnifyingGlass, faMedal, faPenToSquare, faPersonRunning, faPlus, faShieldHalved, faStar, faTrashCan, faUser } from '@fortawesome/free-solid-svg-icons';
 import { DataService } from 'src/app/data.service';
 import { TuiDialogContext, TuiDialogService, TuiDialogSize } from '@taiga-ui/core';
 import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
@@ -42,6 +42,7 @@ export class PlayersComponent implements OnInit, AfterViewInit {
   faIdCard = faIdCard;
   faMagnifyingGlass = faMagnifyingGlass;
   faStar = faStar;
+  faPlus = faPlus;
 
   ngOnInit(): void {
     setTimeout(() => {
@@ -193,7 +194,7 @@ export class PlayersComponent implements OnInit, AfterViewInit {
 
   }
 
-  onEditClick(
+  onClick(
     content: PolymorpheusContent<TuiDialogContext>,
     header: PolymorpheusContent,
     size: TuiDialogSize,

@@ -1,16 +1,24 @@
-<div style="display: flex; margin-left: 40px; margin-top: 30px;">
-    <tui-input tuiTextfield tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" style="width: 10%;"
-        class="tui-space_horizontal-3" [formControl]="nameSearch"
-        (keyup.enter)="FilterPlayers(nameSearch.value, positionSearch.value, teamSearch.value)">Nome</tui-input>
-    <tui-select tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" style="width: 10%;" class="tui-space_horizontal-3"
-        [formControl]="positionSearch" (click)="getDropDown('roles')" (clean)="getDropDown('teams')">
-        <tui-data-list-wrapper *tuiDataList [items]="itemsRoles"></tui-data-list-wrapper>Ruolo</tui-select>
-    <tui-select tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" style="width: 10%;" class="tui-space_horizontal-3"
-        [formControl]="teamSearch" (click)="getDropDown('teams')">
-        <tui-data-list-wrapper *tuiDataList [items]="itemsTeams"></tui-data-list-wrapper>Squadra</tui-select>
-    <button tuiButton [size]="'m'" class="tui-space_horizontal-3"
-        (click)="FilterPlayers(nameSearch.value, positionSearch.value, teamSearch.value)"><fa-icon
-            style="margin-right: 10px;" [icon]="faMagnifyingGlass"></fa-icon>Cerca</button>
+<div>
+    <div class="tui-row"style="margin-left: 20px; margin-top: 30px;">
+        <div class="tui-col_md-9" style="display: flex;">
+            <tui-input tuiTextfield tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" class="tui-space_horizontal-3 w-15-perc" [formControl]="nameSearch"
+                (keyup.enter)="FilterPlayers(nameSearch.value, positionSearch.value, teamSearch.value)">Nome</tui-input>
+            <tui-select tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" class="tui-space_horizontal-3 w-15-perc"
+                [formControl]="positionSearch" (click)="getDropDown('roles')" (clean)="getDropDown('teams')">
+                <tui-data-list-wrapper *tuiDataList [items]="itemsRoles"></tui-data-list-wrapper>Ruolo</tui-select>
+            <tui-select tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" class="tui-space_horizontal-3 w-15-perc"
+                [formControl]="teamSearch" (click)="getDropDown('teams')">
+                <tui-data-list-wrapper *tuiDataList [items]="itemsTeams"></tui-data-list-wrapper>Squadra</tui-select>
+            <button tuiButton [size]="'m'" class="tui-space_horizontal-3" (click)="FilterPlayers(nameSearch.value, positionSearch.value, teamSearch.value)">
+                <fa-icon style="margin-right: 10px;" [icon]="faMagnifyingGlass"></fa-icon>Cerca
+            </button>
+        </div>
+        <div class="tui-col_md-3">
+            <button tuiButton [size]="'m'" class="save-button" (click)="onClick(insert_player, header, 'm')" style="float: right; margin-right: 50px;">
+                <fa-icon style="margin-right: 10px;" [icon]="faPlus"></fa-icon>Inserisci Calciatore
+            </button>
+        </div>
+    </div>
 </div>
 
 <tui-loader [overlay]="true" [showLoader]="!!(loading$ | async)">
@@ -99,7 +107,7 @@
                 <td *tuiCell="'actions'" tuiTd class="v-align-middle txt-center-align"
                     [class.match]="isMatch('red_card')">
                     <span style="margin-right: 30px;">
-                        <a (click)="onEditClick(edit_player, header, 'm')"><fa-icon
+                        <a (click)="onClick(edit_player, header, 'm')"><fa-icon
                                 style="font-size: 20px; cursor: pointer;" [icon]="faPenToSquare"></fa-icon></a>
                     </span>
                     <span>
@@ -147,6 +155,12 @@
 </ng-template>
 
 <ng-template #header>
-    <div class="header-edit-player">
+    <div class="header-player-dialog">
     </div>
+</ng-template>
+
+
+
+<ng-template #insert_player let-observer>
+    <app-insert-player></app-insert-player>
 </ng-template>
