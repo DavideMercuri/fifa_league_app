@@ -1,0 +1,27 @@
+<div>
+
+    <label [tuiLabel]="label"></label>
+
+    <div style="margin-top: 10px; font-size: 16px;">
+        <div style="margin-top: 7px; font-weight: bold;">Saldo Squadra: <span style="font-weight: normal;">{{selectedTeam.money | tuiFormatNumber: {thousandSeparator: '.', decimalSeparator: ','} }}</span></div>
+        <div style="margin-top: 7px; font-weight: bold;">Stipendi: <span style="font-weight: normal;">{{selectedTeam.salary | tuiFormatNumber: {thousandSeparator: '.', decimalSeparator: ','} }}</span></div>
+    </div>
+
+    <div>
+        <div class="tui-row" style="margin-top: 10px;">
+            <div class="tui-col_md-8">
+                <div style="margin-left: 4px; margin-top: 15px;font-weight: bold;">Nuovo Saldo: <span style="font-weight: normal;" [ngClass]="selectedTeam.money - selectedTeam.salary < 0 ? 'error-color' : ''">{{selectedTeam.money - selectedTeam.salary | tuiFormatNumber: {thousandSeparator: '.', decimalSeparator: ','} }}
+                    <span *ngIf="selectedTeam.money - selectedTeam.salary < 0">	
+                        <tui-tooltip style="margin-bottom: 5px; color: rgb(209, 32, 32);" content="Il nuovo saldo deve essere in positivo" direction="right" [appearance]="'error'" [showDelay]="0"></tui-tooltip>
+                    </span>
+                </span>
+                </div>
+            </div>
+            <div class="tui-col_md-4">
+                <button [disabled]="selectedTeam.money - selectedTeam.salary < 0" style="float: right; margin-top: 6px;" tuiButton [size]="'m'" (click)="paySalaries()">Paga Stipendi</button>
+            </div>
+        </div>
+    </div>
+
+
+</div>

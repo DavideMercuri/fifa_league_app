@@ -19,13 +19,13 @@
     </div>
     <div class="tui-col_md-auto" style="margin-top: 15px; margin-left: 17%; font-size: 20px;">
         <span>
-            <a href="" style="margin-right: 25px;"><fa-icon [style.color]="team.team_text_color" [title]="'Gestisci Finanze'" [icon]="faFileInvoiceDollar"></fa-icon></a>
+            <a style="margin-right: 25px; cursor: pointer;" (click)="onClick(salariesPaymentMenu, undefined, 'm')"><fa-icon [style.color]="team.team_text_color" [title]="'Pagamento Stipendi'" [icon]="faFileInvoiceDollar"></fa-icon></a>
         </span>
         <span>
             <a style="margin-right: 25px; cursor: pointer;" (click)="onClick(trophyAwardMenu, undefined, 'm')"><fa-icon [style.color]="team.team_text_color" [title]="'Assegna Premio'" [icon]="faAward"></fa-icon></a>
         </span>
         <span>
-            <a href=""><fa-icon [style.color]="team.team_text_color" [title]="'Modifica Squadra'" [icon]="faGear"></fa-icon></a>
+            <a><fa-icon [style.color]="team.team_text_color" [title]="'Modifica Squadra'" [icon]="faGear"></fa-icon></a>
         </span>
     </div>
 </div>
@@ -135,4 +135,8 @@
 
 <ng-template #trophyAwardMenu let-observer>
     <app-trophy-award-menu [selectedTeam]="team" [observer]="observer"></app-trophy-award-menu>
+</ng-template>
+
+<ng-template #salariesPaymentMenu let-observer>
+    <app-salaries-payment [selectedTeam]="team" [observer]="observer"></app-salaries-payment>
 </ng-template>

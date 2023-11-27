@@ -75,6 +75,7 @@ export class TrophyAwardMenuComponent implements OnInit {
   }
 
   updateMoney(id: number, sum: number) {
+ 
     const body = { id, sum };
     this.http.put('http://localhost:3000/players/team_detail/update-team-money', body).subscribe({
       complete: () => {
