@@ -194,6 +194,16 @@ export class PlayersComponent implements OnInit, AfterViewInit {
 
   }
 
+  selectedPlayerId: number | null = null;
+
+  editPlayer(playerId: number, edit_player: any, header: any, size: any) {
+
+    this.selectedPlayerId = playerId;
+
+    this.onClick(edit_player, header, size);
+
+  };
+
   onClick(
     content: PolymorpheusContent<TuiDialogContext>,
     header: PolymorpheusContent,

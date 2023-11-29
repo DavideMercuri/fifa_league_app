@@ -104,15 +104,12 @@
                     [class.match]="isMatch('red_card')">
                     <span>{{ item.red_card }}</span>
                 </td>
-                <td *tuiCell="'actions'" tuiTd class="v-align-middle txt-center-align"
-                    [class.match]="isMatch('red_card')">
+                <td *tuiCell="'actions'" tuiTd class="v-align-middle txt-center-align">
                     <span style="margin-right: 30px;">
-                        <a (click)="onClick(edit_player, header, 'm')"><fa-icon
-                                style="font-size: 20px; cursor: pointer;" [icon]="faPenToSquare"></fa-icon></a>
+                        <a (click)="editPlayer(item.id, edit_player, header, 'm')"><fa-icon style="font-size: 20px; cursor: pointer;" [icon]="faPenToSquare"></fa-icon></a>
                     </span>
                     <span>
-                        <a><fa-icon style="font-size: 20px; color: red; cursor: pointer;"
-                                [icon]="faTrashCan"></fa-icon></a>
+                        <a><fa-icon style="font-size: 20px; color: red; cursor: pointer;" [icon]="faTrashCan"></fa-icon></a>
                     </span>
                 </td>
             </tr>
@@ -130,28 +127,7 @@
 
 
 <ng-template #edit_player let-observer>
-    <div style="display: flex; text-align: initial;">
-        <tui-input formControlName="testValue" [tuiTextfieldCleaner]="true" [tuiTextfieldLabelOutside]="true"
-            tuiTextfieldSize="m" style="width: 50%;">Nome giocatore<input tuiTextfield type="text" />
-        </tui-input>
-        <tui-select tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" style="width: 25%;" class="tui-space_horizontal-3"
-            [formControl]="positionSearch" (click)="getDropDown('roles')" (clean)="getDropDown('teams')">
-            <tui-data-list-wrapper *tuiDataList [items]="itemsRoles"></tui-data-list-wrapper>Ruolo
-        </tui-select>
-        <tui-select tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" style="width: 30%;"
-            [formControl]="teamSearch" (click)="getDropDown('teams')" (clean)="getDropDown('teams')">
-            <tui-data-list-wrapper *tuiDataList [items]="itemsTeams"></tui-data-list-wrapper>Squadra
-        </tui-select>
-        <tui-avatar [avatarUrl]="'https://i.imgur.com/rLQbuSV.png'" new size="xxl" text="alex inkin"></tui-avatar>
-    </div>
-    <div style="display: flex; text-align: initial;">
-
-    </div>
-    <div class="buttons" style="margin-top: 20px; text-align: initial;">
-        <button size="m" tuiButton type="button" (click)="observer.complete()">
-            Salva
-        </button>
-    </div>
+    <app-edit-player [playerId]="selectedPlayerId" [observer]="observer" [filteredValue]="[nameSearch.value, positionSearch.value, teamSearch.value]"></app-edit-player>
 </ng-template>
 
 <ng-template #header>

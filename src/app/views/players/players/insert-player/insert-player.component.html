@@ -19,13 +19,14 @@
                             formControlName="country" class="tui-space_horizontal-1">Nazione</tui-input>
                     </div>
                 </div>
-                <div class="tui-row" style="margin-top: 25px;">
+                <div class="tui-row" style="margin-top: 40px;">
                     <div class="tui-col-2" style="width: 15%; margin-left: 8%;">
-                        <tui-input-number tuiTextfieldSize="m" [max]="94" formControlName="overall" [(ngModel)]="overall" (ngModelChange)="updateSalaryAndValue(overall)"
+                        <tui-input-number tuiTextfieldSize="m" [max]="94" formControlName="overall"
+                            [(ngModel)]="overall" (ngModelChange)="updateSalaryAndValue(overall)"
                             class="tui-space_horizontal-1">Totale</tui-input-number>
                     </div>
                     <div class="tui-col-4" style="width: 35%;">
-                        <tui-input-number tuiTextfield tuiTextfieldSize="m" [disabled]="true" formControlName="price"
+                        <tui-input-number tuiTextfield tuiTextfieldSize="m" [disabled]="true" formControlName="player_value"
                             class="tui-space_horizontal-1">Valore</tui-input-number>
                     </div>
                     <div class="tui-col-4" style="width: 35%;">
@@ -35,12 +36,16 @@
                 </div>
             </div>
 
-            <div class="tui-col-2" style="width: 25%;">
-                <tui-input-files *ngIf="!control.value" accept="image/png, image/gif, image/jpg, image/jpeg" [formControl]="control" style="height: 100%;"
-                    (reject)="onReject($event)"></tui-input-files>
+            <div class="tui-col-2" style="width: 25%; position: relative; margin-left: 10px;">
 
-                <tui-files class="tui-space_top-1">
-                    <tui-file *ngIf="loadedFiles$ | async as file" [file]="file" [showDelete]="control.enabled"
+
+                <tui-input-files *ngIf="!control.value" accept="image/png, image/gif, image/jpg, image/jpeg, image/webp"
+                    [formControl]="control" style="height: 100%;" (reject)="onReject($event)"></tui-input-files>
+
+                <img *ngIf="control.value" [src]="imageSrc" style="max-width: 50%; height: auto; margin-top: 28px; margin-left: 7px;">
+
+                <tui-files class="tui-space_top-1 file-info-over" style="width: 100%;">
+                    <tui-file class="file-custom-img" *ngIf="loadedFiles$ | async as file" [file]="file" [showDelete]="control.enabled"
                         (removed)="removeFile()"></tui-file>
 
                     <tui-file *ngIf="rejectedFiles$ | async as file" state="error" [file]="file"
@@ -49,17 +54,16 @@
                     <tui-file *ngIf="loadingFiles$ | async as file" state="loading" [file]="file"
                         [showDelete]="control.enabled"></tui-file>
                 </tui-files>
-                <img *ngIf="control" [src]="imageSrc" style="max-width: 100%; height: auto;">
             </div>
         </div>
 
-        <tui-accordion style="margin-top: 25px;" class="custom-expand">
+        <tui-accordion style="margin-top: 40px;" class="custom-expand">
             <tui-accordion-item [open]="false">
                 Informazioni Aggiuntive
                 <ng-template tuiAccordionItemContent>
                     <div class="tui-row" style="margin-left: 0.8%;">
                         <div class="tui-col-2" style="width: 16%;">
-                            <tui-input-number tuiTextfieldSize="m" [min]="0" formControlName="goal"
+                            <tui-input-number tuiTextfieldSize="m" [min]="0" formControlName="goals"
                                 class="tui-space_horizontal-1">Goal
                             </tui-input-number>
                         </div>
@@ -74,12 +78,12 @@
                             </tui-input-number>
                         </div>
                         <div class="tui-col-2" style="width: 16%;">
-                            <tui-input-number tuiTextfieldSize="m" [min]="0" formControlName="yellowCard"
+                            <tui-input-number tuiTextfieldSize="m" [min]="0" formControlName="yellow_card"
                                 class="tui-space_horizontal-1">Cart. Gialli
                             </tui-input-number>
                         </div>
                         <div class="tui-col-2" style="width: 16%;">
-                            <tui-input-number tuiTextfieldSize="m" [min]="0" formControlName="redCard"
+                            <tui-input-number tuiTextfieldSize="m" [min]="0" formControlName="red_card"
                                 class="tui-space_horizontal-1">Cart. Rossi
                             </tui-input-number>
                         </div>
@@ -92,7 +96,7 @@
                     <div class="tui-row" style="margin-left: 0.8%; margin-top: 25px;">
                         <div class="tui-col-10" style="width: 48.2%">
                             <tui-select tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" class="tui-space_horizontal-1"
-                                formControlName="position" (click)="getDropDown('teams')"
+                                formControlName="team" (click)="getDropDown('teams')"
                                 (clean)="getDropDown('teams')">
                                 <tui-data-list-wrapper *tuiDataList [items]="itemsTeams"></tui-data-list-wrapper>Squadra
                             </tui-select>
@@ -102,4 +106,7 @@
             </tui-accordion-item>
         </tui-accordion>
     </form>
+    <div style="float: right; margin-top: 50px;">
+        <button tuiButton [size]="'l'" class="save-button" (click)="insert()">Salva</button>
+    </div>
 </div>

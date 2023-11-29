@@ -6,6 +6,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const util = require('util');
 const bcrypt = require('bcrypt');
+const multer = require('multer');
+const upload = multer();
 
 const SECRET_KEY = '7l5Ywkc6gV';
 
@@ -215,16 +217,117 @@ app.put('/players/fixture/save-match', async (req, res) => {
 
 // API endpoint to retrieve fixtures data from the database
 app.get('/players/players_list', (req, res) => {
-
   const query = 'SELECT * FROM players_list';
   connection.query(query, (error, results) => {
     if (error) {
-      res.status(500).send(error);
-    } else {
-      res.status(200).send(results);
+      return res.status(500).send(error);
     }
+
+    const players = results.map(player => {
+      if (player.photo) {
+        player.photo = 'data:image/webp;base64,' + Buffer.from(player.photo).toString('base64');
+      }
+      return player;
+    });
+
+    res.status(200).send(players);
   });
 });
+
+app.get('/players/player/:id', (req, res) => {
+
+  const playerId = parseInt(req.params.id, 10);
+  const query = 'SELECT * FROM players_list WHERE id = ?';
+
+  connection.query(query, [playerId], (error, results) => {
+
+    if (error) {
+      return res.status(500).send('Internal Server Error');
+    }
+    if (results.length === 0) {
+      return res.status(404).send('Player not found');
+    }
+
+    const player = results[0];
+    if (player.photo) {
+      player.photo = 'data:image/webp;base64,' + Buffer.from(player.photo).toString('base64');
+    }
+
+    res.status(200).send(player);
+  });
+});
+
+app.post('/players/insert-new-player', upload.single('photo'), (req, res) => {
+
+  if (!req.file) {
+    return res.status(400).send('No image file uploaded.');
+  }
+
+  savePlayerData(req.body, req.file)
+    .then(() => res.status(200).send('Player saved successfully'))
+    .catch(error => res.status(500).send('Error saving player: ' + error.message));
+});
+
+function savePlayerData(playerData, imageFile) {
+  return new Promise((resolve, reject) => {
+    // Estrai il buffer dell'immagine
+    const imageBuffer = imageFile.buffer;
+
+    // Query SQL per inserire i dati
+    const sql = `INSERT INTO players_list (name, position, country, team, goals, assist, motm, photo, yellow_card, red_card, injured, salary, overall, player_value) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+    const values = [playerData.name, playerData.position, playerData.country, playerData.team, playerData.goals, playerData.assist, playerData.motm, imageBuffer, playerData.yellow_card, playerData.red_card, playerData.injured, playerData.salary, playerData.overall, playerData.player_value];
+
+    connection.query(sql, values, (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      resolve(results);
+    });
+  });
+}
+
+
+app.put('/players/edit-player/:id', upload.single('photo'), (req, res) => {
+  const playerId = req.params.id;
+  const playerData = req.body;
+  const imageFile = req.file;
+
+  updatePlayerData(playerId, playerData, imageFile)
+    .then(() => res.status(200).json({ message: 'Player updated successfully' })) // Risposta JSON
+    .catch(error => res.status(500).json({ message: 'Error updating player: ' + error.message })); // Risposta JSON in caso di errore
+});
+
+
+// Funzione per eseguire la query di aggiornamento nel database
+function updatePlayerData(playerId, playerData, imageFile) {
+  return new Promise((resolve, reject) => {
+    let imageBuffer = null;
+    if (imageFile) {
+      imageBuffer = imageFile.buffer;
+    }
+
+    let sql = `UPDATE players_list SET name = ?, position = ?, country = ?, team = ?, goals = ?, assist = ?, motm = ?, yellow_card = ?, red_card = ?, injured = ?, salary = ?, overall = ?, player_value = ?`;
+    let values = [playerData.name, playerData.position, playerData.country, playerData.team, playerData.goals, playerData.assist, playerData.motm, playerData.yellow_card, playerData.red_card, playerData.injured, playerData.salary, playerData.overall, playerData.player_value];
+
+    if (imageBuffer) {
+      sql += `, photo = ?`;
+      values.push(imageBuffer);
+    }
+
+    sql += ` WHERE id = ?`;
+    values.push(playerId);
+
+    connection.query(sql, values, (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      resolve(results);
+    });
+  });
+}
+
+
 
 // API endpoint to retrieve fixtures data from the database
 app.get('/players/roles', (req, res) => {
@@ -294,10 +397,17 @@ app.get('/players/players_list/filters', (req, res) => {
 
   connection.query(query, queryParams, (error, results) => {
     if (error) {
-      res.status(500).send(error);
-    } else {
-      res.status(200).send(results);
+      return res.status(500).send(error);
     }
+
+    const players = results.map(player => {
+      if (player.photo) {
+        player.photo = 'data:image/webp;base64,' + Buffer.from(player.photo).toString('base64');
+      }
+      return player;
+    });
+
+    res.status(200).send(players);
   });
 });
 
@@ -307,10 +417,17 @@ app.get('/players/players_list/top_players', (req, res) => {
   const query = `SELECT * FROM players_list WHERE ${category} = (SELECT MAX(${category}) FROM players_list);`;
   connection.query(query, (error, results) => {
     if (error) {
-      res.status(500).send(error);
-    } else {
-      res.status(200).send(results);
+      return res.status(500).send(error);
     }
+
+    const players = results.map(player => {
+      if (player.photo) {
+        player.photo = 'data:image/webp;base64,' + Buffer.from(player.photo).toString('base64');
+      }
+      return player;
+    });
+
+    res.status(200).send(players);
   });
 });
 
