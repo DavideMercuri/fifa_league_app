@@ -207,7 +207,7 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
       .map((player, index) => (index >= start && index < end ? player : null));
 
     // Imitating server response
-    return timer(3000).pipe(map(() => result));
+    return timer(1000).pipe(map(() => result));
   }
 
   onClick(

@@ -47,14 +47,14 @@ export class PlayersComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     setTimeout(() => {
       this.direction$.next(1);
-      this.GetPlayers();
+      this.FilterPlayers('','','');
     }, 0);
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.direction$.next(1);
-      this.GetPlayers();
+      this.FilterPlayers('','','');
     }, 0);
   }
 
@@ -245,7 +245,7 @@ export class PlayersComponent implements OnInit, AfterViewInit {
       .map((player, index) => (index >= start && index < end ? player : null));
 
     // Imitating server response
-    return timer(3000).pipe(map(() => result));
+    return timer(500).pipe(map(() => result));
   }
 
 
