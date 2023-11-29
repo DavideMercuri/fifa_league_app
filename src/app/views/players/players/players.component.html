@@ -138,5 +138,5 @@
 
 
 <ng-template #insert_player let-observer>
-    <app-insert-player></app-insert-player>
+    <app-insert-player [observer]="observer" [filteredValue]="[nameSearch.value, positionSearch.value, teamSearch.value]"></app-insert-player>
 </ng-template>

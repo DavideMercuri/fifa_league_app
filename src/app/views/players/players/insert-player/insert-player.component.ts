@@ -1,9 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, ChangeDetectorRef, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ChangeDetectorRef, OnInit, Input, Inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { TuiAlertService, TuiNotification } from '@taiga-ui/core';
 import { TuiFileLike } from '@taiga-ui/kit';
 import { Observable, Subject, finalize, map, of, switchMap, timer } from 'rxjs';
 import { playerOSV } from 'src/app/components/navbar/common-data';
+import { PlayersComponent } from '../players.component';
 // import {tuiInputNumberOptionsProvider} from '@taiga-ui/kit';
 
 @Component({
@@ -19,8 +21,12 @@ import { playerOSV } from 'src/app/components/navbar/common-data';
 })
 export class InsertPlayerComponent {
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) { }
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef,  @Inject(TuiAlertService)
+  private readonly alerts: TuiAlertService, private players: PlayersComponent) { }
 
+  @Input() observer: any;
+  @Input() filteredValue: any;
+  
   overall!: number;
   itemsRoles: Array<string> = [];
   itemsTeams: Array<string> = [];
@@ -204,13 +210,14 @@ export class InsertPlayerComponent {
 
   sendDataToServer(formData: FormData) {
     this.http.post('http://localhost:3000/players/insert-new-player', formData).subscribe({
-      next: (response) => {
-        console.log('Dati salvati con successo', response);
-        // Gestisci la risposta qui
-      },
       error: (error) => {
         console.error('Errore durante il salvataggio dei dati', error);
         // Gestisci l'errore qui
+      },
+      complete: () => {
+        this.observer.complete();
+        this.players.FilterPlayers(this.filteredValue[0], this.filteredValue[1], this.filteredValue[2]);
+        this.alerts.open('Calciatore aggiunto con Successo!!', { label: 'Operazione Effettuata', status: TuiNotification.Success }).subscribe();
       }
     });
   }

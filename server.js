@@ -264,8 +264,8 @@ app.post('/players/insert-new-player', upload.single('photo'), (req, res) => {
   }
 
   savePlayerData(req.body, req.file)
-    .then(() => res.status(200).send('Player saved successfully'))
-    .catch(error => res.status(500).send('Error saving player: ' + error.message));
+  .then(() => res.status(200).json({ message: 'Player Added successfully' })) // Risposta JSON
+  .catch(error => res.status(500).json({ message: 'Error Adding player: ' + error.message })); // Risposta JSON in caso di errore
 });
 
 function savePlayerData(playerData, imageFile) {
