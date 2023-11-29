@@ -297,8 +297,20 @@ tui-combo-box .t-input {
   background-color: #34b41f !important;
 }
 
+.delete-button .t-wrapper {
+  background-color: #c71818 !important;
+}
+
 .back-button-bg .t-wrapper {
   background-color: #a09f9f !important;
+}
+
+.ucl-button-bg .t-wrapper {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 75, 1) 0%,
+    rgba(48, 66, 198, 0.846673703661152) 100%
+  ) !important;
 }
 
 .goals-count {
@@ -432,7 +444,11 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
   width: 100%;
   height: 3rem;
   text-align: initial;
-  background: #ffdd2d;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 75, 1) 0%,
+    rgba(48, 66, 198, 0.846673703661152) 100%
+  ) !important;
 }
 
 .match-status-info {
@@ -643,4 +659,17 @@ tui-file.file-custom-img .t-content{
 
 tui-file.file-custom-img div.t-size{
   display: none !important;
+}
+
+.tui-avatar-custom-delete {
+  margin-top: 30px !important;
+  height: 60px !important;
+  width: 60px !important;
+  font-size: 25px !important;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 75, 1) 0%,
+    rgba(48, 66, 198, 0.846673703661152) 100%
+  ) !important;
+  --tui-avatar-color: #fff;
 }

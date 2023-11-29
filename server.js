@@ -257,6 +257,19 @@ app.get('/players/player/:id', (req, res) => {
   });
 });
 
+app.delete('/players/player-delete/:id', (req, res) => {
+
+  const playerId = parseInt(req.params.id, 10);
+  const query = 'DELETE FROM players_list WHERE id = ?';
+
+  connection.query(query, [playerId], (error, results) => {
+    if (error) {
+      return res.status(500).json({ message: 'Error Deleting player: ' + error.message })
+    }
+    res.status(200).json({ message: 'Player Deleted successfully' }); // Risposta JSON in caso di errore
+  });
+});
+
 app.post('/players/insert-new-player', upload.single('photo'), (req, res) => {
 
   if (!req.file) {

@@ -9,7 +9,7 @@ import { debounceTime, filter, map, share, startWith, switchMap } from 'rxjs/ope
 import { Player } from 'src/interfaces/player.interface';
 import { faFutbol, faIdCard, faMagnifyingGlass, faMedal, faPenToSquare, faPersonRunning, faPlus, faShieldHalved, faStar, faTrashCan, faUser } from '@fortawesome/free-solid-svg-icons';
 import { DataService } from 'src/app/data.service';
-import { TuiDialogContext, TuiDialogService, TuiDialogSize } from '@taiga-ui/core';
+import { TuiAlertService, TuiDialogContext, TuiDialogService, TuiDialogSize, TuiNotification } from '@taiga-ui/core';
 import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
 
 
@@ -25,7 +25,9 @@ type Key = 'name' | 'overall' | 'position' | 'team' | 'goals' | 'assist' | 'motm
 
 export class PlayersComponent implements OnInit, AfterViewInit {
 
-  constructor(private http: HttpClient, private dataService: DataService, @Inject(TuiDialogService) private readonly dialogs: TuiDialogService) { }
+  constructor(private http: HttpClient, private dataService: DataService,
+    @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
+    @Inject(TuiAlertService) private readonly alerts: TuiAlertService) { }
 
   itemsRoles: Array<string> = [];
   itemsTeams: Array<string> = [];
@@ -47,14 +49,14 @@ export class PlayersComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     setTimeout(() => {
       this.direction$.next(1);
-      this.FilterPlayers('','','');
+      this.FilterPlayers('', '', '');
     }, 0);
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.direction$.next(1);
-      this.FilterPlayers('','','');
+      this.FilterPlayers('', '', '');
     }, 0);
   }
 
@@ -194,15 +196,36 @@ export class PlayersComponent implements OnInit, AfterViewInit {
 
   }
 
+  selectedPlayer!: Player;
   selectedPlayerId: number | null = null;
 
-  editPlayer(playerId: number, edit_player: any, header: any, size: any) {
+  assignPlayer(player: any, dialog: any, header: any, size: any) {
 
-    this.selectedPlayerId = playerId;
+    this.selectedPlayer = player;
+    this.selectedPlayerId = player.id;
 
-    this.onClick(edit_player, header, size);
+    this.onClick(dialog, header, size);
 
   };
+
+  delete(observer: any, filteredValue: Array<any>) {
+
+    this.http.delete(`http://localhost:3000/players/player-delete/${this.selectedPlayerId}`).subscribe({
+      error: (err: any) => {
+        console.error(err);
+      },
+      complete: () => {
+        observer.complete();
+        this.FilterPlayers(filteredValue[0], filteredValue[1], filteredValue[2]);
+        this.alerts.open('Info Calciatore aggiornate con Successo!!', { label: 'Operazione Effettuata', status: TuiNotification.Success }).subscribe();
+
+      }
+    })
+  }
+
+  close(observer: any) {
+    observer.complete();
+  }
 
   onClick(
     content: PolymorpheusContent<TuiDialogContext>,
@@ -212,7 +235,7 @@ export class PlayersComponent implements OnInit, AfterViewInit {
     this.dialogs
       .open(content, {
         header,
-        size: 'l',
+        size: size,
         dismissible: false,
       })
       .subscribe();
