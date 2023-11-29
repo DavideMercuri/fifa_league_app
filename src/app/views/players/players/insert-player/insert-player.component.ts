@@ -21,12 +21,12 @@ import { PlayersComponent } from '../players.component';
 })
 export class InsertPlayerComponent {
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef,  @Inject(TuiAlertService)
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, @Inject(TuiAlertService)
   private readonly alerts: TuiAlertService, private players: PlayersComponent) { }
 
   @Input() observer: any;
   @Input() filteredValue: any;
-  
+
   overall!: number;
   itemsRoles: Array<string> = [];
   itemsTeams: Array<string> = [];
@@ -54,9 +54,9 @@ export class InsertPlayerComponent {
     yellow_card: new FormControl(0),
     red_card: new FormControl(0),
     injured: new FormControl(0),
-    salary: new FormControl({ disabled: true }),
+    salary: new FormControl(),
     overall: new FormControl(),
-    player_value: new FormControl({ disabled: true }),
+    player_value: new FormControl(),
   });
 
   getDropDown(type: string) {
@@ -140,12 +140,12 @@ export class InsertPlayerComponent {
               const base64Data = e.target.result.split(',')[1]; // Ottieni solo la parte base64
               this.imageSrc = e.target.result; // Salva l'intero dataURL se necessario per altre operazioni
               this.cdr.detectChanges(); // Aggiorna la vista
-          
+
               // Ora puoi passare con sicurezza la stringa base64 al tuo metodo base64ToBlob
               this.bufferedImg = this.base64ToBlob(base64Data, 'image/webp');
             }
           };
-          
+
           reader.readAsDataURL(file);
         } else {
           console.error('Il contenuto del file non è un Blob:', file);
@@ -201,8 +201,11 @@ export class InsertPlayerComponent {
 
     if (this.bufferedImg) {
       // formData.append('image', this.bufferedImg); // Se `this.bufferedImg` è già un Blob, usalo direttamente
-      formData.append('photo', new Blob([this.bufferedImg], {type: 'image/jpeg'})); // Solo se `this.bufferedImg` è un ArrayBuffer o un'altra struttura di dati binari
-    }    
+      formData.append('photo', new Blob([this.bufferedImg], { type: 'image/jpeg' })); // Solo se `this.bufferedImg` è un ArrayBuffer o un'altra struttura di dati binari
+    }
+
+    formData.append('salary', this.newPlayer.controls['salary'].value);
+    formData.append('player_value', this.newPlayer.controls['player_value'].value);
 
     // Invia i dati al tuo server
     this.sendDataToServer(formData);

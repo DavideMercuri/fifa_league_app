@@ -16,7 +16,7 @@ import { PlayersComponent } from '../players.component';
 export class EditPlayerComponent implements OnInit {
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef, @Inject(TuiAlertService)
-  private readonly alerts: TuiAlertService, private players: PlayersComponent ) { }
+  private readonly alerts: TuiAlertService, private players: PlayersComponent) { }
 
   @Input() playerId: any;
   @Input() observer: any;
@@ -49,9 +49,9 @@ export class EditPlayerComponent implements OnInit {
     yellow_card: new FormControl(),
     red_card: new FormControl(),
     injured: new FormControl(),
-    salary: new FormControl({ disabled: true }),
+    salary: new FormControl(),
     overall: new FormControl(),
-    player_value: new FormControl({ disabled: true }),
+    player_value: new FormControl(),
   });
 
   ngOnInit(): void {
@@ -74,8 +74,8 @@ export class EditPlayerComponent implements OnInit {
     })
   }
 
-  setPlayerData(res: any){
-    
+  setPlayerData(res: any) {
+
     this.player.controls['name'].setValue(res.name);
     this.player.controls['position'].setValue(res.position);
     this.player.controls['country'].setValue(res.country);
@@ -94,7 +94,7 @@ export class EditPlayerComponent implements OnInit {
       const imageBlob = this.base64ToBlob(res.photo.split(',')[1], 'image/webp');
       const imageName = 'player_photo.webp';
       const imageFile = new File([imageBlob], imageName, { type: 'image/webp' });
-  
+
       this.control.setValue(imageFile);
       this.imageSrc = res.photo;
     }
@@ -216,11 +216,11 @@ export class EditPlayerComponent implements OnInit {
     }
 
     if (playerData) {
-      
+
       this.player.controls['salary'].setValue(playerData.salary);
       this.player.controls['player_value'].setValue(playerData.player_value);
     } else {
-      
+
       this.player.controls['salary'].reset();
       this.player.controls['player_value'].reset();
     }
@@ -242,11 +242,16 @@ export class EditPlayerComponent implements OnInit {
       formData.append('photo', new Blob([this.bufferedImg], { type: 'image/jpeg' })); // Solo se `this.bufferedImg` è un ArrayBuffer o un'altra struttura di dati binari
     }
 
+    formData.append('salary', this.player.controls['salary'].value);
+    formData.append('player_value', this.player.controls['player_value'].value);
+
     // Invia i dati al tuo server
     this.sendDataToServer(formData, id);
+
   }
 
   sendDataToServer(formData: FormData, id: any) {
+
     this.http.put(`http://localhost:3000/players/edit-player/${id}`, formData).subscribe({
       error: (error) => {
         console.error('Errore durante il salvataggio dei dati', error);
