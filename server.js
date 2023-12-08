@@ -277,8 +277,8 @@ app.post('/players/insert-new-player', upload.single('photo'), (req, res) => {
   }
 
   savePlayerData(req.body, req.file)
-  .then(() => res.status(200).json({ message: 'Player Added successfully' })) // Risposta JSON
-  .catch(error => res.status(500).json({ message: 'Error Adding player: ' + error.message })); // Risposta JSON in caso di errore
+    .then(() => res.status(200).json({ message: 'Player Added successfully' })) // Risposta JSON
+    .catch(error => res.status(500).json({ message: 'Error Adding player: ' + error.message })); // Risposta JSON in caso di errore
 });
 
 function savePlayerData(playerData, imageFile) {
@@ -368,11 +368,37 @@ app.get('/players/teams', (req, res) => {
   });
 });
 
+app.put('/players/team-detail/update-value-salary', async (req, res) => {
+
+  const query = `UPDATE teams t JOIN 
+  (SELECT team, SUM(salary) AS total_salary, SUM(player_value) AS total_player_value, COUNT(*) AS total_players_number
+  FROM players_list GROUP BY team) p ON t.team_name = p.team 
+  SET t.salary = p.total_salary, t.club_value = total_player_value, t.players_number = total_players_number`;
+
+    connection.query(query, (error, results) => {
+      if (error) {
+        res.status(500).send(error);
+      } else {
+        res.status(200).send(results);
+      }
+    });
+})
+
 // API endpoint to retrieve fixtures data from the database
 app.get('/players/team-detail', (req, res) => {
 
-  const id = req.query.id;
-  const query = `SELECT * FROM teams WHERE team_id = ${id}`;
+  var id;
+  var team_name;
+  var query
+
+  if (!req.query.id) {
+    team_name = req.query.team_name;
+    query = `SELECT * FROM teams WHERE team_name = '${team_name}'`;
+  } else {
+    id = req.query.id;
+    query = `SELECT * FROM teams WHERE team_id = ${id}`;
+  }
+
   connection.query(query, (error, results) => {
     if (error) {
       res.status(500).send(error);
@@ -686,6 +712,21 @@ app.put('/players/team_detail/update-team-money', async (req, res) => {
     }
   });
 });
+
+app.put('/players/team_detail/update-team-trophy', async (req, res) => {
+
+  const { id, trophyType } = req.body;
+
+  var query = `UPDATE teams SET ${trophyType} = ${trophyType} + 1 WHERE team_id = ?;`;
+
+  connection.query(query, [id], (error, results) => {
+    if (error) {
+      res.status(500).send(error);
+    } else {
+      res.status(200).send(results);
+    }
+  });
+})
 
 // Start the server
 app.listen(3000, () => {

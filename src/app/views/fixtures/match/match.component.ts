@@ -116,6 +116,8 @@ export class MatchComponent implements OnInit, AfterViewInit {
 
     setTimeout(() => (this.generateArrays()), 0);
 
+    setTimeout(() => (this.cdRef.detectChanges()), 0);
+
   }
 
 

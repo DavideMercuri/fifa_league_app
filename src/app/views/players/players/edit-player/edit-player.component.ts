@@ -42,7 +42,6 @@ export class EditPlayerComponent implements OnInit {
     name: new FormControl(),
     position: new FormControl(),
     country: new FormControl(),
-    team: new FormControl(),
     goals: new FormControl(),
     assist: new FormControl(),
     motm: new FormControl(),
@@ -79,7 +78,6 @@ export class EditPlayerComponent implements OnInit {
     this.player.controls['name'].setValue(res.name);
     this.player.controls['position'].setValue(res.position);
     this.player.controls['country'].setValue(res.country);
-    this.player.controls['team'].setValue(res.team);
     this.player.controls['goals'].setValue(res.goals);
     this.player.controls['assist'].setValue(res.assist);
     this.player.controls['motm'].setValue(res.motm);
@@ -261,8 +259,19 @@ export class EditPlayerComponent implements OnInit {
         this.observer.complete();
         this.players.FilterPlayers(this.filteredValue[0], this.filteredValue[1], this.filteredValue[2]);
         this.alerts.open('Info Calciatore aggiornate con Successo!!', { label: 'Operazione Effettuata', status: TuiNotification.Success }).subscribe();
+        this.updateTeamSalaryAndValue();
       }
     });
+  }
+
+  updateTeamSalaryAndValue() {
+
+    this.http.put(`http://localhost:3000/players/team-detail/update-value-salary`, undefined).subscribe({
+      error: (err: any) => {
+        console.error(err);
+      },
+    });
+
   }
 
 }

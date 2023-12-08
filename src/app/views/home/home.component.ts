@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { DataService } from 'src/app/data.service';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -14,7 +14,7 @@ Chart.register(...registerables);
 })
 export class HomeComponent implements OnInit, AfterViewInit {
 
-  constructor(private http: HttpClient, private dataService: DataService) { }
+  constructor(private http: HttpClient, private dataService: DataService, private cd: ChangeDetectorRef) { }
 
   items!: Array<any>;
 
@@ -49,7 +49,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.createChart();
-    }, 1000);
+      this.cd.detectChanges();
+    }, 0);
+
+    
   }
 
   getTopPlayersInfo(category: string): void {

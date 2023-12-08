@@ -3,7 +3,7 @@ import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButto
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { TuiAccordionModule, TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiCheckboxBlockModule, TuiCheckboxLabeledModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiElasticContainerModule, TuiInputFilesModule, TuiInputModule, TuiInputNumberModule, TuiInputPasswordModule, TuiIslandModule, TuiMarkerIconModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule } from "@taiga-ui/kit";
+import { TuiAccordionModule, TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiCheckboxBlockModule, TuiCheckboxLabeledModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiElasticContainerModule, TuiInputFilesModule, TuiInputModule, TuiInputNumberModule, TuiInputPasswordModule, TuiIslandModule, TuiMarkerIconModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule, TuiToggleModule } from "@taiga-ui/kit";
 import { TuiAppBarModule, TuiTabBarModule } from '@taiga-ui/addon-mobile';
 import { TuiCalendarModule } from '@taiga-ui/core';
 import { TuiLetModule } from '@taiga-ui/cdk';
@@ -31,6 +31,7 @@ import { TrophyAwardMenuComponent } from './views/team-detail/trophy-award-menu/
 import { SalariesPaymentComponent } from './views/team-detail/salaries-payment/salaries-payment.component';
 import { InsertPlayerComponent } from './views/players/players/insert-player/insert-player.component';
 import { EditPlayerComponent } from './views/players/players/edit-player/edit-player.component';
+import { TradePlayersComponent } from './views/team-detail/trade-players/trade-players.component';
 
 
 @NgModule({
@@ -50,6 +51,7 @@ import { EditPlayerComponent } from './views/players/players/edit-player/edit-pl
     SalariesPaymentComponent,
     InsertPlayerComponent,
     EditPlayerComponent,
+    TradePlayersComponent,
   ],
   imports: [
     BrowserModule,
@@ -75,6 +77,7 @@ import { EditPlayerComponent } from './views/players/players/edit-player/edit-pl
     TuiPaginationModule,
     TuiComboBoxModule,
     TuiCheckboxLabeledModule,
+    TuiToggleModule,
     TuiAppBarModule,
     TuiCalendarModule,
     TuiLoaderModule,

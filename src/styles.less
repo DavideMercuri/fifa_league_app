@@ -266,6 +266,11 @@ tui-combo-box .t-input {
   top: -10px !important;
 }
 
+tui-combo-box.transfer-combo-box .t-input {
+  top: -5px !important;
+  left: 2px;
+}
+
 #resume-input {
   padding: 0px !important;
   position: absolute;
@@ -652,12 +657,12 @@ img.tui-space_right-3 {
   opacity: 1 !important;
 }
 
-tui-file.file-custom-img .t-content{
+tui-file.file-custom-img .t-content {
   position: absolute !important;
   margin-left: -3% !important;
 }
 
-tui-file.file-custom-img div.t-size{
+tui-file.file-custom-img div.t-size {
   display: none !important;
 }
 
@@ -672,4 +677,24 @@ tui-file.file-custom-img div.t-size{
     rgba(48, 66, 198, 0.846673703661152) 100%
   ) !important;
   --tui-avatar-color: #fff;
+}
+
+.multiple-mode-toggle {
+  text-align: end;
+}
+
+.rounded-add-button {
+  background-color: var(--tui-link);
+  color: #fff;
+  border-radius: 50%;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  line-height: 25px;
+  margin-left: 10px;
+}
+
+.rounded-add-button:hover {
+  background-color: var(--tui-link-hover);
 }

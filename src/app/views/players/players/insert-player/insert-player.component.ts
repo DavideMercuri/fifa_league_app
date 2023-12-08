@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, ChangeDetectorRef, OnInit, Input, Inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TuiAlertService, TuiNotification } from '@taiga-ui/core';
@@ -191,6 +191,43 @@ export class InsertPlayerComponent {
     this.newPlayer.controls['player_value'].disable();
   }
 
+  moneyUpdateOnPlayerInsert(res: any, team_name: any) {
+
+    var sum = res.money - this.newPlayer.controls['player_value'].value;
+    var id = res.team_id;
+    var payment = true;
+
+    const body = { id, sum, payment };
+
+    this.http.put(`http://localhost:3000/players/team_detail/update-team-money`, body).subscribe({
+      error: (err: any) => {
+        console.error(err);
+      },
+    });
+  }
+
+
+  loadDataBasedOnTeamName(team_name: any): void {
+
+    var httpParams: HttpParams = new HttpParams().append('team_name', team_name);
+    this.http.get(`http://localhost:3000/players/team-detail`, { params: httpParams }).subscribe({
+      next: (res: any) => {
+        this.moneyUpdateOnPlayerInsert(res[0], team_name);
+        this.updateTeamSalaryAndValue();
+      }
+    });
+  }
+
+  updateTeamSalaryAndValue() {
+
+    this.http.put(`http://localhost:3000/players/team-detail/update-value-salary`, undefined).subscribe({
+      error: (err: any) => {
+        console.error(err);
+      },
+    });
+
+  }
+
   insert() {
     const formData = new FormData();
 
@@ -212,12 +249,17 @@ export class InsertPlayerComponent {
   }
 
   sendDataToServer(formData: FormData) {
+
+    var teamSelected: any = this.newPlayer.controls['team'].value;
+
     this.http.post('http://localhost:3000/players/insert-new-player', formData).subscribe({
       error: (error) => {
         console.error('Errore durante il salvataggio dei dati', error);
-        // Gestisci l'errore qui
       },
       complete: () => {
+        if (teamSelected != 'Svincolati') {
+          this.loadDataBasedOnTeamName(teamSelected);
+        }
         this.observer.complete();
         this.players.FilterPlayers(this.filteredValue[0], this.filteredValue[1], this.filteredValue[2]);
         this.alerts.open('Calciatore aggiunto con Successo!!', { label: 'Operazione Effettuata', status: TuiNotification.Success }).subscribe();

@@ -1,7 +1,7 @@
 <div>
-    <div class="tui-row"style="margin-left: 20px; margin-top: 30px;">
-        <div class="tui-col_md-9" style="display: flex;">
-            <tui-input tuiTextfield tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" class="tui-space_horizontal-3 w-15-perc" [formControl]="nameSearch"
+    <div class="tui-row"style="margin-left: 50px; margin-top: 30px; width: 95%;">
+        <div class="tui-col_md-9" style="display: flex; padding-left: 0; padding-right: 0;">
+            <tui-input tuiTextfield tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" class="tui-space_horizontal-3 w-15-perc" [formControl]="nameSearch" style="margin-left: 0;"
                 (keyup.enter)="FilterPlayers(nameSearch.value, positionSearch.value, teamSearch.value)">Nome</tui-input>
             <tui-select tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" class="tui-space_horizontal-3 w-15-perc"
                 [formControl]="positionSearch" (click)="getDropDown('roles')" (clean)="getDropDown('teams')">
@@ -13,8 +13,8 @@
                 <fa-icon style="margin-right: 10px;" [icon]="faMagnifyingGlass"></fa-icon>Cerca
             </button>
         </div>
-        <div class="tui-col_md-3">
-            <button tuiButton [size]="'m'" class="save-button" (click)="onClick(insert_player, header, 'l')" style="float: right; margin-right: 50px;">
+        <div class="tui-col_md-3" style="padding-right: 0; padding-left: 0;">
+            <button tuiButton [size]="'m'" class="save-button" (click)="onClick(insert_player, header, 'l')" style="float: right;">
                 <fa-icon style="margin-right: 10px;" [icon]="faPlus"></fa-icon>Inserisci Calciatore
             </button>
         </div>

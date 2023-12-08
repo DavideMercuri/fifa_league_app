@@ -93,15 +93,6 @@
                             </tui-input-number>
                         </div>
                     </div>
-                    <div class="tui-row" style="margin-left: 0.8%; margin-top: 25px;">
-                        <div class="tui-col-10" style="width: 48.2%">
-                            <tui-select tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" class="tui-space_horizontal-1"
-                                formControlName="team" (click)="getDropDown('teams')"
-                                (clean)="getDropDown('teams')">
-                                <tui-data-list-wrapper *tuiDataList [items]="itemsTeams"></tui-data-list-wrapper>Squadra
-                            </tui-select>
-                        </div>
-                    </div>
                 </ng-template>
             </tui-accordion-item>
         </tui-accordion>
