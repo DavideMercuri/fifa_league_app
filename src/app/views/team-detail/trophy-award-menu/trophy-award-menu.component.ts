@@ -70,20 +70,42 @@ export class TrophyAwardMenuComponent implements OnInit {
       }
     });
 
-    this.updateMoney(Number(this.selectedTeam.team_id), totalSum);
+    var leagueWin: boolean = false;
+    var uclWin: boolean = false;
+
+      if (this.awardForm.controls['awardCampionato'].value && this.awardForm.controls['awardCampionato'].value.label == '1° Posto') {
+        leagueWin = true;
+      }
+      if (this.awardForm.controls['awardChampionsLeague'].value && this.awardForm.controls['awardChampionsLeague'].value.label == 'Vittoria') {
+        uclWin = true;
+      }
+    
+    this.updateMoney(Number(this.selectedTeam.team_id), totalSum, leagueWin, uclWin);
 
   }
 
-  updateMoney(id: number, sum: number) {
- 
+  updateMoney(id: number, sum: number, leagueWin?: boolean, uclWin?: boolean) {
+
     const body = { id, sum };
     this.http.put('http://localhost:3000/players/team_detail/update-team-money', body).subscribe({
       complete: () => {
+        if(leagueWin){
+          this.updateTeamTrophy(id, 'league_win');
+        }
+        if(uclWin){
+          this.updateTeamTrophy(id, 'cup_win');
+        }
         this.observer.complete();
         this.teamDetail.loadDataBasedOnId(String(id));
         this.alerts.open('Modifica Avvenuta con Successo!!', { label: 'Operazione Effettuata', status: TuiNotification.Success }).subscribe();
       }
     });
+  }
+
+  updateTeamTrophy(id: number, trophyType: string){
+
+    const body = {id, trophyType};
+    this.http.put('http://localhost:3000/players/team_detail/update-team-trophy', body).subscribe({});
   }
 
 }
