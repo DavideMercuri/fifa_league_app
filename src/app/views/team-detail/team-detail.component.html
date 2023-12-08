@@ -22,7 +22,7 @@
             <a style="margin-right: 25px; cursor: pointer;" (click)="onClick(salariesPaymentMenu, undefined, 'm')"><fa-icon [style.color]="team.team_text_color" [title]="'Pagamento Stipendi'" [icon]="faFileInvoiceDollar"></fa-icon></a>
         </span>
         <span>
-            <a style="margin-right: 25px; cursor: pointer;" (click)="onClick(trophyAwardMenu, undefined, 'm')"><fa-icon [style.color]="team.team_text_color" [title]="'Assegna Premio'" [icon]="faAward"></fa-icon></a>
+            <a style="margin-right: 25px; cursor: pointer;" (click)="onClick(trophyAwardMenu, undefined, 'l')"><fa-icon [style.color]="team.team_text_color" [title]="'Assegna Premio'" [icon]="faAward"></fa-icon></a>
         </span>
         <span>
             <a><fa-icon [style.color]="team.team_text_color" [title]="'Modifica Squadra'" [icon]="faGear"></fa-icon></a>
@@ -117,7 +117,7 @@
                 </td>
                 <td *tuiCell="'actions'" tuiTd class="v-align-middle txt-center-align" [class.match]="isMatch('red_card')">
                     <span>
-                        <a><fa-icon style="font-size: 20px; cursor: pointer;" [icon]="faSackDollar"></fa-icon></a>
+                        <a (click)="assignPlayer(item, tradePlayersMenu, header, 'l')"><fa-icon style="font-size: 20px; cursor: pointer;" [icon]="faSackDollar"></fa-icon></a>
                     </span>
                 </td>
             </tr>
@@ -132,6 +132,10 @@
     </table>
 </tui-loader>
 
+<ng-template #header>
+    <div class="header-player-dialog">
+    </div>
+</ng-template>
 
 <ng-template #trophyAwardMenu let-observer>
     <app-trophy-award-menu [selectedTeam]="team" [observer]="observer"></app-trophy-award-menu>
@@ -139,4 +143,8 @@
 
 <ng-template #salariesPaymentMenu let-observer>
     <app-salaries-payment [selectedTeam]="team" [observer]="observer"></app-salaries-payment>
+</ng-template>
+
+<ng-template #tradePlayersMenu let-observer>
+    <app-trade-players [selectedTeam]="team" [playerId]="selectedPlayerId" [player]="selectedPlayer" [observer]="observer"></app-trade-players>
 </ng-template>

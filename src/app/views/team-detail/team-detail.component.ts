@@ -26,6 +26,9 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
   team!: Team;
   players: Array<Player> = [];
 
+  selectedPlayer!: Player;
+  selectedPlayerId: number | null = null;
+
   faUser = faUser;
   faPenToSquare = faPenToSquare;
   faTrashCan = faTrashCan;
@@ -44,7 +47,7 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
 
     this.loadDataBasedOnId(this.teamId);
     if (this.team)
-      this.FilterPlayers('', '', this.team.team_name);
+      this.FilterPlayers('', '', this.team.team_name);    
 
   }
 
@@ -56,6 +59,7 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
       this.loadDataBasedOnId(this.teamId);
       setTimeout(() => {
         this.FilterPlayers('', '', this.team.team_name);
+        console.log(this.players);
       }, 1000)
 
 
@@ -171,8 +175,7 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
 
     this.http.get('http://localhost:3000/players/players_list/filters', { params: httpParams }).subscribe({
       next: (res: any) => {
-
-        this.players = res;
+        this.players = res;        
         this.dataService.setPlayersList(res);
         this.page$.next(0);
       }
@@ -180,6 +183,15 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
 
   }
 
+  updateTeamSalaryAndValue() {
+
+    this.http.put(`http://localhost:3000/players/team-detail/update-value-salary`, undefined).subscribe({
+      error: (err: any) => {
+        console.error(err);
+      },
+    });
+
+  }
 
   currentSortColumn: string | number | symbol | null = null;
 
@@ -210,18 +222,23 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
     return timer(1000).pipe(map(() => result));
   }
 
-  onClick(
-    content: PolymorpheusContent<TuiDialogContext>,
-    header: PolymorpheusContent,
-    size: TuiDialogSize,
-  ): void {
-    this.dialogs
-      .open(content, {
-        size: 'l',
-        dismissible: false,
-      })
-      .subscribe();
+  assignPlayer(player: any, dialog: any, header: any, size: any) {
+
+    this.selectedPlayer = player;
+    this.selectedPlayerId = player.id;
+
+    this.onClick(dialog, header, size);
+
+  };
+
+  onClick(content: PolymorpheusContent<TuiDialogContext>, header: PolymorpheusContent, size: TuiDialogSize): void {
+    this.dialogs.open(content, {
+      size: size,
+      dismissible: false,
+    }).subscribe();
   }
+
+  
 }
 
 function sortBy(key: 'name' | 'overall' | 'position' | 'salary' | 'player_value', direction: -1 | 1): TuiComparator<Player> {

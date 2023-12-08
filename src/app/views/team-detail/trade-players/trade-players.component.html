@@ -1,0 +1,52 @@
+<div class="multiple-mode-toggle">
+    <span style="margin-right: 10px; vertical-align: sub;">Modalità multipla </span>
+    <tui-toggle [formControl]="multitrade" size="l"></tui-toggle>
+</div>
+
+<div>
+    <div *ngIf="!multitrade.value">
+        <img style="width: 35px; height: 35px; margin-right: 10px; margin-left: 10px;" src="{{player.photo}}">{{
+        player.name }}
+    </div>
+    <div *ngIf="multitrade.value">
+
+        <div class="tui-col_md-6 centered-input-content">
+
+            <form [formGroup]="multiTradeForm">
+                <div>
+                    <span>Trasferimento Multiplo</span>
+                    <span class="rounded-add-button">
+                        <a (click)="addControl()" style="display: inline-block;">
+                            <fa-icon style="font-size: 13px; cursor: pointer; color: #fff" [icon]="faPlus"></fa-icon>
+                        </a>
+                    </span>
+                </div>
+                <ng-container *ngFor="let controlName of controlNames; let i = index">
+                    <tui-combo-box [formControlName]="controlName" *tuiLet="items$ | async as items"
+                        [stringify]="stringify" (searchChange)="onSearchChange('')" tuiTextfieldSize="m"
+                        (focusedChange)="onSearchChange('')" [tuiTextfieldCleaner]="true"
+                        class="centered-input-content tui-space_top-4 transfer-combo-box">
+                        <input tuiTextfield [placeholder]="'Selezionare il calciatore per il trasferimento..'"
+                            (input)="onSearchChange(extractValueFromEvent($event))">
+                        <p style="margin-top: 18px;" [hidden]="controlName.value">Selezionare il calciatore per il
+                            trasferimento..</p>
+                        <tui-data-list-wrapper *tuiDataList [items]="items" [itemContent]="selectedPlayers">
+                        </tui-data-list-wrapper>
+                    </tui-combo-box>
+                    <ng-template #selectedPlayers let-data>
+                        <div class="template">
+                            <tui-avatar size="m" [avatarUrl]="data.photo" [text]="data.toString()">
+                            </tui-avatar>
+                            <span class="player-name-motm">{{ data.name }}</span>
+                            <tui-badge [value]="data.position"></tui-badge>
+                        </div>
+                    </ng-template>
+                </ng-container>
+
+                <br>
+            </form>
+
+        </div>
+
+    </div>
+</div>
