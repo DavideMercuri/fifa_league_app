@@ -1,5 +1,5 @@
 import { NgDompurifySanitizer } from "@tinkoff/ng-dompurify";
-import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButtonModule, TuiDataListModule, TuiTextfieldControllerModule, TuiLabelModule, TuiSvgModule, TuiLoaderModule, TuiFormatNumberPipeModule, TuiTooltipModule, TuiExpandModule, TuiDropdownModule } from "@taiga-ui/core";
+import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButtonModule, TuiDataListModule, TuiTextfieldControllerModule, TuiLabelModule, TuiSvgModule, TuiLoaderModule, TuiFormatNumberPipeModule, TuiTooltipModule, TuiExpandModule, TuiDropdownModule, TuiHintModule } from "@taiga-ui/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -81,6 +81,7 @@ import { TradePlayersComponent } from './views/team-detail/trade-players/trade-p
     TuiAppBarModule,
     TuiCalendarModule,
     TuiLoaderModule,
+    TuiHintModule,
     TuiTableFiltersModule,
     TuiSvgModule,
     TuiTabsModule,

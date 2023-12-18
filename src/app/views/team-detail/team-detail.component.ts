@@ -1,13 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { AfterViewInit, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { faUser, faFutbol, faMedal, faPersonRunning, faShieldHalved, faPenToSquare, faTrashCan, faIdCard, faMagnifyingGlass, faStar, faSackDollar, faCommentDollar, faTrophy, faFileInvoiceDollar, faGear, faAward } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faShieldHalved, faPenToSquare, faTrashCan, faIdCard, faStar, faSackDollar, faCommentDollar, faTrophy, faFileInvoiceDollar, faGear, faAward } from '@fortawesome/free-solid-svg-icons';
 import { TuiComparator } from '@taiga-ui/addon-table';
 import { tuiIsFalsy, tuiIsPresent, TUI_DEFAULT_MATCHER, tuiDefaultSort } from '@taiga-ui/cdk';
 import { TuiDialogContext, TuiDialogService, TuiDialogSize } from '@taiga-ui/core';
 import { TUI_ARROW } from '@taiga-ui/kit';
-import { BehaviorSubject, Observable, Subscription, combineLatest, debounceTime, filter, map, share, startWith, switchMap, timer } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, debounceTime, filter, map, share, startWith, switchMap, timer } from 'rxjs';
 import { DataService } from 'src/app/data.service';
 import { Player } from 'src/interfaces/player.interface';
 import { Team } from 'src/interfaces/team.interfaces';
@@ -27,6 +27,7 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
   players: Array<Player> = [];
 
   selectedPlayer!: Player;
+  selectedTeamPlayers!: Player;
   selectedPlayerId: number | null = null;
 
   faUser = faUser;
@@ -47,7 +48,7 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
 
     this.loadDataBasedOnId(this.teamId);
     if (this.team)
-      this.FilterPlayers('', '', this.team.team_name);    
+      this.FilterPlayers('', '', this.team.team_name);
 
   }
 
@@ -59,10 +60,7 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
       this.loadDataBasedOnId(this.teamId);
       setTimeout(() => {
         this.FilterPlayers('', '', this.team.team_name);
-        console.log(this.players);
       }, 1000)
-
-
     });
   }
 
@@ -175,7 +173,7 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
 
     this.http.get('http://localhost:3000/players/players_list/filters', { params: httpParams }).subscribe({
       next: (res: any) => {
-        this.players = res;        
+        this.players = res;
         this.dataService.setPlayersList(res);
         this.page$.next(0);
       }
@@ -238,7 +236,7 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
     }).subscribe();
   }
 
-  
+
 }
 
 function sortBy(key: 'name' | 'overall' | 'position' | 'salary' | 'player_value', direction: -1 | 1): TuiComparator<Player> {

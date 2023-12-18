@@ -28,9 +28,8 @@ const query = util.promisify(connection.query).bind(connection);
 
 // Middleware
 app.use(cors());
-app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Login
 app.post('/login', async (req, res) => {
@@ -727,6 +726,51 @@ app.put('/players/team_detail/update-team-trophy', async (req, res) => {
     }
   });
 })
+
+app.post('/transfer', async (req, res) => {
+  const { sellingTeam, buyingTeam, transferAmount, mainPlayer, additionalPlayers, additionalBuyerPlayers } = req.body;
+
+  try {
+    // Avvia una transazione
+    await query('START TRANSACTION');
+
+    // Aggiorna la squadra che vende
+    if (sellingTeam !== 'Svincolati') {
+      await query('UPDATE teams SET money = money + ? WHERE team_name = ?', [transferAmount, sellingTeam]);
+    }
+
+    // Aggiorna la squadra che compra
+    if (buyingTeam !== 'Svincolati') {
+      await query('UPDATE teams SET money = money - ? WHERE team_name = ?', [transferAmount, buyingTeam]);
+    }
+
+    // Cambia la squadra del calciatore principale
+    await query('UPDATE players_list SET team = ? WHERE id = ?', [buyingTeam, mainPlayer.id]);
+
+    // Cambia la squadra degli altri calciatori coinvolti nel trasferimento
+    if (additionalPlayers && additionalPlayers.length > 0) {
+      for (const player of additionalPlayers) {
+        await query('UPDATE players_list SET team = ? WHERE id = ?', [buyingTeam, player.id]);
+      }
+    }
+
+    // Cambia la squadra dei calciatori comprati (se presenti)
+    if (additionalBuyerPlayers && additionalBuyerPlayers.length > 0) {
+      for (const player of additionalBuyerPlayers) {
+        await query('UPDATE players_list SET team = ? WHERE id = ?', [sellingTeam, player.id]);
+      }
+    }
+
+    // Commit della transazione
+    await query('COMMIT');
+
+    res.send({ status: 'success', message: 'Transfer completed successfully.' });
+  } catch (error) {
+    // Rollback nel caso di errori
+    await query('ROLLBACK');
+    res.status(500).send({ status: 'error', message: 'An error occurred during the transfer.', error });
+  }
+});
 
 // Start the server
 app.listen(3000, () => {

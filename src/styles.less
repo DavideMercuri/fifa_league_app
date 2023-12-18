@@ -111,6 +111,15 @@ button:hover .submenu {
   cursor: default;
 }
 
+.enable-click {
+  cursor: pointer;
+}
+
+.disabled-element {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
 div.submenu-square a {
   color: #333;
   padding: 8px 12px;
@@ -214,6 +223,15 @@ fieldset.t-item[_ngcontent-vmu-c17] {
   font-size: 12px;
 }
 
+.player-name-trade-list{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+  width: 180px;
+  font-size: 14px;
+}
+
 #tuitui .t-tag {
   background-color: var(--tui-support-04);
   padding-left: 25px;
@@ -269,6 +287,7 @@ tui-combo-box .t-input {
 tui-combo-box.transfer-combo-box .t-input {
   top: -5px !important;
   left: 2px;
+
 }
 
 #resume-input {
@@ -679,22 +698,76 @@ tui-file.file-custom-img div.t-size {
   --tui-avatar-color: #fff;
 }
 
-.multiple-mode-toggle {
-  text-align: end;
+.add-players-to-trade-toggle{
+  float: left;
+  margin-top: 30px;
+  margin-right: 20px;
+  font-size: 12px;
 }
 
-.rounded-add-button {
-  background-color: var(--tui-link);
-  color: #fff;
-  border-radius: 50%;
-  display: inline-block;
-  width: 25px;
-  height: 25px;
-  text-align: center;
-  line-height: 25px;
-  margin-left: 10px;
+.combo-box-container {
+  display: flex;
+  align-items: flex-start;
 }
 
-.rounded-add-button:hover {
-  background-color: var(--tui-link-hover);
+.single-trade-info-container {
+  display: flex;
+  align-items: flex-start; /* Allinea gli elementi in alto */
 }
+
+.image-single-trade {
+  width: 100px;
+  height: 100px;
+  margin-right: 10px;
+  margin-left: -2px;
+  margin-top: 9px;
+}
+
+.name-single-trade {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 15px;
+  /* Assicurati che il nome non spinga la nuova scritta troppo in basso */
+}
+
+.text-single-trade-container {
+  display: flex;
+  flex-direction: column; /* Organizza i testi in colonna */
+  justify-content: space-between; /* Distribuisce lo spazio verticalmente */
+  height: 65px; /* Altezza fissa per allinearsi con l'immagine */
+}
+
+.additional-text {
+  margin-top: 77px;
+  font-size: 16px;
+  position: absolute;
+}
+
+.set-trade-vaue-to-zero{
+  position: absolute;
+  right: -3px;
+  font-size: 23px;
+  margin-top: 140px;
+  padding-left: 0 !important;
+}
+
+.elevated-player-container {
+  background-color: white;
+  border-radius: 18px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 2px;
+  padding-bottom: 0px !important;
+  max-width: 300px;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  font-size: 18px;
+  box-sizing: border-box;
+  margin-top: 20px;
+}
+
+.input-trade-single-player{
+  max-width: 300px;
+  margin-top: 20px;
+}
+
+
