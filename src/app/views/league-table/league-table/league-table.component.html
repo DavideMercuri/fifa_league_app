@@ -1,44 +1,52 @@
-<table tuiTable class="table" [columns]="columns" style="margin: 30px; width: 95%;">
-    <thead>
-        <tr tuiThGroup>
-            <th class="txt-center-align v-align-middle w-100" tuiTh>Posizione</th>
-            <th class="txt-center-align v-align-middle" style="width: fit-content;" tuiTh>Squadra</th>
-            <th class="txt-center-align v-align-middle" tuiTh>Giocate</th>
-            <th class="txt-center-align v-align-middle" tuiTh>Vittorie</th>
-            <th class="txt-center-align v-align-middle" tuiTh>Pareggi</th>
-            <th class="txt-center-align v-align-middle" tuiTh>Sconfitte</th>
-            <th class="txt-center-align v-align-middle" tuiTh>Diff. Reti</th>
-            <th class="txt-center-align v-align-middle font-b" tuiTh>Punti</th>
-        </tr>
-    </thead>
-    <tbody tuiTbody [data]="leagueTable">
-        <tr *ngFor="let item of leagueTable" tuiTr>
-            <td *tuiCell="'position'" class="txt-center-align v-align-middle ftsz-15" tuiTd>
-                {{ item.position }}
-            </td>
-            <td *tuiCell="'team'" class="v-align-middle ftsz-15" tuiTd>
-                <span><img style="width: 30px; height: 30px; margin-right: 10px; margin-left: 10px;" src="{{item.team_logo}}">
-                    {{ item.team }}
-                </span>
-            </td>
-            <td *tuiCell="'games_played'" class="txt-center-align v-align-middle ftsz-15" tuiTd>
-                {{ item.games_played }}
-            </td>
-            <td *tuiCell="'wins'" class="txt-center-align v-align-middle ftsz-15" tuiTd>
-                {{ item.wins }}
-            </td>
-            <td *tuiCell="'draws'" class="txt-center-align v-align-middle ftsz-15" tuiTd>
-                {{ item.draws }}
-            </td>
-            <td *tuiCell="'losses'" class="txt-center-align v-align-middle ftsz-15" tuiTd>
-                {{ item.losses }}
-            </td>
-            <td *tuiCell="'goal_difference'" class="txt-center-align v-align-middle ftsz-15" tuiTd>
-                {{ item.goal_difference }}
-            </td>
-            <td *tuiCell="'points'" class="txt-center-align v-align-middle ftsz-15-b" tuiTd>
-                {{ item.points }}
-            </td>
-        </tr>
-    </tbody>
-</table>
+<div>
+    <div *ngIf="false" style="margin-left: 5px; margin-top: 20px; width: 95%; text-align: right; font-size: 22px;">
+        <a class="enable-click" (click)="startNewSeason(leagueTable)"><fa-icon [icon]="faFolderPlus"></fa-icon></a>
+    </div>
+
+    <table tuiTable class="table" [columns]="columns" style="margin: 30px; margin-top: 30px; width: 95%;">
+        <thead>
+            <tr tuiThGroup>
+                <th class="txt-center-align v-align-middle w-100" tuiTh>Posizione</th>
+                <th class="txt-center-align v-align-middle" style="width: fit-content;" tuiTh>Squadra</th>
+                <th class="txt-center-align v-align-middle" tuiTh>Giocate</th>
+                <th class="txt-center-align v-align-middle" tuiTh>Vittorie</th>
+                <th class="txt-center-align v-align-middle" tuiTh>Pareggi</th>
+                <th class="txt-center-align v-align-middle" tuiTh>Sconfitte</th>
+                <th class="txt-center-align v-align-middle" tuiTh>Diff. Reti</th>
+                <th class="txt-center-align v-align-middle font-b" tuiTh>Punti</th>
+            </tr>
+        </thead>
+        <tbody tuiTbody [data]="leagueTable">
+            <tr *ngFor="let item of leagueTable" tuiTr>
+                <td *tuiCell="'position'" class="txt-center-align v-align-middle ftsz-15" tuiTd>
+                    {{ item.position }}
+                </td>
+                <td *tuiCell="'team'" class="v-align-middle ftsz-15" tuiTd>
+                    <span><img style="width: 30px; height: 30px; margin-right: 10px; margin-left: 10px;" src="{{item.team_logo}}">
+                        {{ item.team }}
+                    </span>
+                </td>
+                <td *tuiCell="'games_played'" class="txt-center-align v-align-middle ftsz-15" tuiTd>
+                    {{ item.games_played }}
+                </td>
+                <td *tuiCell="'wins'" class="txt-center-align v-align-middle ftsz-15" tuiTd>
+                    {{ item.wins }}
+                </td>
+                <td *tuiCell="'draws'" class="txt-center-align v-align-middle ftsz-15" tuiTd>
+                    {{ item.draws }}
+                </td>
+                <td *tuiCell="'losses'" class="txt-center-align v-align-middle ftsz-15" tuiTd>
+                    {{ item.losses }}
+                </td>
+                <td *tuiCell="'goal_difference'" class="txt-center-align v-align-middle ftsz-15" tuiTd [ngClass]="goalDifferenceStyle(item.goal_difference)">
+                    {{ item.goal_difference > 0 ? '+'+item.goal_difference: item.goal_difference }}
+                </td>
+                <td *tuiCell="'points'" class="txt-center-align v-align-middle ftsz-15-b" tuiTd>
+                    {{ item.points }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
+

@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { faFolderPlus } from '@fortawesome/free-solid-svg-icons';
 import { DataService } from 'src/app/data.service';
 
 @Component({
@@ -10,6 +11,8 @@ import { DataService } from 'src/app/data.service';
 export class LeagueTableComponent implements OnInit {
 
   constructor(private http: HttpClient) { }
+
+  faFolderPlus = faFolderPlus;
 
   ngOnInit(): void {
     this.GetLeagueTable();
@@ -22,9 +25,27 @@ export class LeagueTableComponent implements OnInit {
   GetLeagueTable() {
     this.http.get('http://localhost:3000/players/league_table').subscribe({
       next: (res) => {
-        this.leagueTable = res;        
+        this.leagueTable = res;
       }
     });
+  }
+
+  goalDifferenceStyle(gd: any): string {
+
+    if (gd > 0) {
+      return 'positive-gd-status';
+    } else if (gd == 0) {
+      return 'neutral-gd-status';
+    } else if (gd < 0) {
+      return 'negative-gd-status';
+    }else{
+      return '';
+    }
+
+  }
+
+  startNewSeason(data: Array<any>){
+    
   }
 
 }
