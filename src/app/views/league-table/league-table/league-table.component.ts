@@ -45,7 +45,13 @@ export class LeagueTableComponent implements OnInit {
   }
 
   startNewSeason(data: Array<any>){
-    
+    this.http.put('http://localhost:3000/reset-league', undefined).subscribe({
+      error: (err: any) => {
+      },
+      complete: () => {
+        console.log('Reset Completato');
+      }
+    })
   }
 
 }
