@@ -10,6 +10,7 @@ export class DataService {
   wins: any; 
   draws: any;
   losses: any;
+  goalDiff: any;
 
   constructor() { }
 
@@ -45,4 +46,11 @@ export class DataService {
     this.losses = losses;
   }
   
+  setgoalDiff(goalDiff: any): void{
+    this.goalDiff = goalDiff;
+  }
+
+  getgoalDiff(): any{
+    return this.goalDiff;
+  }
 }

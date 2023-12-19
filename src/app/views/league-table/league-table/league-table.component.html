@@ -7,6 +7,7 @@
             <th class="txt-center-align v-align-middle" tuiTh>Vittorie</th>
             <th class="txt-center-align v-align-middle" tuiTh>Pareggi</th>
             <th class="txt-center-align v-align-middle" tuiTh>Sconfitte</th>
+            <th class="txt-center-align v-align-middle" tuiTh>Diff. Reti</th>
             <th class="txt-center-align v-align-middle font-b" tuiTh>Punti</th>
         </tr>
     </thead>
@@ -31,6 +32,9 @@
             </td>
             <td *tuiCell="'losses'" class="txt-center-align v-align-middle ftsz-15" tuiTd>
                 {{ item.losses }}
+            </td>
+            <td *tuiCell="'goal_difference'" class="txt-center-align v-align-middle ftsz-15" tuiTd>
+                {{ item.goal_difference }}
             </td>
             <td *tuiCell="'points'" class="txt-center-align v-align-middle ftsz-15-b" tuiTd>
                 {{ item.points }}

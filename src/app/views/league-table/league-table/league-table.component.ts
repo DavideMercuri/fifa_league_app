@@ -17,7 +17,7 @@ export class LeagueTableComponent implements OnInit {
 
   leagueTable: any = [];
 
-  columns = ['position', 'team', 'games_played', 'wins', 'draws', 'losses', 'points'];
+  columns = ['position', 'team', 'games_played', 'wins', 'draws', 'losses', 'goal_difference', 'points'];
 
   GetLeagueTable() {
     this.http.get('http://localhost:3000/players/league_table').subscribe({

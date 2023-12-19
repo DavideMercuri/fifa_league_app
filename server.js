@@ -19,7 +19,7 @@ const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'password',
-  database: 'players'
+  database: 'players_test'
 });
 connection.connect();
 
@@ -54,7 +54,12 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// API endpoint to retrieve fixtures data from the database
+// Un endpoint protetto come esempio
+app.get('/players/protected', authMiddleware, (req, res) => {
+  res.json({ message: 'Benvenuto nella zona protetta!' });
+});
+
+// API endpoint to retrieve  all fixtures data from the database
 app.get('/players/fixtures', (req, res) => {
 
   const query = 'SELECT * FROM fixtures';
@@ -65,11 +70,6 @@ app.get('/players/fixtures', (req, res) => {
       res.status(200).send(results);
     }
   });
-});
-
-// Un endpoint protetto come esempio
-app.get('/players/protected', authMiddleware, (req, res) => {
-  res.json({ message: 'Benvenuto nella zona protetta!' });
 });
 
 // API endpoint to retrieve single match info from the database
@@ -87,7 +87,6 @@ app.get('/players/fixture', (req, res) => {
 
 // Promisifica la query per poterla usare con async/await
 const queryAsync = util.promisify(connection.query).bind(connection);
-
 
 app.put('/players/fixture/save-match', async (req, res) => {
   try {
@@ -163,7 +162,8 @@ app.put('/players/fixture/save-match', async (req, res) => {
                   FROM fixtures AS f1
                   JOIN fixtures AS f2 ON (
                       (f2.home_team = ? OR f2.away_team = ?) AND 
-                      f2.matchday > f1.matchday
+                      f2.matchday >= f1.matchday AND
+                      f2.played = 'no'
                   )
                   WHERE f1.id_game = ?
                   ORDER BY f2.matchday ASC
@@ -182,6 +182,50 @@ app.put('/players/fixture/save-match', async (req, res) => {
         }
       }
     };
+
+    const yellowCardPlayers = yellow_card.split(','); // Array degli ID dei giocatori che hanno ricevuto un cartellino giallo
+
+    for (let playerId of yellowCardPlayers) {
+      await updatePlayer('yellow_card', playerId, 1); // Aggiorna i cartellini gialli
+
+      // Controlla il numero totale di cartellini gialli per il giocatore
+      const totalYellowCardsQuery = `SELECT yellow_card FROM players_list WHERE id = ?`;
+      const totalYellowCardsResult = await queryAsync(totalYellowCardsQuery, [playerId]);
+
+      if (totalYellowCardsResult.length > 0) {
+        const totalYellowCards = totalYellowCardsResult[0].yellow_card;
+
+        // Se il giocatore raggiunge un multiplo di 3, procedi con la "notation_warned"
+        if (totalYellowCards % 3 === 0 && totalYellowCards !== 0) {
+          const teamOfPlayerQuery = `SELECT team FROM players_list WHERE id = ?`;
+          const playerTeamResult = await queryAsync(teamOfPlayerQuery, [playerId]);
+
+          if (playerTeamResult.length) {
+            const playerTeam = playerTeamResult[0].team;
+
+            // Trova la prossima partita non giocata della squadra del giocatore
+            const nextMatchQuery = `
+              SELECT id_game 
+              FROM fixtures 
+              WHERE (home_team = ? OR away_team = ?) AND 
+                    played = 'no' 
+              ORDER BY matchday ASC 
+              LIMIT 1`;
+            const nextMatchResult = await queryAsync(nextMatchQuery, [playerTeam, playerTeam]);
+
+            // Aggiungi la "notation_warned" per la partita trovata
+            if (nextMatchResult.length) {
+              const nextMatchId = nextMatchResult[0].id_game;
+              const updateMatchForWarning = `
+                UPDATE fixtures 
+                SET notation_warned = CONCAT(IFNULL(notation_warned,''), ?, ',') 
+                WHERE id_game = ?`;
+              await queryAsync(updateMatchForWarning, [playerId, nextMatchId]);
+            }
+          }
+        }
+      }
+    }
 
     await processNotations('notation_expelled', red_card);
     await processNotations('notation_injured', injured);
@@ -299,7 +343,6 @@ function savePlayerData(playerData, imageFile) {
   });
 }
 
-
 app.put('/players/edit-player/:id', upload.single('photo'), (req, res) => {
   const playerId = req.params.id;
   const playerData = req.body;
@@ -309,7 +352,6 @@ app.put('/players/edit-player/:id', upload.single('photo'), (req, res) => {
     .then(() => res.status(200).json({ message: 'Player updated successfully' })) // Risposta JSON
     .catch(error => res.status(500).json({ message: 'Error updating player: ' + error.message })); // Risposta JSON in caso di errore
 });
-
 
 // Funzione per eseguire la query di aggiornamento nel database
 function updatePlayerData(playerId, playerData, imageFile) {
@@ -338,8 +380,6 @@ function updatePlayerData(playerId, playerData, imageFile) {
     });
   });
 }
-
-
 
 // API endpoint to retrieve fixtures data from the database
 app.get('/players/roles', (req, res) => {
@@ -374,13 +414,13 @@ app.put('/players/team-detail/update-value-salary', async (req, res) => {
   FROM players_list GROUP BY team) p ON t.team_name = p.team 
   SET t.salary = p.total_salary, t.club_value = total_player_value, t.players_number = total_players_number`;
 
-    connection.query(query, (error, results) => {
-      if (error) {
-        res.status(500).send(error);
-      } else {
-        res.status(200).send(results);
-      }
-    });
+  connection.query(query, (error, results) => {
+    if (error) {
+      res.status(500).send(error);
+    } else {
+      res.status(200).send(results);
+    }
+  });
 })
 
 // API endpoint to retrieve fixtures data from the database
@@ -580,80 +620,138 @@ app.get('/players/getDraws', (req, res) => {
   });
 });
 
+app.get('/players/getGoalDifference', (req, res) => {
+  const query = `SELECT 
+  teams.team,
+  COALESCE(goals_for.total_goals_for, 0) - COALESCE(goals_against.total_goals_against, 0) AS goal_difference
+FROM (
+  SELECT home_team AS team FROM fixtures
+  UNION
+  SELECT away_team AS team FROM fixtures
+) AS teams
+LEFT JOIN (
+  SELECT 
+    team,
+    SUM(home_goals_for) AS total_goals_for
+  FROM (
+    SELECT 
+      home_team AS team,
+      SUM(ht_goals) AS home_goals_for
+    FROM fixtures
+    WHERE played = 'yes'
+    GROUP BY home_team
+    UNION ALL
+    SELECT 
+      away_team AS team,
+      SUM(aw_goals) AS home_goals_for
+    FROM fixtures
+    WHERE played = 'yes'
+    GROUP BY away_team
+  ) AS SubqueryGoalsFor
+  GROUP BY team
+) AS goals_for ON teams.team = goals_for.team
+LEFT JOIN (
+  SELECT 
+    team,
+    SUM(away_goals_against) AS total_goals_against
+  FROM (
+    SELECT 
+      home_team AS team,
+      SUM(aw_goals) AS away_goals_against
+    FROM fixtures
+    WHERE played = 'yes'
+    GROUP BY home_team
+    UNION ALL
+    SELECT 
+      away_team AS team,
+      SUM(ht_goals) AS away_goals_against
+    FROM fixtures
+    WHERE played = 'yes'
+    GROUP BY away_team
+  ) AS SubqueryGoalsAgainst
+  GROUP BY team
+) AS goals_against ON teams.team = goals_against.team;
+`;
+
+  connection.query(query, (error, results) => {
+    if (error) throw error;
+    res.send(results);
+  });
+});
+
 // API endpoint to retrieve fixtures data from the database
 app.get('/players/league_table', (req, res) => {
 
-  const query = `
-    WITH Teams AS (
-      SELECT home_team AS team FROM fixtures
-      UNION
-      SELECT away_team AS team FROM fixtures
+  const query = `WITH Teams AS (
+    SELECT home_team AS team FROM fixtures
+    UNION
+    SELECT away_team AS team FROM fixtures
   ),
-
+  
   Victories AS (
-      SELECT team,
-            SUM(home_wins + away_wins) AS wins
-      FROM (
-          SELECT home_team AS team,
-                COUNT(*) AS home_wins,
-                0 AS away_wins
-          FROM fixtures
-          WHERE ht_goals > aw_goals AND played = 'yes'
-          GROUP BY home_team
-          UNION ALL
-          SELECT away_team AS team,
-                0 AS home_wins,
-                COUNT(*) AS away_wins
-          FROM fixtures
-          WHERE aw_goals > ht_goals AND played = 'yes'
-          GROUP BY away_team
-      ) AS Subquery
-      GROUP BY team
+    SELECT team,
+          SUM(home_wins + away_wins) AS wins
+    FROM (
+        SELECT home_team AS team,
+              COUNT(*) AS home_wins,
+              0 AS away_wins
+        FROM fixtures
+        WHERE ht_goals > aw_goals AND played = 'yes'
+        GROUP BY home_team
+        UNION ALL
+        SELECT away_team AS team,
+              0 AS home_wins,
+              COUNT(*) AS away_wins
+        FROM fixtures
+        WHERE aw_goals > ht_goals AND played = 'yes'
+        GROUP BY away_team
+    ) AS Subquery
+    GROUP BY team
   ),
-
+  
   Losses AS (
-      SELECT team,
-            SUM(home_losses + away_losses) AS losses
-      FROM (
-          SELECT home_team AS team,
-                COUNT(*) AS home_losses,
-                0 AS away_losses
-          FROM fixtures
-          WHERE ht_goals < aw_goals AND played = 'yes'
-          GROUP BY home_team
-          UNION ALL
-          SELECT away_team AS team,
-                0 AS home_losses,
-                COUNT(*) AS away_losses
-          FROM fixtures
-          WHERE aw_goals < ht_goals AND played = 'yes'
-          GROUP BY away_team
-      ) AS Subquery
-      GROUP BY team
+    SELECT team,
+          SUM(home_losses + away_losses) AS losses
+    FROM (
+        SELECT home_team AS team,
+              COUNT(*) AS home_losses,
+              0 AS away_losses
+        FROM fixtures
+        WHERE ht_goals < aw_goals AND played = 'yes'
+        GROUP BY home_team
+        UNION ALL
+        SELECT away_team AS team,
+              0 AS home_losses,
+              COUNT(*) AS away_losses
+        FROM fixtures
+        WHERE aw_goals < ht_goals AND played = 'yes'
+        GROUP BY away_team
+    ) AS Subquery
+    GROUP BY team
   ),
-
+  
   Draws AS (
-      SELECT team,
-            SUM(home_draws + away_draws) AS draws
-      FROM (
-          SELECT home_team AS team,
-                COUNT(*) AS home_draws,
-                0 AS away_draws
-          FROM fixtures
-          WHERE ht_goals = aw_goals AND played = 'yes'
-          GROUP BY home_team
-          UNION ALL
-          SELECT away_team AS team,
-                0 AS home_draws,
-                COUNT(*) AS away_draws
-          FROM fixtures
-          WHERE ht_goals = aw_goals AND played = 'yes'
-          GROUP BY away_team
-      ) AS Subquery
-      GROUP BY team
+    SELECT team,
+          SUM(home_draws + away_draws) AS draws
+    FROM (
+        SELECT home_team AS team,
+              COUNT(*) AS home_draws,
+              0 AS away_draws
+        FROM fixtures
+        WHERE ht_goals = aw_goals AND played = 'yes'
+        GROUP BY home_team
+        UNION ALL
+        SELECT away_team AS team,
+              0 AS home_draws,
+              COUNT(*) AS away_draws
+        FROM fixtures
+        WHERE ht_goals = aw_goals AND played = 'yes'
+        GROUP BY away_team
+    ) AS Subquery
+    GROUP BY team
   ),
-
-GamesPlayed AS (
+  
+  GamesPlayed AS (
     SELECT team, COUNT(*) AS games_played
     FROM (
         SELECT home_team AS team
@@ -665,25 +763,62 @@ GamesPlayed AS (
         WHERE played = 'yes'
     ) AS Subquery
     GROUP BY team
-)
-
-      SELECT ROW_NUMBER() OVER (ORDER BY L.points DESC) AS position,
-            T.team,
-            L.id,
-            L.team_logo,
-            L.points,
-            COALESCE(V.wins, 0) AS wins,
-            COALESCE(Ls.losses, 0) AS losses,
-            COALESCE(D.draws, 0) AS draws,
-            COALESCE(G.games_played, 0) AS games_played
-      FROM Teams T
-      JOIN league_table L ON T.team = L.team
-      LEFT JOIN Victories V ON T.team = V.team
-      LEFT JOIN Losses Ls ON T.team = Ls.team
-      LEFT JOIN Draws D ON T.team = D.team
-      LEFT JOIN GamesPlayed G ON T.team = G.team
-      ORDER BY L.points DESC;
-      `;
+  ),
+  
+  GoalsScored AS (
+    SELECT team, SUM(goals) AS goals_scored
+    FROM (
+        SELECT home_team AS team, SUM(ht_goals) AS goals
+        FROM fixtures
+        WHERE played = 'yes'
+        GROUP BY home_team
+        UNION ALL
+        SELECT away_team AS team, SUM(aw_goals) AS goals
+        FROM fixtures
+        WHERE played = 'yes'
+        GROUP BY away_team
+    ) AS Subquery
+    GROUP BY team
+  ),
+  
+  GoalsConceded AS (
+    SELECT team, SUM(goals) AS goals_conceded
+    FROM (
+        SELECT home_team AS team, SUM(aw_goals) AS goals
+        FROM fixtures
+        WHERE played = 'yes'
+        GROUP BY home_team
+        UNION ALL
+        SELECT away_team AS team, SUM(ht_goals) AS goals
+        FROM fixtures
+        WHERE played = 'yes'
+        GROUP BY away_team
+    ) AS Subquery
+    GROUP BY team
+  )
+  
+  SELECT ROW_NUMBER() OVER (ORDER BY L.points DESC, (COALESCE(G.goals_scored, 0) - COALESCE(GC.goals_conceded, 0)) DESC) AS position,
+        T.team,
+        L.id,
+        L.team_logo,
+        L.points,
+        COALESCE(V.wins, 0) AS wins,
+        COALESCE(Ls.losses, 0) AS losses,
+        COALESCE(D.draws, 0) AS draws,
+        COALESCE(G.goals_scored, 0) AS goals_scored,
+        COALESCE(GC.goals_conceded, 0) AS goals_conceded,
+        COALESCE(G.goals_scored, 0) - COALESCE(GC.goals_conceded, 0) AS goal_difference,
+        COALESCE(GP.games_played, 0) AS games_played
+  FROM Teams T
+  JOIN league_table L ON T.team = L.team
+  LEFT JOIN Victories V ON T.team = V.team
+  LEFT JOIN Losses Ls ON T.team = Ls.team
+  LEFT JOIN Draws D ON T.team = D.team
+  LEFT JOIN GoalsScored G ON T.team = G.team
+  LEFT JOIN GoalsConceded GC ON T.team = GC.team
+  LEFT JOIN GamesPlayed GP ON T.team = GP.team
+  ORDER BY L.points DESC, (COALESCE(G.goals_scored, 0) - COALESCE(GC.goals_conceded, 0)) DESC;
+  `;
   connection.query(query, (error, results) => {
     if (error) {
       res.status(500).send(error);
@@ -769,6 +904,31 @@ app.post('/transfer', async (req, res) => {
     // Rollback nel caso di errori
     await query('ROLLBACK');
     res.status(500).send({ status: 'error', message: 'An error occurred during the transfer.', error });
+  }
+});
+
+app.put('/reset-league', async (req, res) => {
+
+  try {
+    // Avvia una transazione
+    await query(`START TRANSACTION`);
+
+    // Prima query di aggiornamento
+    await query(`UPDATE fixtures SET ht_goals = 0, aw_goals = 0, scorers = NULL, assists = NULL, yellow_card = NULL, red_card = NULL, injured = NULL, notation_injured = NULL, notation_expelled = NULL, notation_warned = NULL, motm = '', played = 'no'`);
+
+    // Seconda query di aggiornamento
+    await query(`UPDATE league_table SET points = 0`);
+
+    await query(`UPDATE players_list SET goals = 0, assist = 0, motm = 0, yellow_card = 0, red_card = 0, injured = 0`);
+
+    // Commit della transazione
+    await query(`COMMIT`);
+
+    res.send({ status: 'success', message: 'Data reset completed.' });
+  } catch (error) {
+    // Rollback nel caso di errori
+    await query(`ROLLBACK`);
+    res.status(500).send({ status: 'error', message: 'An error occurred during the update.', error });
   }
 });
 
