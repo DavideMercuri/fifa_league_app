@@ -3,7 +3,7 @@ import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButto
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { TuiAccordionModule, TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiCheckboxBlockModule, TuiCheckboxLabeledModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiElasticContainerModule, TuiInputFilesModule, TuiInputModule, TuiInputNumberModule, TuiInputPasswordModule, TuiIslandModule, TuiMarkerIconModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule, TuiToggleModule } from "@taiga-ui/kit";
+import { TuiAccordionModule, TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiCheckboxBlockModule, TuiCheckboxLabeledModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiElasticContainerModule, TuiInputFilesModule, TuiInputModule, TuiInputNumberModule, TuiInputPasswordModule, TuiIslandModule, TuiLazyLoadingModule, TuiMarkerIconModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule, TuiToggleModule } from "@taiga-ui/kit";
 import { TuiAppBarModule, TuiTabBarModule } from '@taiga-ui/addon-mobile';
 import { TuiCalendarModule } from '@taiga-ui/core';
 import { TuiLetModule } from '@taiga-ui/cdk';
@@ -90,6 +90,7 @@ import { TradePlayersComponent } from './views/team-detail/trade-players/trade-p
     TuiBadgeModule,
     TuiCarouselModule,
     TuiIslandModule,
+    TuiLazyLoadingModule,
     FormsModule,
     ReactiveFormsModule,
     TuiMultiSelectModule,

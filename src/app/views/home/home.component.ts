@@ -292,4 +292,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
       plugins: [ChartDataLabels]
     });
   }
+
+  resetLeague(){
+    this.http.put('http://localhost:3000/reset-league', undefined).subscribe({
+      error: (err: any) => {
+      },
+      complete: () => {
+        console.log('Reset Completato');
+      }
+    })
+  }
 }

@@ -17,7 +17,7 @@
                         </tr>
                         <tr style="position: relative; width: 100%;">
                             <td class="match-status-info" colspan="7">
-                                <fa-icon *ngIf="fixture.notation_expelled && fixture.played == 'no' || fixture.notation_injured && fixture.played == 'no' " class="exclamation-info-home" [icon]="faCircleExclamation"></fa-icon>    
+                                <fa-icon *ngIf="fixture.notation_expelled && fixture.played == 'no' || fixture.notation_injured && fixture.played == 'no' || fixture.notation_warned && fixture.played == 'no' " class="exclamation-info-home" [icon]="faCircleExclamation"></fa-icon>    
                             </td>
                         </tr>
                     </tbody>

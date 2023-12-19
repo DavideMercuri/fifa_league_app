@@ -13,6 +13,7 @@ export interface Fixture {
   played: string;
   notation_injured: string;
   notation_expelled: string;
+  notation_warned: string;
   matchday: string;
 
 }

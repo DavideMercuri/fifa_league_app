@@ -1,4 +1,4 @@
-import { faBolt, faFutbol, faMedal, faPersonRunning, faPlus, faSquare, faSquarePlus, faSquarePollVertical, faTruckMedical } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faFutbol, faHand, faMedal, faPersonRunning, faPlus, faSquare, faSquarePlus, faSquarePollVertical, faTruckMedical } from '@fortawesome/free-solid-svg-icons';
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, Input, OnInit, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
@@ -61,6 +61,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
   faTruckMedical = faTruckMedical;
   faSquarePlus = faSquarePlus;
   faSquare = faSquare;
+  faHand = faHand;
   faPlus = faPlus;
   activeItemIndex = 0;
   htGoals = '0';
@@ -84,6 +85,10 @@ export class MatchComponent implements OnInit, AfterViewInit {
   awayTeamInjured: Array<PlayerSearch> = [];
   homeTeamExpelled: Array<PlayerSearch> = [];
   awayTeamExpelled: Array<PlayerSearch> = [];
+  homeTeamWarned: Array<PlayerSearch> = [];
+  awayTeamWarned: Array<PlayerSearch> = [];
+
+  isLoading: boolean = true; // set this to true initially
 
   constructor(private http: HttpClient, private cdRef: ChangeDetectorRef, @Inject(TuiAlertService)
   private readonly alerts: TuiAlertService, private fixtures: FixturesComponent) { }
@@ -91,6 +96,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
 
     this.GetPlayers();
+
     // Iscriviti ai cambiamenti delle selezioni attive e chiama `AddCounter` quando cambiano
     this.activeScorers.valueChanges.subscribe(() => {
       this.AddCounter('scorers', this.activeScorers.value);
@@ -112,11 +118,21 @@ export class MatchComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => (this.SetDefaultData()), 0);
 
-    setTimeout(() => (this.generateArrays()), 0);
+    this.GetPlayers();
 
-    setTimeout(() => (this.cdRef.detectChanges()), 0);
+    setTimeout(() => {
+      this.SetDefaultData();
+    }, 500);
+
+    setTimeout(() => {
+      this.generateArrays();
+    }, 500);
+
+    
+    setTimeout(() => {
+      this.cdRef.detectChanges();
+    }, 1000);
 
   }
 
@@ -335,6 +351,11 @@ export class MatchComponent implements OnInit, AfterViewInit {
 
     this.homeTeamExpelled = this.getPlayersFromNotations(this.match.notation_expelled, this.match.home_team);
     this.awayTeamExpelled = this.getPlayersFromNotations(this.match.notation_expelled, this.match.away_team);
+
+    this.homeTeamWarned = this.getPlayersFromNotations(this.match.notation_warned, this.match.home_team);
+    this.awayTeamWarned = this.getPlayersFromNotations(this.match.notation_warned, this.match.away_team);
+
+    this.isLoading = false;
 
   }
 
