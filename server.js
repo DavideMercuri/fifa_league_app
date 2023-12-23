@@ -19,7 +19,7 @@ const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'password',
-  database: 'players'
+  database: 'players_test'
 });
 connection.connect();
 
@@ -439,6 +439,12 @@ app.get('/players/team-detail', (req, res) => {
   }
 
   connection.query(query, (error, results) => {
+
+    const team = results[0];
+    if (team.team_logo) {
+      team.team_logo = 'data:image/webp;base64,' + Buffer.from(team.team_logo).toString('base64');
+    }
+
     if (error) {
       res.status(500).send(error);
     } else {
@@ -931,6 +937,63 @@ app.put('/reset-league', async (req, res) => {
     res.status(500).send({ status: 'error', message: 'An error occurred during the update.', error });
   }
 });
+
+function savePlayerData(playerData, imageFile) {
+  return new Promise((resolve, reject) => {
+    // Estrai il buffer dell'immagine
+    const imageBuffer = imageFile.buffer;
+
+    // Query SQL per inserire i dati
+    const sql = `INSERT INTO players_list (name, position, country, team, goals, assist, motm, photo, yellow_card, red_card, injured, salary, overall, player_value) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+    const values = [playerData.name, playerData.position, playerData.country, playerData.team, playerData.goals, playerData.assist, playerData.motm, imageBuffer, playerData.yellow_card, playerData.red_card, playerData.injured, playerData.salary, playerData.overall, playerData.player_value];
+
+    connection.query(sql, values, (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      resolve(results);
+    });
+  });
+}
+
+app.put('/players/edit-team/:id', upload.single('team_logo'), (req, res) => {
+  const team_id = req.params.id;
+  const teamData = req.body;
+  const imageFile = req.file;
+
+  updatePlayerData(team_id, teamData, imageFile)
+    .then(() => res.status(200).json({ message: 'Team updated successfully' })) // Risposta JSON
+    .catch(error => res.status(500).json({ message: 'Error updating player: ' + error.message })); // Risposta JSON in caso di errore
+});
+
+// Funzione per eseguire la query di aggiornamento nel database
+function updatePlayerData(team_id, teamData, imageFile) {
+  return new Promise((resolve, reject) => {
+    let imageBuffer = null;
+    if (imageFile) {
+      imageBuffer = imageFile.buffer;
+    }
+
+    let sql = `UPDATE teams SET team_name = ?, captain = ?, team_main_color = ?, team_secondary_color = ?, team_text_color = ?`;
+    let values = [teamData.team_name, teamData.captain, teamData.team_main_color, teamData.team_secondary_color, teamData.team_text_color];
+
+    if (imageBuffer) {
+      sql += `, team_logo = ?`;
+      values.push(imageBuffer);
+    }
+
+    sql += ` WHERE team_id = ?`;
+    values.push(team_id);
+
+    connection.query(sql, values, (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      resolve(results);
+    });
+  });
+}
 
 // Start the server
 app.listen(3000, () => {

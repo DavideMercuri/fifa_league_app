@@ -21,6 +21,8 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { TuiTagDirectiveDirective } from './views/fixtures/match/tui-tag-directive.directive';
 import { TuiTableFiltersModule, TuiTableModule, TuiTablePaginationModule } from "@taiga-ui/addon-table";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ColorChromeModule } from 'ngx-color/chrome';
+import { ColorTwitterModule } from 'ngx-color/twitter';
 import { PlayersComponent } from './views/players/players/players.component';
 import { of } from "rxjs";
 import { LeagueTableComponent } from './views/league-table/league-table/league-table.component';
@@ -32,6 +34,8 @@ import { SalariesPaymentComponent } from './views/team-detail/salaries-payment/s
 import { InsertPlayerComponent } from './views/players/players/insert-player/insert-player.component';
 import { EditPlayerComponent } from './views/players/players/edit-player/edit-player.component';
 import { TradePlayersComponent } from './views/team-detail/trade-players/trade-players.component';
+import { EditTeamComponent } from './views/team-detail/edit-team/edit-team.component';
+import { ClickOutsideDirective } from './components/navbar/click-outside.directive';
 
 
 @NgModule({
@@ -52,12 +56,16 @@ import { TradePlayersComponent } from './views/team-detail/trade-players/trade-p
     InsertPlayerComponent,
     EditPlayerComponent,
     TradePlayersComponent,
+    EditTeamComponent,
+    ClickOutsideDirective,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     FontAwesomeModule,
+    ColorChromeModule,
+    ColorTwitterModule,
     TuiRootModule,
     TuiDialogModule,
     TuiTableModule,

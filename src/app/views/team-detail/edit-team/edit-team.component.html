@@ -1,0 +1,107 @@
+<div style="height: 280px;">
+
+    <form class="b-form" [formGroup]="teamInfo">
+        <div class="tui-row" style="margin-top: 30px">
+            <div class="tui-col_md-9">
+
+                <div class="tui-row">
+                    <div class="tui-col_md-6">
+                        <tui-input tuiTextfield tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" formControlName="team_name"
+                            class="tui-space_horizontal-1">Nome Team</tui-input>
+                    </div>
+                    <div class="tui-col_md-6">
+                        <tui-combo-box #tuicomboMotm *tuiLet="items$ | async as items" formControlName="captain"
+                            class="captain-box" [tuiTextfieldCleaner]="true" [valueContent]="content" [stringify]="stringify"
+                            (searchChange)="onSearchChange('')" tuiTextfieldSize="m" (focusedChange)="onSearchChange('')">
+                            <input tuiTextfield [placeholder]="'Selezionare il capitano...'"
+                                (input)="onSearchChange(extractValueFromEvent($event))" />Capitano
+                            <tui-data-list-wrapper *tuiDataList [items]="items" [itemContent]="content"></tui-data-list-wrapper>
+                        </tui-combo-box>
+                        <ng-template #content let-data>
+                            <div class="template">
+                                <span>{{ data.name }}</span>
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+        
+                <div class="tui-row" style="margin-left: -5px; justify-content: space-between; margin-top: 30px">
+                    <div class="tui-col_md-4" style="display: inline-flex; margin-top: 20px; justify-content: start;">
+            
+                        <span style="margin-top: inherit; font-size: 13px;">Colore Primario </span>
+                        <!-- Main Color Picker -->
+                        <div appClickOutside (clickOutside)="closePicker('main')" style="width: fit-content;">
+                            <div class="color-picker-trigger" (click)="togglePicker('main')">
+                                <div class="color-display" [style.background]="selectedMainColor"></div>
+                            </div>
+                            <div style="position: absolute; z-index: 5;">
+                                <color-chrome #color [style.display]="hiddenPickerMain ? 'none' : 'block'"
+                                    [color]="selectedMainColor" (onChangeComplete)="changeComplete($event, 'main')"></color-chrome>
+                            </div>
+                        </div>
+            
+                    </div>
+                    <div class="tui-col_md-4" style="display: inline-flex; margin-top: 20px; justify-content: center;">
+            
+                        <span style="margin-top: inherit; font-size: 13px;">Colore Secondario </span>
+                        <!-- Secondary Color Picker -->
+                        <div appClickOutside (clickOutside)="closePicker('secondary')" style="width: fit-content;">
+                            <div class="color-picker-trigger" (click)="togglePicker('secondary')">
+                                <div class="color-display" [style.background]="selectedSecondaryColor"></div>
+                            </div>
+                            <div style="position: absolute; z-index: 5;">
+                                <color-chrome #color [style.display]="hiddenPickerSecondary ? 'none' : 'block'"
+                                    [color]="selectedSecondaryColor"
+                                    (onChangeComplete)="changeComplete($event, 'secondary')"></color-chrome>
+                            </div>
+                        </div>
+            
+                    </div>
+                    <div class="tui-col_md-4" style="display: inline-flex; margin-top: 20px; justify-content: end;">
+            
+                        <span style="margin-top: inherit; font-size: 13px;">Colore Testo </span>
+                        <!-- Text Color Picker -->
+                        <div appClickOutside (clickOutside)="closePicker('text')" style="width: fit-content;">
+                            <div class="color-picker-trigger" (click)="togglePicker('text')">
+                                <div class="color-display" [style.background]="selectedTextColor"></div>
+                            </div>
+                            <div style="position: absolute; z-index: 5;">
+                                <color-twitter #color [style.display]="hiddenPickerText ? 'none' : 'block'" [colors]="['#000', '#fff']"
+                                    [color]="selectedTextColor" (onChangeComplete)="changeComplete($event, 'text')"></color-twitter>
+                            </div>
+                        </div>
+            
+                    </div>
+            
+                </div>
+
+            </div>
+            <div class="tui-col_md-2 edit-team-img-loader">
+
+                <tui-input-files *ngIf="!control.value" accept="image/png, image/gif, image/jpg, image/jpeg, image/webp"
+                [formControl]="control" style="height: 100%;" (reject)="onReject($event)"></tui-input-files>
+
+            <img *ngIf="control.value" [src]="imageSrc" class="edit-team-logo-style">
+
+            <tui-files class="tui-space_top-1 file-info-over" style="width: 100%;">
+                <tui-file class="file-custom-img" *ngIf="loadedFiles$ | async as file" [file]="file" [showDelete]="control.enabled"
+                    (removed)="removeFile()"></tui-file>
+
+                <tui-file *ngIf="rejectedFiles$ | async as file" state="error" [file]="file"
+                    [showDelete]="control.enabled" (removed)="clearRejected()"></tui-file>
+
+                <tui-file *ngIf="loadingFiles$ | async as file" state="loading" [file]="file"
+                    [showDelete]="control.enabled"></tui-file>
+            </tui-files>
+
+            </div>
+
+        </div>
+
+    </form>
+
+    <div style="float: right; margin-top: 80px;">
+        <button tuiButton [size]="'l'" style="width: 145px" class="save-button" (click)="updateTeam(selectedTeam.team_id)">Salva</button>
+    </div>
+
+</div>

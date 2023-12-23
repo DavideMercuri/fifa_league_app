@@ -43,11 +43,17 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
   faGear = faGear;
   faAward = faAward;
 
+  imageSrc: string | ArrayBuffer | null = null;
+
+  bufferedImg: any;
+
+  readonly control = new FormControl();
+
   constructor(private route: ActivatedRoute, private dataService: DataService, private http: HttpClient, @Inject(TuiDialogService) private readonly dialogs: TuiDialogService) { }
   ngAfterViewInit(): void {
 
     this.loadDataBasedOnId(this.teamId);
-    if (this.team)
+    if (this.team)  
       this.FilterPlayers('', '', this.team.team_name);
 
   }
@@ -71,9 +77,49 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
     this.http.get(`http://localhost:3000/players/team-detail`, { params: httpParams }).subscribe({
       next: (res: any) => {
         this.team = res[0];
+        if (res.team_logo) {
+          // Converti la stringa base64 in un Blob
+          const imageBlob = this.base64ToBlob(res.team_logo.split(',')[1], 'image/webp');
+          const imageName = 'team_logo.webp';
+          const imageFile = new File([imageBlob], imageName, { type: 'image/webp' });
+    
+          this.control.setValue(imageFile);
+          this.imageSrc = res.team_logo;
+        }
       }
     });
 
+  }
+
+  base64ToBlob(base64: string, contentType: string): Blob {
+    // Controlla se la stringa base64 contiene l'intestazione Data URL e rimuovila
+    const base64WithoutHeader = base64;
+
+    try {
+      // Decodifica la stringa base64 in una stringa di caratteri binari
+      const byteChars = window.atob(base64WithoutHeader);
+      const byteArrays = [];
+
+      // Dividi la stringa di caratteri binari in pezzi e convertili in byte
+      for (let offset = 0, len = byteChars.length; offset < len; offset += 1024) {
+        const slice = byteChars.slice(offset, offset + 1024);
+        const byteNumbers = new Array(slice.length);
+
+        for (let i = 0; i < slice.length; i++) {
+          byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+      }
+
+      // Crea il Blob dal byte array
+      const blob = new Blob(byteArrays, { type: contentType });
+      return blob;
+    } catch (e) {
+      console.error('Errore nella decodifica della stringa base64: ', e);
+      throw e; // Rilancia l'errore per permettere al chiamante di gestirlo
+    }
   }
 
 

@@ -223,7 +223,7 @@ fieldset.t-item[_ngcontent-vmu-c17] {
   font-size: 12px;
 }
 
-.player-name-trade-list{
+.player-name-trade-list {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -284,10 +284,13 @@ tui-combo-box .t-input {
   top: -10px !important;
 }
 
+tui-combo-box.captain-box .t-input {
+  top: unset !important;
+}
+
 tui-combo-box.transfer-combo-box .t-input {
   top: -5px !important;
   left: 2px;
-
 }
 
 #resume-input {
@@ -459,15 +462,15 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
   padding: 0;
 }
 
-.positive-gd-status{
+.positive-gd-status {
   color: var(--tui-positive);
 }
 
-.neutral-gd-status{
+.neutral-gd-status {
   color: var(--tui-support-12);
 }
 
-.negative-gd-status{
+.negative-gd-status {
   color: var(--tui-negative);
 }
 
@@ -509,10 +512,16 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
   vertical-align: middle;
 }
 
+.team-action-container {
+  margin-top: 20px;
+  font-size: 25px;
+  display: inline-flex;
+  justify-content: end;
+}
+
 .team-logo-small-detail {
   width: 85px;
   height: 85px;
-  margin-left: 10px;
   margin-top: 8px;
 }
 
@@ -710,7 +719,7 @@ tui-file.file-custom-img div.t-size {
   --tui-avatar-color: #fff;
 }
 
-.add-players-to-trade-toggle{
+.add-players-to-trade-toggle {
   float: left;
   margin-top: 30px;
   margin-right: 20px;
@@ -755,7 +764,7 @@ tui-file.file-custom-img div.t-size {
   position: absolute;
 }
 
-.set-trade-vaue-to-zero{
+.set-trade-vaue-to-zero {
   position: absolute;
   right: -3px;
   font-size: 23px;
@@ -770,16 +779,62 @@ tui-file.file-custom-img div.t-size {
   padding: 2px;
   padding-bottom: 0px !important;
   max-width: 300px;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   color: #333;
   font-size: 18px;
   box-sizing: border-box;
   margin-top: 20px;
 }
 
-.input-trade-single-player{
+.input-trade-single-player {
   max-width: 300px;
   margin-top: 20px;
 }
 
+/* Stilizzazione del trigger del color picker */
+.color-picker-trigger {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid #ccc; /* Bordo leggero per il contenitore */
+  padding: 2px; /* Spazio intorno al contenitore */
+  border-radius: 20px; /* Bordo arrotondato per il contenitore */
+  width: fit-content;
+  margin: 5px;
+  margin-top: 20px;
+}
 
+/* Stilizzazione dell'elemento che mostra il colore selezionato */
+.color-display {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #0000003d; /* Bordo leggero per la visualizzazione del colore */
+  border-radius: 20px; /* Bordo arrotondato per la visualizzazione del colore */
+}
+
+.cap-name {
+  margin-top: 10px;
+}
+
+div.twitter-picker {
+  width: 235px !important;
+}
+
+.swatch {
+  border: 1px solid #00000038;
+  border-radius: 5px;
+}
+
+.edit-team-img-loader {
+  width: 25% !important;
+  height: 140px !important;
+  position: relative !important;
+  margin-left: inherit !important;
+}
+
+.edit-team-logo-style {
+  max-width: 60%;
+  height: auto;
+  margin-top: 40px;
+  margin-left: 50px;
+}

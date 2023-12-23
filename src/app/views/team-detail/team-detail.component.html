@@ -1,23 +1,23 @@
-<div *ngIf="team" class="tui-row" style="width: 95%; height: 105px; margin-top: 15px; margin-left: 50px" [style.backgroundColor]="team && team.team_main_color ? team.team_main_color : ''" [style.color]="team && team.team_text_color ? team.team_text_color : ''">
-    <div class="tui-col_md-auto">
+<div *ngIf="team" class="tui-row" style="width: 95%; height: 105px; margin-top: 15px; margin-left: 50px; display: inline-flex;" [style.backgroundColor]="team && team.team_main_color ? team.team_main_color : ''" [style.color]="team && team.team_text_color ? team.team_text_color : ''">
+    <div class="tui-col_md-1">
         <img [src]="team.team_logo" alt="" class="team-logo-small-detail">
     </div>
     <div class="tui-col_md-3" style="margin-top: 15px;">
-        <p class="ftsz-30" style="margin-left: 10px;">{{team.team_name}}</p>
-        <div style="margin-left: 10px; margin-top: 35px; font-weight: bold; font-size: 16px;">Valore Club: <span></span><span style="font-weight: normal;">{{team.club_value | tuiFormatNumber: {thousandSeparator: '.', decimalSeparator: ','} }}</span></div>
+        <p class="ftsz-30" style="margin-top: 5px;">{{team.team_name}}</p>
+        <div style="margin-top: 25px; font-weight: bold; font-size: 16px;">Valore Club: <span></span><span style="font-weight: normal;">{{team.club_value | tuiFormatNumber: {thousandSeparator: '.', decimalSeparator: ','} }}</span></div>
     </div>
-    <div class="tui-col_md-auto" style="margin-top: 10px;">
+    <div class="tui-col_md-2" style="margin-top: 10px;">
         <div style="margin-top: 5px; font-size: 16px; font-weight: bold;">Trofei Vinti</div>
         <div style="margin-top: 10px;">
             <div style="font-size: 14px;"><fa-icon style="margin-right: 10px;" [icon]="faShieldHalved"></fa-icon>Campionati: {{team.league_win}}</div>
             <div style="font-size: 14px; margin-top: 5px;"><fa-icon style="margin-right: 10px;" [icon]="faTrophy"></fa-icon>Coppe: {{team.cup_win}}</div>    
         </div>
     </div>
-    <div class="tui-col_md-auto" style="margin-top: 35px; margin-left: 22%; font-size: 14px;">
+    <div class="tui-col_md-3" style="margin-top: 35px; font-size: 14px;">
         <div style="margin-top: 7px; font-weight: bold;">Saldo Squadra: <span style="font-weight: normal;">{{team.money | tuiFormatNumber: {thousandSeparator: '.', decimalSeparator: ','} }}</span></div>
         <div style="margin-top: 7px; font-weight: bold;">Stipendi: <span style="font-weight: normal;">{{team.salary | tuiFormatNumber: {thousandSeparator: '.', decimalSeparator: ','} }}</span></div>
     </div>
-    <div class="tui-col_md-auto" style="margin-top: 15px; margin-left: 17%; font-size: 20px;">
+    <div class="tui-col_md-3 team-action-container">
         <span>
             <a style="margin-right: 25px; cursor: pointer;" (click)="onClick(salariesPaymentMenu, undefined, 'm')"><fa-icon [style.color]="team.team_text_color" [title]="'Pagamento Stipendi'" [icon]="faFileInvoiceDollar"></fa-icon></a>
         </span>
@@ -25,7 +25,7 @@
             <a style="margin-right: 25px; cursor: pointer;" (click)="onClick(trophyAwardMenu, undefined, 'l')"><fa-icon [style.color]="team.team_text_color" [title]="'Assegna Premio'" [icon]="faAward"></fa-icon></a>
         </span>
         <span>
-            <a><fa-icon [style.color]="team.team_text_color" [title]="'Modifica Squadra'" [icon]="faGear"></fa-icon></a>
+            <a style="margin-right: 25px; cursor: pointer;" (click)="onClick(editTeamMenu, undefined, 'l')"><fa-icon [style.color]="team.team_text_color" [title]="'Modifica Squadra'" [icon]="faGear"></fa-icon></a>
         </span>
     </div>
 </div>
@@ -147,4 +147,8 @@
 
 <ng-template #tradePlayersMenu let-observer>
     <app-trade-players [selectedTeam]="team" [playerId]="selectedPlayerId" [player]="selectedPlayer" [teamPlayers]="selectedTeamPlayers" [observer]="observer"></app-trade-players>
+</ng-template>
+
+<ng-template #editTeamMenu let-observer>
+    <app-edit-team [selectedTeam]="team" [observer]="observer"></app-edit-team>
 </ng-template>
