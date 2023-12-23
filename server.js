@@ -826,10 +826,18 @@ app.get('/players/league_table', (req, res) => {
   ORDER BY L.points DESC, (COALESCE(G.goals_scored, 0) - COALESCE(GC.goals_conceded, 0)) DESC;
   `;
   connection.query(query, (error, results) => {
+
+    const teams = results.map(team => {
+      if (team.team_logo) {
+        team.team_logo = 'data:image/webp;base64,' + Buffer.from(team.team_logo).toString('base64');
+      }
+      return team;
+    });
+
     if (error) {
       res.status(500).send(error);
     } else {
-      res.status(200).send(results);
+      res.status(200).send(teams);
     }
   });
 });
@@ -938,66 +946,89 @@ app.put('/reset-league', async (req, res) => {
   }
 });
 
-function savePlayerData(playerData, imageFile) {
-  return new Promise((resolve, reject) => {
-    // Estrai il buffer dell'immagine
-    const imageBuffer = imageFile.buffer;
-
-    // Query SQL per inserire i dati
-    const sql = `INSERT INTO players_list (name, position, country, team, goals, assist, motm, photo, yellow_card, red_card, injured, salary, overall, player_value) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-    const values = [playerData.name, playerData.position, playerData.country, playerData.team, playerData.goals, playerData.assist, playerData.motm, imageBuffer, playerData.yellow_card, playerData.red_card, playerData.injured, playerData.salary, playerData.overall, playerData.player_value];
-
-    connection.query(sql, values, (error, results) => {
-      if (error) {
-        return reject(error);
-      }
-      resolve(results);
-    });
-  });
-}
-
 app.put('/players/edit-team/:id', upload.single('team_logo'), (req, res) => {
   const team_id = req.params.id;
   const teamData = req.body;
   const imageFile = req.file;
 
-  updatePlayerData(team_id, teamData, imageFile)
+  updateTeamData(team_id, teamData, imageFile, teamData.oldTeamName)
     .then(() => res.status(200).json({ message: 'Team updated successfully' })) // Risposta JSON
     .catch(error => res.status(500).json({ message: 'Error updating player: ' + error.message })); // Risposta JSON in caso di errore
 });
 
-// Funzione per eseguire la query di aggiornamento nel database
-function updatePlayerData(team_id, teamData, imageFile) {
+function updateTeamData(team_id, teamData, imageFile, oldTeamName) {
   return new Promise((resolve, reject) => {
     let imageBuffer = null;
     if (imageFile) {
       imageBuffer = imageFile.buffer;
     }
 
-    let sql = `UPDATE teams SET team_name = ?, captain = ?, team_main_color = ?, team_secondary_color = ?, team_text_color = ?`;
-    let values = [teamData.team_name, teamData.captain, teamData.team_main_color, teamData.team_secondary_color, teamData.team_text_color];
+    // Start a transaction
+    connection.beginTransaction(error => {
+      if (error) { return reject(error); }
 
-    if (imageBuffer) {
-      sql += `, team_logo = ?`;
-      values.push(imageBuffer);
-    }
+      // Update the teams table
+      let sql = `UPDATE teams SET team_name = ?, captain = ?, team_main_color = ?, team_secondary_color = ?, team_text_color = ?`;
+      let values = [teamData.team_name, teamData.captain, teamData.team_main_color, teamData.team_secondary_color, teamData.team_text_color];
 
-    sql += ` WHERE team_id = ?`;
-    values.push(team_id);
-
-    connection.query(sql, values, (error, results) => {
-      if (error) {
-        return reject(error);
+      if (imageBuffer) {
+        sql += `, team_logo = ?`;
+        values.push(imageBuffer);
       }
-      resolve(results);
+
+      sql += ` WHERE team_id = ?`;
+      values.push(team_id);
+
+      connection.query(sql, values, (error, results) => {
+        if (error) {
+          return connection.rollback(() => { reject(error); });
+        }
+
+          // Update the fixtures table
+          sql = `UPDATE fixtures SET home_team = IF(home_team = ?, ?, home_team), away_team = IF(away_team = ?, ?, away_team)`;
+          values = [oldTeamName, teamData.team_name, oldTeamName, teamData.team_name];
+
+          connection.query(sql, values, (error, results) => {
+            if (error) {
+              return connection.rollback(() => { reject(error); });
+            }
+
+            // Update the league_table table
+            sql = `UPDATE league_table SET team = ?, team_logo = ? WHERE team = ?`;
+            values = [teamData.team_name, imageBuffer, oldTeamName];
+
+            connection.query(sql, values, (error, results) => {
+              if (error) {
+                return connection.rollback(() => { reject(error); });
+              }
+
+                          // Update the players table
+            sql = `UPDATE players_list SET team = ? WHERE team = ?`;
+            values = [teamData.team_name, oldTeamName];
+
+            connection.query(sql, values, (error, results) => {
+              if (error) {
+                return connection.rollback(() => { reject(error); });
+              }
+            });
+
+              // Commit the transaction
+              connection.commit(error => {
+                if (error) {
+                  return connection.rollback(() => { reject(error); });
+                }
+                resolve(results);
+              });
+            });
+          });
+        });
+      });
     });
-  });
-}
+  }
 
 // Start the server
 app.listen(3000, () => {
-  console.log('Server listening on port 3000');
-});
+    console.log('Server listening on port 3000');
+  });
 
-module.exports = connection;
+  module.exports = connection;

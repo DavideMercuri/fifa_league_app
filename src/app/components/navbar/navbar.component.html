@@ -10,7 +10,7 @@
                 <li *ngFor="let subItem of item.subMenu">
                     <a [routerLink]="subItem.routerLink">
                         <div style="margin-top: 5px">
-                            <img style="width: 30px; height: 30px; margin-right: 5px;" [src]="teamLogo(subItem.text)">
+                            <img style="width: 30px; height: 30px; margin-right: 5px;" [src]="subItem.logo">
                             <span style="margin-left: 5px;">{{ subItem.text }}</span>
                         </div>
                     </a>

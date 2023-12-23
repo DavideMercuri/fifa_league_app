@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
+import { SubMenuVoicesService } from 'src/app/sub-menu-voices.service';
 
 interface Item {
 
@@ -18,11 +19,13 @@ interface Item {
   styleUrls: ['./navbar.component.less']
 })
 
-export class NavbarComponent implements AfterViewInit {
+export class NavbarComponent implements OnInit, AfterViewInit {
 
   isvisible: boolean = false;
   activeItemIndex = 1;
   itemsTeams: Array<any> = [];
+  teams: any;
+  showSubMenu: boolean[] = [];
 
   readonly items = [
     {
@@ -45,14 +48,25 @@ export class NavbarComponent implements AfterViewInit {
       icon: 'tuiIconUsersLarge',
       routerLink: '',
       subMenu: [
-        { text: 'Arsenal', routerLink: 'team-detail/2' },
-        { text: 'Real Madrid', routerLink: 'team-detail/1' },
-        { text: 'Inter', routerLink: 'team-detail/3' },
+        { text: '', routerLink: '', logo: '' },
+        { text: '', routerLink: '', logo: '' },
+        { text: '', routerLink: '', logo: '' }
       ]
     },
   ];
 
-  constructor(private router: Router, public authService: AuthService) { }
+  constructor(private router: Router, public authService: AuthService, private http: HttpClient, private subMenuVoices: SubMenuVoicesService) {
+    this.subMenuVoices.triggerNavbarUpdate.subscribe(() => {
+      this.getSubMenu();
+    });
+  }
+
+  ngOnInit(): void {
+
+    setTimeout(() => {
+      this.getSubMenu();
+    }, 0);
+  }
 
   ngAfterViewInit(): void {
 
@@ -65,7 +79,20 @@ export class NavbarComponent implements AfterViewInit {
     }, 0);
   }
 
-  showSubMenu: boolean[] = [];
+  getSubMenu(){
+    this.http.get('http://localhost:3000/players/league_table').subscribe({
+      next: (res) => {
+        this.teams = res;
+
+        this.items[3].subMenu = [];
+        this.teams.forEach((element: any) => {
+          if (this.items[3].subMenu) {
+            this.items[3].subMenu.push({ text: String(element.team), routerLink: `team-detail/${element.id}`, logo: String(element.team_logo) })
+          }
+        });
+      }
+    });
+  }
 
   showSubmenu(i: number): void {
     clearTimeout(this.hideDelayTimer);
@@ -92,7 +119,6 @@ export class NavbarComponent implements AfterViewInit {
     this.showSubMenu[i] = false;
   }
 
-
   logout(): void {
     this.authService.logout();  // Esegui il logout dal servizio
     this.router.navigate(['/login']);  // Reindirizza all'utente alla pagina di login
@@ -108,20 +134,6 @@ export class NavbarComponent implements AfterViewInit {
         element.removeAttribute(attribute.name);
       }
     });
-  }
-
-  teamLogo(teamName: string): string {
-
-    switch (teamName) {
-      case 'Arsenal':
-        return 'https://i.imgur.com/jHecsme.png';
-      case 'Real Madrid':
-        return 'https://i.imgur.com/epsvCFz.png';
-      case 'Inter':
-        return 'https://i.imgur.com/Q5tOZ9Q.png';
-      default:
-        return '';
-    }
   }
 
 }

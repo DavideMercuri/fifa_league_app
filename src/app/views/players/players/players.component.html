@@ -85,7 +85,7 @@
                 </td>
                 <td *tuiCell="'team'" tuiTd class="v-align-middle" [class.match]="isMatch('team')">
                     <span><img style="width: 22px; height: 22px; margin-right: 10px; margin-left: 10px;"
-                            src="{{teamLogo(item.team)}}"> {{ item.team }}</span>
+                            src="{{teamLogo(teams, item.team)}}"> {{ item.team }}</span>
                 </td>
                 <td *tuiCell="'goals'" tuiTd class="v-align-middle txt-center-align" [class.match]="isMatch('goals')">
                     <span>{{ item.goals }}</span>

@@ -15,5 +15,7 @@ export interface Fixture {
   notation_expelled: string;
   notation_warned: string;
   matchday: string;
+  home_logo?: string;
+  away_logo?: string;
 
 }

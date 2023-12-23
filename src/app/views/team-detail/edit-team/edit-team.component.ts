@@ -9,6 +9,8 @@ import { TeamDetailComponent } from '../team-detail.component';
 import { Observable, Subject, delay, filter, finalize, map, of, startWith, switchMap, timer } from 'rxjs';
 import { TUI_DEFAULT_MATCHER, TuiContextWithImplicit, TuiStringHandler } from '@taiga-ui/cdk';
 import { TuiFileLike } from '@taiga-ui/kit';
+import { NavbarComponent } from 'src/app/components/navbar/navbar.component';
+import { SubMenuVoicesService } from 'src/app/sub-menu-voices.service';
 
 class PlayerSearch implements Player {
   constructor(
@@ -38,7 +40,7 @@ class PlayerSearch implements Player {
 export class EditTeamComponent implements OnInit, AfterViewInit {
 
   constructor(private http: HttpClient, @Inject(TuiAlertService) private readonly alerts: TuiAlertService,
-    private teamDetail: TeamDetailComponent, private changeDetectorRef: ChangeDetectorRef) { }
+    private teamDetail: TeamDetailComponent, private changeDetectorRef: ChangeDetectorRef, private subMenuVoices: SubMenuVoicesService) { }
 
 
   teamInfo = new FormGroup({
@@ -64,6 +66,7 @@ export class EditTeamComponent implements OnInit, AfterViewInit {
   bufferedImg: any;
 
   teamName: any;
+  oldTeamName: any;
 
   readonly control = new FormControl();
 
@@ -96,6 +99,7 @@ export class EditTeamComponent implements OnInit, AfterViewInit {
         this.control.setValue(imageFile);
         this.imageSrc = this.selectedTeam.team_logo;
       }
+      this.oldTeamName = this.selectedTeam.team_name;
       this.captain = this.teamPlayers.filter(item => item.name == this.selectedTeam.captain);
       this.teamInfo.controls['captain'].setValue(this.captain[0]);
     }, 200);
@@ -279,6 +283,7 @@ export class EditTeamComponent implements OnInit, AfterViewInit {
     formData.append('team_main_color', this.selectedMainColor);
     formData.append('team_secondary_color', this.selectedSecondaryColor);
     formData.append('team_text_color', this.selectedTextColor);
+    formData.append('oldTeamName', this.oldTeamName);
 
     this.teamName = this.teamInfo.controls['team_name'].value;
 
@@ -294,6 +299,7 @@ export class EditTeamComponent implements OnInit, AfterViewInit {
         console.error('Errore durante il salvataggio dei dati', error);
       },
       complete: () => {
+        this.subMenuVoices.requestNavbarUpdate();
         this.observer.complete();
         this.teamDetail.loadDataBasedOnId(this.selectedTeam.team_id);
         this.teamDetail.FilterPlayers('', '', this.teamName);

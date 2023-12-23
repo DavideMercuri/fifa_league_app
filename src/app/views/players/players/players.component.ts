@@ -33,6 +33,7 @@ export class PlayersComponent implements OnInit, AfterViewInit {
   itemsTeams: Array<string> = [];
 
   players: Array<Player> = [];
+  teams: any;
 
   faUser = faUser;
   faFutbol = faFutbol;
@@ -50,6 +51,11 @@ export class PlayersComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.direction$.next(1);
       this.FilterPlayers('', '', '');
+      this.http.get('http://localhost:3000/players/league_table').subscribe({
+        next: (res) => {
+          this.teams = res;
+        }
+      });
     }, 0);
   }
 
@@ -272,19 +278,11 @@ export class PlayersComponent implements OnInit, AfterViewInit {
   }
 
 
-
-  teamLogo(teamName: string): string {
-
-    switch (teamName) {
-      case 'Arsenal':
-        return 'https://i.imgur.com/jHecsme.png';
-      case 'Real Madrid':
-        return 'https://i.imgur.com/epsvCFz.png';
-      case 'Inter':
-        return 'https://i.imgur.com/Q5tOZ9Q.png';
-      default:
-        return 'https://i.imgur.com/pCC3lju.png';
-    }
+  teamLogo(array: any, teamName: string) {
+    // Find the object where the team name matches the parameter
+    const teamObj = array.find((obj: any) => obj.team === teamName);
+    // If found, return the team_logo, otherwise return a message or null
+    return teamObj ? teamObj.team_logo : 'No logo found for this team';
   }
 }
 

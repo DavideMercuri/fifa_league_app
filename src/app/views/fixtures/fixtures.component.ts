@@ -12,8 +12,8 @@ import { ScrollService } from 'src/app/scroll.service';
   templateUrl: './fixtures.component.html',
   styleUrls: ['./fixtures.component.less']
 })
-export class FixturesComponent implements OnInit, AfterViewInit, OnDestroy  {
-  
+export class FixturesComponent implements OnInit, AfterViewInit, OnDestroy {
+
   tdStyleClass: string = 'tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last';
   trStyleClass: string = 'tui-table__tr tui-table__tr_border_none tui-table__tr_hover_disabled';
   tableStyleClass: string = 'tui-table tui-table__tr_hover_disabled tui-table_font-size_s';
@@ -24,6 +24,8 @@ export class FixturesComponent implements OnInit, AfterViewInit, OnDestroy  {
   fixtures: Array<Fixture> = [];
   match!: Fixture;
 
+  teams: any;
+
   faTruckMedical = faTruckMedical;
   faSquarePlus = faSquarePlus;
   faCircleExclamation = faCircleExclamation;
@@ -33,13 +35,19 @@ export class FixturesComponent implements OnInit, AfterViewInit, OnDestroy  {
 
   ngOnInit(): void {
     this.getFixtures();
+
+    this.http.get('http://localhost:3000/players/league_table').subscribe({
+      next: (res) => {
+        this.teams = res;
+      }
+    });
   }
 
   ngAfterViewInit() {
-    setTimeout( () => {
-    if (this.scrollService.hasScrolled) {
-      this.showScrollTopButton = true;
-    }      
+    setTimeout(() => {
+      if (this.scrollService.hasScrolled) {
+        this.showScrollTopButton = true;
+      }
     }, 1000);
   }
 
@@ -66,18 +74,16 @@ export class FixturesComponent implements OnInit, AfterViewInit, OnDestroy  {
     });
   }
 
-  teamLogo(teamName: string): string {
-
-    switch (teamName) {
-      case 'Arsenal':
-        return 'https://i.imgur.com/jHecsme.png';
-      case 'Real Madrid':
-        return 'https://i.imgur.com/epsvCFz.png';
-      case 'Inter':
-        return 'https://i.imgur.com/Q5tOZ9Q.png';
-      default:
-        return '';
+  teamLogo(array: any, teamName: string) {
+    if (array) {
+      const teamObj = array.find((obj: any) => obj.team === teamName);
+      return teamObj ? teamObj.team_logo : 'No logo found for this team';
+    }else{
+      setTimeout(() => {
+        this.teamLogo(array, teamName);
+      },100)
     }
+
   }
 
   onClick(
@@ -88,17 +94,19 @@ export class FixturesComponent implements OnInit, AfterViewInit, OnDestroy  {
     this.getSingleMatchInfo(id);
 
     this.dialogs.open(content, {
-        label: '',
-        header,
-        size,
-        dismissible: false,
-      }).subscribe();
+      label: '',
+      header,
+      size,
+      dismissible: false,
+    }).subscribe();
   }
 
   getSingleMatchInfo(id: any) {
     this.http.get(`http://localhost:3000/players/fixture?id=${id}`).subscribe({
       next: (res: any) => {
         this.match = res[0];
+        this.match.home_logo = this.teamLogo(this.teams, this.match.home_team);
+        this.match.away_logo = this.teamLogo(this.teams, this.match.away_team);
       }
     });
   }

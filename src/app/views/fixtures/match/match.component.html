@@ -6,7 +6,7 @@
                 <tr class="tui-table__tr tui-table__tr_border_none tui-table__tr_hover_disabled"
                     style="vertical-align: middle;">
                     <td class="{{tdStyleClass}}" style="width: 100px; height: 90px;">
-                        <img [src]="TeamLogo(match.home_team)" class="logo-match-style"></td>
+                        <img [src]="match.home_logo" class="logo-match-style"></td>
                     <td class="{{tdStyleClass}}" style="width: 100px; height: 40px; vertical-align: middle;">
                         {{match.home_team}}</td>
                     <td class="{{tdStyleClass}}"
@@ -23,7 +23,7 @@
                     <td class="{{tdStyleClass}}" style="width: 100px; height: 40px; vertical-align: middle;">
                         {{match.away_team }}</td>
                     <td class="{{tdStyleClass}}" style="width: 100px; height: 90px;">
-                        <img [src]="TeamLogo(match.away_team)" class="logo-match-style"></td>
+                        <img [src]="match.away_logo" class="logo-match-style"></td>
                 </tr>
             </tbody>
         </table>
