@@ -95,7 +95,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
 
-    this.GetPlayers();    
+    this.GetPlayers();
 
     // Iscriviti ai cambiamenti delle selezioni attive e chiama `AddCounter` quando cambiano
     this.activeScorers.valueChanges.subscribe(() => {
@@ -119,20 +119,14 @@ export class MatchComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
 
-    this.GetPlayers();
-
-    setTimeout(() => {
-      this.SetDefaultData();
-    }, 500);
-
     setTimeout(() => {
       this.generateArrays();
-    }, 500);
+      this.SetDefaultData();
+    }, 100);
 
-    
     setTimeout(() => {
       this.cdRef.detectChanges();
-    }, 1000);
+    }, 500);
 
   }
 
@@ -185,6 +179,20 @@ export class MatchComponent implements OnInit, AfterViewInit {
 
   SortPlayerByName(arrayToSort: any): Array<any> {
     return arrayToSort.sort((a: any, b: any) => a.name.localeCompare(b.name));
+  }
+
+  TeamLogo(teamName: string): string {
+
+    switch (teamName) {
+      case 'Arsenal':
+        return 'https://i.imgur.com/jHecsme.png';
+      case 'Real Madrid':
+        return 'https://i.imgur.com/epsvCFz.png';
+      case 'Inter':
+        return 'https://i.imgur.com/Q5tOZ9Q.png';
+      default:
+        return '';
+    }
   }
 
   SetDefaultData() {
