@@ -1,7 +1,7 @@
 <div>
 
     <label tuiLabel="Seleziona i trofei ed i premi da assegnare..."></label>
-    
+
     <form class="b-form" [formGroup]="awardForm" style="width: 100%">
 
         <div class="separator">
@@ -12,10 +12,13 @@
         <div class="tui-row" style="width: 88%">
 
             <div class="tui-col_md-5">
-                <tui-select formControlName="awardCampionato" tuiTextfieldSize="l" [valueContent]="leagueAwardContent" [tuiTextfieldCleaner]="true" class="award-select tui-space_top-5 tui-space_bottom-5">
-                    <span style="font-size: 10px;">Campionato<fa-icon style="margin-left: 5px;" [icon]="faShieldHalved"></fa-icon></span>
+                <tui-select formControlName="awardCampionato" tuiTextfieldSize="l" [valueContent]="leagueAwardContent"
+                    [tuiTextfieldCleaner]="true" class="award-select tui-space_top-5 tui-space_bottom-5">
+                    <span style="font-size: 10px;">Campionato<fa-icon style="margin-left: 5px;"
+                            [icon]="faShieldHalved"></fa-icon></span>
                     <input class="trophy-input" placeholder="Piazzamento..." tuiTextfield />
-                    <tui-data-list-wrapper *tuiDataList [items]="leagueInfo" [itemContent]="leagueAwardContent"></tui-data-list-wrapper>
+                    <tui-data-list-wrapper *tuiDataList [items]="leagueInfo"
+                        [itemContent]="leagueAwardContent"></tui-data-list-wrapper>
                     <ng-template #leagueAwardContent let-data>
                         <div class="template">
                             <span style="margin-top: 7px;">{{ data.label }}</span>
@@ -26,23 +29,28 @@
             </div>
 
             <div class="tui-col_md-5">
-                <tui-select formControlName="awardChampionsLeague" tuiTextfieldSize="l" [valueContent]="UCLAwardContent" [tuiTextfieldCleaner]="true" class="award-select tui-space_top-5 tui-space_bottom-5">
-                    <span style="font-size: 10px;">Champios League<fa-icon style="margin-left: 5px;" [icon]="faTrophy"></fa-icon></span>
+                <tui-select formControlName="awardChampionsLeague" tuiTextfieldSize="l" [valueContent]="UCLAwardContent"
+                    [tuiTextfieldCleaner]="true" class="award-select tui-space_top-5 tui-space_bottom-5">
+                    <span style="font-size: 10px;">Champios League<fa-icon style="margin-left: 5px;"
+                            [icon]="faTrophy"></fa-icon></span>
                     <input class="trophy-input" placeholder="Avanzamento..." tuiTextfield />
-                    <tui-data-list-wrapper *tuiDataList [items]="UCLInfo" [itemContent]="UCLAwardContent"></tui-data-list-wrapper>
+                    <tui-data-list-wrapper *tuiDataList [items]="UCLInfo"
+                        [itemContent]="UCLAwardContent"></tui-data-list-wrapper>
                     <ng-template #UCLAwardContent let-data>
                         <div class="template">
                             <span style="margin-top: 7px; min-width: 80px;">{{ data.label }}</span>
-                                <tui-badge class="prizes-badge-ucl ucl" [value]="data.prize"></tui-badge>
+                            <tui-badge class="prizes-badge-ucl ucl" [value]="data.prize"></tui-badge>
                         </div>
                     </ng-template>
                 </tui-select>
             </div>
 
             <div class="tui-space_top-5 tui-col_md-2">
-                <tui-checkbox-block class="custom-checkbox tui-space_bottom-5" formControlName="awardCup" size="l" style="width: 240px;">
+                <tui-checkbox-block class="custom-checkbox tui-space_bottom-5" formControlName="awardCup" size="l"
+                    style="width: 240px;">
                     <div class="content">
-                        <tui-avatar size="m" class="tui-space_top-1" [avatarUrl]="'https://i.imgur.com/snEYNRI.png'" style="width: 35px; height: 35px;"></tui-avatar>
+                        <tui-avatar size="m" class="tui-space_top-1" [avatarUrl]="'https://i.imgur.com/snEYNRI.png'"
+                            style="width: 35px; height: 35px;"></tui-avatar>
                         <div style="margin-left: 20px; margin-top: 3px; padding-right: 20px;">
                             <div class="label" style="font-size: 10px;">Coppa</div>
                             Vittoria
@@ -59,27 +67,53 @@
 
         <div class="tui-row">
             <div class="tui-col_md-4 tui-space_top-1">
-                <tui-checkbox-labeled formControlName="awardBestScorer" size="l" class="tui-space_top-5 labeled-checkbox-custom">
-                    <span style="font-size: 12px;">Premio Capocannoniere <tui-badge size="xs" [value]="'15m'" [ngClass]="'scorers-badge'" style="margin-left: 9px; margin-bottom: 5px"></tui-badge></span>
+                <tui-checkbox-labeled formControlName="awardBestScorer" size="l"
+                    class="tui-space_top-5 labeled-checkbox-custom">
+                    <span style="font-size: 12px;">Premio Capocannoniere <tui-badge size="xs" [value]="'15m'"
+                            [ngClass]="'scorers-badge'" style="margin-left: 9px; margin-bottom: 5px"></tui-badge></span>
                 </tui-checkbox-labeled>
-                <tui-checkbox-labeled formControlName="awardBestAssistman" size="l" class="tui-space_top-5 labeled-checkbox-custom">
-                    <span style="font-size: 12px;">Premio Assist <tui-badge size="xs" [value]="'10m'" [ngClass]="'assist-badge'" style="margin-left: 68px; margin-bottom: 5px"></tui-badge></span>
+                <tui-checkbox-labeled formControlName="awardBestAssistman" size="l"
+                    class="tui-space_top-5 labeled-checkbox-custom">
+                    <span style="font-size: 12px;">Premio Assist <tui-badge size="xs" [value]="'10m'"
+                            [ngClass]="'assist-badge'" style="margin-left: 68px; margin-bottom: 5px"></tui-badge></span>
                 </tui-checkbox-labeled>
-                <tui-checkbox-labeled formControlName="awardBestMotm" size="l" class="tui-space_top-5 labeled-checkbox-custom">
-                    <span style="font-size: 12px;">Premio MOTM <tui-badge size="xs" [value]="'5m'" style="margin-left: 70px; margin-bottom: 5px"></tui-badge></span>
+                <tui-checkbox-labeled formControlName="awardBestMotm" size="l"
+                    class="tui-space_top-5 labeled-checkbox-custom">
+                    <span style="font-size: 12px;">Premio MOTM <tui-badge size="xs" [value]="'5m'"
+                            style="margin-left: 70px; margin-bottom: 5px"></tui-badge></span>
                 </tui-checkbox-labeled>
             </div>
 
             <div class="tui-col_md-4" style="margin-left: 10px;">
-                <tui-checkbox-labeled formControlName="awardBestScorerUcl" size="l" class="tui-space_top-5 labeled-checkbox-custom">
-                    <span style="font-size: 12px;">Capocannoniere UCL <tui-badge size="xs" [value]="'10m'" class="ucl" style="margin-left: 5px; margin-bottom: 5px"></tui-badge></span>
+                <tui-checkbox-labeled formControlName="awardBestScorerUcl" size="l"
+                    class="tui-space_top-5 labeled-checkbox-custom">
+                    <span style="font-size: 12px;">Capocannoniere UCL <tui-badge size="xs" [value]="'10m'" class="ucl"
+                            style="margin-left: 5px; margin-bottom: 5px"></tui-badge></span>
                 </tui-checkbox-labeled>
             </div>
 
-            <div class="tui-col_md-3" style="margin-left: 10px;">
-                <tui-checkbox-labeled formControlName="awardGoldenBall" size="l" class="tui-space_top-5 labeled-checkbox-custom">
-                    <span style="font-size: 12px;">Pallone D'oro <tui-badge size="xs" [value]="'10m'" class="gold" style="margin-left: 5px; margin-bottom: 5px"></tui-badge></span>
+            <div class="tui-col_md-3" style="margin-left: 10px; width: 30%;">
+                <tui-checkbox-labeled formControlName="awardGoldenBall" size="l" class="tui-space_top-5 labeled-checkbox-custom" (ngModelChange)="setCheckboxStatus()">
+                    <span style="font-size: 12px;">Pallone D'oro <tui-badge size="xs" [value]="'10m'" class="gold"
+                            style="margin-left: 5px; margin-bottom: 5px"></tui-badge></span>
                 </tui-checkbox-labeled>
+                <tui-combo-box #tuicomboMotm [disabled]="awardForm.controls['awardGoldenBall'].value == false" *tuiLet="items$ | async as items" [formControl]="pots" class="tui-space_top-5"
+                    [tuiTextfieldCleaner]="true" [valueContent]="motmContent" [stringify]="stringify" class="centered-input-content custom-combo tui-space_top-5"
+                    (searchChange)="onSearchChange('')" tuiTextfieldSize="s" (focusedChange)="onSearchChange('')">
+                    <input tuiTextfield [placeholder]="placeholder"
+                        (input)="onSearchChange(extractValueFromEvent($event))" />
+                    <p style="margin-top: 18px;" [hidden]="pots.value != null">Pallone D'oro
+                    </p>
+                    <tui-data-list-wrapper *tuiDataList [items]="items"
+                        [itemContent]="motmContent"></tui-data-list-wrapper>
+                </tui-combo-box>
+                <ng-template #motmContent let-data>
+                    <div class="template">
+                        <tui-avatar size="xs" class="avatar" [avatarUrl]="data.photo" [text]="data.toString()">
+                        </tui-avatar>
+                        <span class="player-name-motm">{{ data.name }}</span>
+                    </div>
+                </ng-template>
             </div>
         </div>
     </form>

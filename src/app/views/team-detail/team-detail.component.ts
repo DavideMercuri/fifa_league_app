@@ -30,6 +30,8 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
   selectedTeamPlayers!: Player;
   selectedPlayerId: number | null = null;
 
+  isLoaded: boolean = false;
+
   faUser = faUser;
   faPenToSquare = faPenToSquare;
   faTrashCan = faTrashCan;
@@ -59,7 +61,6 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-
     this.route.paramMap.subscribe(params => {
 
       this.teamId = String(params.get('id'));
@@ -68,6 +69,8 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
         this.FilterPlayers('', '', this.team.team_name);
       }, 1000)
     });
+
+    
   }
 
   loadDataBasedOnId(id: string): void {
@@ -222,6 +225,9 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
         this.players = res;
         this.dataService.setPlayersList(res);
         this.page$.next(0);
+      },
+      error: (err: any) => {
+        console.error(err);
       }
     });
 
