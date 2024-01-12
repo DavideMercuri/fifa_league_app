@@ -181,20 +181,6 @@ export class MatchComponent implements OnInit, AfterViewInit {
     return arrayToSort.sort((a: any, b: any) => a.name.localeCompare(b.name));
   }
 
-  TeamLogo(teamName: string): string {
-
-    switch (teamName) {
-      case 'Arsenal':
-        return 'https://i.imgur.com/jHecsme.png';
-      case 'Real Madrid':
-        return 'https://i.imgur.com/epsvCFz.png';
-      case 'Inter':
-        return 'https://i.imgur.com/Q5tOZ9Q.png';
-      default:
-        return '';
-    }
-  }
-
   SetDefaultData() {
 
     var testo = document.getElementById("tui_interactive_681691675169956");

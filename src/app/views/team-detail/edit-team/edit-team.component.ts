@@ -270,11 +270,11 @@ export class EditTeamComponent implements OnInit, AfterViewInit {
   }
 
   updateTeam(teamId: any) {
-    const formData = new FormData();
+    const formData = new FormData();    
 
     if (this.bufferedImg) {
       // formData.append('image', this.bufferedImg); // Se `this.bufferedImg` è già un Blob, usalo direttamente
-      formData.append('team_logo', new Blob([this.bufferedImg], { type: 'image/jpeg' })); // Solo se `this.bufferedImg` è un ArrayBuffer o un'altra struttura di dati binari
+      formData.append('team_logo', new Blob([this.bufferedImg], { type: 'image/webp' })); // Solo se `this.bufferedImg` è un ArrayBuffer o un'altra struttura di dati binari
     }
 
 
@@ -288,11 +288,13 @@ export class EditTeamComponent implements OnInit, AfterViewInit {
     this.teamName = this.teamInfo.controls['team_name'].value;
 
     // Invia i dati al tuo server
-    this.sendDataToServer(formData, teamId);
+    setTimeout( () => {
+      this.sendDataToServer(formData, teamId);
+    }, 0)
 
   }
 
-  sendDataToServer(formData: FormData, id: any) {
+  sendDataToServer(formData: FormData, id: any) {    
 
     this.http.put(`http://localhost:3000/players/edit-team/${id}`, formData).subscribe({
       error: (error) => {

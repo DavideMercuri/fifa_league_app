@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { faFolderPlus } from '@fortawesome/free-solid-svg-icons';
-import { DataService } from 'src/app/data.service';
 
 @Component({
   selector: 'app-league-table',
@@ -26,6 +25,9 @@ export class LeagueTableComponent implements OnInit {
     this.http.get('http://localhost:3000/players/league_table').subscribe({
       next: (res) => {
         this.leagueTable = res;
+      },
+      error: (err: any) => {
+        console.error(err);        
       }
     });
   }
@@ -47,9 +49,10 @@ export class LeagueTableComponent implements OnInit {
   startNewSeason(data: Array<any>){
     this.http.put('http://localhost:3000/reset-league', undefined).subscribe({
       error: (err: any) => {
+        console.error(err);
       },
       complete: () => {
-        console.log('Reset Completato');
+        //console.log('Reset Completato');
       }
     })
   }

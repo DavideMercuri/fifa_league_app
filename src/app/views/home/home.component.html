@@ -41,8 +41,8 @@
 </div>
 
 <div style="margin: 50px; align-items: center;">
-    <div tuiCarouselButtons class="wrapper row w-60-perc">
-        <tui-carousel #carousel class="carousel col-8" style="padding: 0px;" [duration]="3000" [index]="indexStats">
+    <div tuiCarouselButtons class="wrapper w-30-perc">
+        <tui-carousel [duration]="3000" [(index)]="indexStats">
             <tui-island *tuiItem class="txt-center-align">
                 <h2 class="tui-island__title">Vittorie</h2>
                 <canvas id="winsChart"></canvas>
@@ -56,8 +56,13 @@
                 <canvas id="lossesChart"></canvas>
             </tui-island>
         </tui-carousel>
-        <tui-pagination size="s" class="pagination" [length]="3" [(index)]="indexStats"></tui-pagination>
+        <tui-pagination size="s" class="pagination" style="margin-top: 10px;" [length]="3"
+            [(index)]="indexStats"></tui-pagination>
     </div>
 </div>
 
-<!-- <button tuiButton (click)="resetLeague()">Reset</button> -->
+<div style="width: 10%; margin-left: 70px;">
+
+    <button style="margin-top: 20px;" [size]="'m'" tuiButton
+        (click)="startNewLeague()">Termina Stagione</button>
+</div>
