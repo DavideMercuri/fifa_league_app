@@ -1,0 +1,37 @@
+<div style="text-align: center; margin-bottom: 20px;">Calendario Stagione: {{ selectedSummary.season_id < 10 ? '0' + selectedSummary.season_id : selectedSummary.season_id}} / {{selectedSummary.season_year}}</div>
+
+        <div>
+            <ng-container *ngFor="let fixture of selectedSummary.season_fixtures; let i = index">
+                <tui-accordion class="container" [rounded]="false">
+                    <tui-accordion-item borders="top-bottom" [showArrow]="true" [size]="'s'">
+                        <div tuiAccordionItemContext>
+                            <div class="tui-row" style="justify-content: center;">
+                                <span class="tui-col_md-1"><img [src]="teamLogo(teams, fixture.home_team)" alt="" style="width: 20px; height: auto;"></span>
+                                <span class="tui-col_md-2">{{fixture.home_team}}</span>
+                                <span class="tui-col_md-1" style="font-size: 15px;">{{fixture.ht_goals}}</span>
+                                <span class="tui-col_md-1" style="width: 3%; padding-left: 0px; padding-right: 0px;"> - </span>
+                                <span class="tui-col_md-1" style="font-size: 15px;">{{fixture.aw_goals}}</span>
+                                <span class="tui-col_md-2">{{fixture.away_team}}</span>
+                                <span class="tui-col_md-1"><img [src]="teamLogo(teams, fixture.away_team)" alt="" style="width: 20px; height: auto;"></span>
+                            </div>
+                        </div>
+                        <ng-template tuiAccordionItemContent>
+                            <div class="tui-row">
+                                <div class="tui-col_md-3" style="padding-right: 0px; width: 23%"><div *ngIf="fixture.motm.team == fixture.home_team"><fa-icon [icon]="faStar" style="color: #f0c912;"></fa-icon><span style="margin-left: 3px;">{{formatPlayerName(fixture.motm.name)}}</span></div></div>
+                                <div class="tui-col_md-4" style="width: 27%">
+                                    <ul class="no-bullets">
+                                        <li *ngFor="let player of fixture.ht_scorers"><fa-icon [icon]="faFutbol"></fa-icon><span style="margin-left: 3px;">{{formatPlayerName(player)}}</span></li>
+                                    </ul>
+                                </div>
+                                <div class="tui-col_md-4">
+                                    <ul class="no-bullets" style="margin-left: 55px;">
+                                        <li *ngFor="let player of fixture.aw_scorers"><fa-icon [icon]="faFutbol"></fa-icon><span style="margin-left: 3px;">{{formatPlayerName(player)}}</span></li>
+                                    </ul>
+                                </div>
+                                <div class="tui-col_md-auto" style="text-align: right; padding-right: 0px; width: 14%"><span *ngIf="fixture.motm.team == fixture.away_team"><fa-icon [icon]="faStar" style="color: #f0c912;"></fa-icon><span style="margin-left: 3px;">{{formatPlayerName(fixture.motm.name)}}</span></span></div>
+                            </div>
+                        </ng-template>
+                    </tui-accordion-item>
+                </tui-accordion>
+            </ng-container>
+        </div>
