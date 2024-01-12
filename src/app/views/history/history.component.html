@@ -1,0 +1,37 @@
+<div style="margin-top: 50px;">
+
+<div class="container" style="width: 1280px; margin-bottom: 10px; font-size: 15px;">
+    <div class="tui-row">
+        <div class="operation-date tui-col_md-1">Stagione</div>
+        <div class="operation-date tui-col_md-1">Anno</div>
+        <div class="operation-date tui-col_md-3" style="text-align: start; width: 21.6%">Vincitore Campionato</div>
+        <div class="operation-date tui-col_md-4" style="text-align: start; width: 38.333%;">Vincitore UCL</div>
+        <div class="operation-date tui-col_md-1">Incontri</div>
+        <div class="operation-date tui-col_md-2" style="width: 15%">Albo D'oro</div>
+    </div>
+</div>
+<ng-container *ngFor="let summary of seasonsSummary; let i = index">
+    <tui-accordion class="container custom-accordion-no-click" [rounded]="false">
+        <tui-accordion-item borders="top-bottom" [showArrow]="false" [size]="'s'">
+            <div tuiAccordionItemContext class="disabled-click">
+                <div class="operation-header tui-row">
+                    <div class="operation-date tui-col_md-1" style="text-align: center;">{{ summary.season_id < 10 ? '0' + summary.season_id : summary.season_id }}</div>
+                    <div class="operation-date tui-col_md-1" style="text-align: center;">{{ summary.season_year }}</div>
+                    <div class="operation-title tui-col_md-2"><img style="width: 23px; height: auto;" [src]="convertImgToBase64(summary.winnerTeam.team_logo)" alt=""><span style="margin-left: 20px; font-size: 18px; vertical-align: middle;">{{ summary.winnerTeam.team }}</span></div>
+                    <div class="operation-title tui-col_md-5" style="width: 36%;">
+                        <span *ngIf="summary.winnerTeamUCL"><img style="width: 23px; height: auto;" [src]="convertImgToBase64(summary.winnerTeamUCL.team_logo)" alt=""><span style="margin-left: 20px; font-size: 18px; vertical-align: middle;">{{ summary.winnerTeamUCL.team_name }}</span></span>
+                        <span *ngIf="!summary.winnerTeamUCL"><span style="margin-left: 45px; font-size: 18px; vertical-align: middle;"> - - </span></span>
+                    </div>
+                    <a (click)="openDialog(historyLeagueStats, undefined, 'l')" class="enable-click-a-element zoom-on-hover operation-date tui-col_md-1" style="font-size: 25px;"><span><fa-icon [icon]="faRectangleList"></fa-icon><span></span></span></a>
+                    <a class="enable-click-a-element zoom-on-hover operation-date tui-col_md-1" style="font-size: 25px; margin-left: 3%"><span><fa-icon [icon]="faUsersRectangle"></fa-icon><span></span></span></a>
+                </div>
+            </div>
+        </tui-accordion-item>
+    </tui-accordion>
+
+    <ng-template #historyLeagueStats let-observer>
+        <app-history-league-stats [selectedSummary]="summary" [observer]="observer"></app-history-league-stats>
+    </ng-template>
+</ng-container>
+
+</div>

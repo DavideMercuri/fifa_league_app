@@ -3,14 +3,15 @@ const jwt = require('jsonwebtoken');
 const mysql = require('mysql');
 const authMiddleware = require('./authMiddleware');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const util = require('util');
-const bcrypt = require('bcrypt');
 const multer = require('multer');
-const upload = multer();
+
+const fs = require('fs').promises;
+const path = require('path');
+const { log } = require('console');
+const upload = multer({ dest: 'uploads/' });
 
 const SECRET_KEY = '7l5Ywkc6gV';
-
 
 const app = express();
 
@@ -258,7 +259,7 @@ app.put('/players/fixture/save-match', async (req, res) => {
   }
 });
 
-// API endpoint to retrieve fixtures data from the database
+// API endpoint to retrieve players_list data from the database
 app.get('/players/players_list', (req, res) => {
   const query = 'SELECT * FROM players_list';
   connection.query(query, (error, results) => {
@@ -324,25 +325,6 @@ app.post('/players/insert-new-player', upload.single('photo'), (req, res) => {
     .catch(error => res.status(500).json({ message: 'Error Adding player: ' + error.message })); // Risposta JSON in caso di errore
 });
 
-function savePlayerData(playerData, imageFile) {
-  return new Promise((resolve, reject) => {
-    // Estrai il buffer dell'immagine
-    const imageBuffer = imageFile.buffer;
-
-    // Query SQL per inserire i dati
-    const sql = `INSERT INTO players_list (name, position, country, team, goals, assist, motm, photo, yellow_card, red_card, injured, salary, overall, player_value) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-    const values = [playerData.name, playerData.position, playerData.country, playerData.team, playerData.goals, playerData.assist, playerData.motm, imageBuffer, playerData.yellow_card, playerData.red_card, playerData.injured, playerData.salary, playerData.overall, playerData.player_value];
-
-    connection.query(sql, values, (error, results) => {
-      if (error) {
-        return reject(error);
-      }
-      resolve(results);
-    });
-  });
-}
-
 app.put('/players/edit-player/:id', upload.single('photo'), (req, res) => {
   const playerId = req.params.id;
   const playerData = req.body;
@@ -352,34 +334,6 @@ app.put('/players/edit-player/:id', upload.single('photo'), (req, res) => {
     .then(() => res.status(200).json({ message: 'Player updated successfully' })) // Risposta JSON
     .catch(error => res.status(500).json({ message: 'Error updating player: ' + error.message })); // Risposta JSON in caso di errore
 });
-
-// Funzione per eseguire la query di aggiornamento nel database
-function updatePlayerData(playerId, playerData, imageFile) {
-  return new Promise((resolve, reject) => {
-    let imageBuffer = null;
-    if (imageFile) {
-      imageBuffer = imageFile.buffer;
-    }
-
-    let sql = `UPDATE players_list SET name = ?, position = ?, country = ?, team = ?, goals = ?, assist = ?, motm = ?, yellow_card = ?, red_card = ?, injured = ?, salary = ?, overall = ?, player_value = ?`;
-    let values = [playerData.name, playerData.position, playerData.country, playerData.team, playerData.goals, playerData.assist, playerData.motm, playerData.yellow_card, playerData.red_card, playerData.injured, playerData.salary, playerData.overall, playerData.player_value];
-
-    if (imageBuffer) {
-      sql += `, photo = ?`;
-      values.push(imageBuffer);
-    }
-
-    sql += ` WHERE id = ?`;
-    values.push(playerId);
-
-    connection.query(sql, values, (error, results) => {
-      if (error) {
-        return reject(error);
-      }
-      resolve(results);
-    });
-  });
-}
 
 // API endpoint to retrieve fixtures data from the database
 app.get('/players/roles', (req, res) => {
@@ -685,7 +639,6 @@ LEFT JOIN (
   });
 });
 
-// API endpoint to retrieve fixtures data from the database
 app.get('/players/league_table', (req, res) => {
 
   const query = `WITH Teams AS (
@@ -874,7 +827,35 @@ app.put('/players/team_detail/update-team-trophy', async (req, res) => {
       res.status(200).send(results);
     }
   });
-})
+});
+
+app.put('/players/team_detail/set-baloon-dor', async (req, res) => {
+
+  const { id } = req.body;
+
+  var query = `UPDATE players_list SET pots = 'yes' WHERE id = ?;`;
+
+  connection.query(query, [id], (error, results) => {
+    if (error) {
+      res.status(500).send(error);
+    } else {
+      res.status(200).send(results);
+    }
+  });
+});
+
+app.put('/players/team_detail/reset-baloon-dor', async (req, res) => {
+
+  var query = `UPDATE players_list SET pots = 'no';`;
+
+  connection.query(query, (error, results) => {
+    if (error) {
+      res.status(500).send(error);
+    } else {
+      res.status(200).send(results);
+    }
+  });
+});
 
 app.post('/transfer', async (req, res) => {
   const { sellingTeam, buyingTeam, transferAmount, mainPlayer, additionalPlayers, additionalBuyerPlayers } = req.body;
@@ -956,18 +937,164 @@ app.put('/players/edit-team/:id', upload.single('team_logo'), (req, res) => {
     .catch(error => res.status(500).json({ message: 'Error updating player: ' + error.message })); // Risposta JSON in caso di errore
 });
 
-function updateTeamData(team_id, teamData, imageFile, oldTeamName) {
-  return new Promise((resolve, reject) => {
-    let imageBuffer = null;
-    if (imageFile) {
-      imageBuffer = imageFile.buffer;
+// Your endpoint for starting a new season
+app.post('/start-new-season', async (req, res) => {
+  try {
+    const seasonData = await getSeasonData();
+    const lastSeasonId = await getLastSeasonId();
+
+    if (lastSeasonId) {
+      await updateLastSeasonInHistory(lastSeasonId, seasonData);
+    } else {
+      await saveSeasonToHistory(seasonData); // Use this only if there's no record to update
     }
 
-    // Start a transaction
+    await createNextSeasonRecord();
+
+    res.send('Current season saved and new season started.');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error during the season update.');
+  }
+});
+
+// API endpoint to retrieve fixtures data from the database
+app.get('/players/history', (req, res) => {
+  const query = 'SELECT * FROM history';
+  connection.query(query, (error, results) => {
+    if (error) {
+      return res.status(500).send(error);
+    }
+    res.status(200).send(results);
+  });
+});
+
+app.get('/players/history/:seasonId', (req, res) => {
+  const seasonId = req.params.seasonId;
+  const query = 'SELECT season_league_table FROM history WHERE season_id = ?';
+
+  connection.query(query, [seasonId], (error, results) => {
+    if (error) {
+      return res.status(500).send(error);
+    }
+
+    if (results.length > 0) {
+      const seasonLeagueTable = JSON.parse(results[0].season_league_table);
+
+      const teamsWithLogos = seasonLeagueTable.map(team => {
+        if (team.team_logo && team.team_logo.data) {
+          // Assumendo che team.team_logo.data sia un buffer binario
+          const logoBase64 = 'data:image/webp;base64,' + Buffer.from(team.team_logo.data).toString('base64');
+          return {
+            team: team.team,
+            team_logo: logoBase64
+          };
+        } else {
+          // Se non c'è un logo, puoi decidere di inviare un valore di default o null
+          return {
+            team: team.team,
+            team_logo: null
+          };
+        }
+      });
+
+      res.status(200).send(teamsWithLogos);
+    } else {
+      res.status(404).send({ message: 'Season not found' });
+    }
+  });
+});
+
+
+function savePlayerData(playerData, imageFile) {
+  return new Promise(async (resolve, reject) => {
+    let imageBuffer = null;
+    if (imageFile) {
+      try {
+        // Leggi il file in un buffer
+        imageBuffer = await fs.readFile(imageFile.path);
+      } catch (readError) {
+        return reject(readError);
+      }
+    }
+
+    // Query SQL per inserire i dati
+    const sql = `INSERT INTO players_list (name, position, country, team, goals, assist, motm, photo, yellow_card, red_card, injured, salary, overall, player_value) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const values = [playerData.name, playerData.position, playerData.country, playerData.team, playerData.goals, playerData.assist, playerData.motm, imageBuffer, playerData.yellow_card, playerData.red_card, playerData.injured, playerData.salary, playerData.overall, playerData.player_value];
+
+    connection.query(sql, values, async (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      try {
+        // Pulisci la cartella uploads dopo che i dati del giocatore sono stati salvati
+        await clearUploadsDirectory('uploads/');
+        resolve(results);
+      } catch (clearError) {
+        reject(clearError);
+      }
+    });
+  });
+}
+
+// Funzione per eseguire la query di aggiornamento nel database
+function updatePlayerData(playerId, playerData, imageFile) {
+
+  return new Promise(async (resolve, reject) => { // Make sure to handle this async function properly with try-catch
+    let imageBuffer = null;
+    if (imageFile) {
+      try {
+        // Read the file into a buffer
+        imageBuffer = await fs.readFile(imageFile.path);
+      } catch (readError) {
+        return reject(readError);
+      }
+    }
+
+    let sql = `UPDATE players_list SET name = ?, position = ?, country = ?, goals = ?, assist = ?, motm = ?, yellow_card = ?, red_card = ?, injured = ?, salary = ?, overall = ?, player_value = ?`;
+    let values = [playerData.name, playerData.position, playerData.country, playerData.goals, playerData.assist, playerData.motm, playerData.yellow_card, playerData.red_card, playerData.injured, playerData.salary, playerData.overall, playerData.player_value];
+
+    if (imageBuffer) {
+      sql += `, photo = ?`;
+      values.push(imageBuffer);
+    }
+
+    sql += ` WHERE id = ?`;
+    values.push(playerId);
+
+    connection.query(sql, values, async (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      // Pulisci la cartella uploads dopo l'aggiornamento del giocatore
+      try {
+        await clearUploadsDirectory('uploads/');
+        resolve(results); // Risolvi la promessa dopo aver pulito la directory
+      } catch (clearError) {
+        reject(clearError); // Gestisci eventuali errori durante la pulizia
+      }
+    });
+  });
+}
+
+// Funzione per eseguire la query di aggiornamento nel database
+function updateTeamData(team_id, teamData, imageFile, oldTeamName) {
+  return new Promise(async (resolve, reject) => {
+    let imageBuffer = null;
+    if (imageFile) {
+      try {
+        // Leggi il file in un buffer
+        imageBuffer = await fs.readFile(imageFile.path);
+      } catch (readError) {
+        return reject(readError);
+      }
+    }
+
+    // Inizia la transazione
     connection.beginTransaction(error => {
       if (error) { return reject(error); }
 
-      // Update the teams table
+      // Aggiorna la tabella teams
       let sql = `UPDATE teams SET team_name = ?, captain = ?, team_main_color = ?, team_secondary_color = ?, team_text_color = ?`;
       let values = [teamData.team_name, teamData.captain, teamData.team_main_color, teamData.team_secondary_color, teamData.team_text_color];
 
@@ -984,25 +1111,25 @@ function updateTeamData(team_id, teamData, imageFile, oldTeamName) {
           return connection.rollback(() => { reject(error); });
         }
 
-          // Update the fixtures table
-          sql = `UPDATE fixtures SET home_team = IF(home_team = ?, ?, home_team), away_team = IF(away_team = ?, ?, away_team)`;
-          values = [oldTeamName, teamData.team_name, oldTeamName, teamData.team_name];
+        // Aggiorna la tabella fixtures
+        sql = `UPDATE fixtures SET home_team = IF(home_team = ?, ?, home_team), away_team = IF(away_team = ?, ?, away_team)`;
+        values = [oldTeamName, teamData.team_name, oldTeamName, teamData.team_name];
+
+        connection.query(sql, values, (error, results) => {
+          if (error) {
+            return connection.rollback(() => { reject(error); });
+          }
+
+          // Aggiorna la tabella league_table
+          sql = `UPDATE league_table SET team = ?, team_logo = ? WHERE team = ?`;
+          values = [teamData.team_name, imageBuffer, oldTeamName];
 
           connection.query(sql, values, (error, results) => {
             if (error) {
               return connection.rollback(() => { reject(error); });
             }
 
-            // Update the league_table table
-            sql = `UPDATE league_table SET team = ?, team_logo = ? WHERE team = ?`;
-            values = [teamData.team_name, imageBuffer, oldTeamName];
-
-            connection.query(sql, values, (error, results) => {
-              if (error) {
-                return connection.rollback(() => { reject(error); });
-              }
-
-                          // Update the players table
+            // Aggiorna la tabella players_list
             sql = `UPDATE players_list SET team = ? WHERE team = ?`;
             values = [teamData.team_name, oldTeamName];
 
@@ -1010,25 +1137,198 @@ function updateTeamData(team_id, teamData, imageFile, oldTeamName) {
               if (error) {
                 return connection.rollback(() => { reject(error); });
               }
-            });
-
-              // Commit the transaction
-              connection.commit(error => {
-                if (error) {
-                  return connection.rollback(() => { reject(error); });
+              
+              // Commit della transazione
+              connection.commit(async (commitError) => {
+                if (commitError) {
+                  return connection.rollback(() => { reject(commitError); });
                 }
-                resolve(results);
+
+                try {
+                  // Pulisci la cartella uploads dopo che la transazione è stata committata
+                  await clearUploadsDirectory('uploads/');
+                  resolve(results); // Risolvi la promessa dopo aver pulito la directory
+                } catch (clearError) {
+                  // Gestisci eventuali errori durante la pulizia
+                  reject(clearError);
+                }
               });
             });
           });
         });
       });
     });
+  });
+}
+
+async function clearUploadsDirectory(directoryPath) {
+  try {
+    // Leggi i nomi dei file nella directory
+    const files = await fs.readdir(directoryPath);
+    
+    // Crea una promessa per ciascun file da rimuovere
+    const deletePromises = files.map(file => fs.unlink(path.join(directoryPath, file)));
+    
+    // Attendi che tutti i file siano rimossi
+    await Promise.all(deletePromises);
+
+    console.log('Upload directory has been cleared.');
+  } catch (error) {
+    console.error('Error clearing upload directory:', error);
   }
+}
+
+async function getSeasonTopPlayers(tableName, columnName) {
+  const sqlQuery = `SELECT id, name, team, ${columnName} FROM ${tableName} ORDER BY ${columnName} DESC LIMIT 3`;
+  const players = await query(sqlQuery);
+
+  return players.map(player => (
+    {
+      id: player.id,
+      name: player.name,
+      team: player.team,
+      [columnName]: player[columnName],
+    }));
+}
+
+async function getSeasonFixtures() {
+  const fixturesQuery = 'SELECT * FROM fixtures';
+  const fixturesData = await query(fixturesQuery);
+
+  const fixturesJsonArray = await Promise.all(fixturesData.map(async (fixture) => {
+    // Estrai e converti gli scorer
+    const scorersArray = fixture.scorers.split(',').map(scorerInfo => {
+      const [id, goals] = scorerInfo.split('x').map(Number);
+      return { id, goals };
+    });
+
+    const motm = await getIdName(fixture.motm);
+    const motm_team = await getPlayerTeam(fixture.motm);
+
+    // Ottieni nomi e squadre degli scorer
+    const scorersWithNames = await Promise.all(scorersArray.map(async scorer => {
+      const name = await getPlayerName(scorer.id);
+      const team = await getPlayerTeam(scorer.id);
+      const formattedScorer = scorer.goals > 1 ? `${name} x${scorer.goals}` : name;
+      return { name: formattedScorer, team, goals: scorer.goals };
+    }));
+
+    // Separa gli scorer per squadra di casa e trasferta
+    const ht_scorers = scorersWithNames
+      .filter(scorer => scorer.team === fixture.home_team)
+      .map(scorer => scorer.name);
+    const aw_scorers = scorersWithNames
+      .filter(scorer => scorer.team === fixture.away_team)
+      .map(scorer => scorer.name);
+
+    return {
+      id_game: fixture.id_game,
+      home_team: fixture.home_team,
+      ht_goals: fixture.ht_goals,
+      ht_scorers,
+      away_team: fixture.away_team,
+      aw_goals: fixture.aw_goals,
+      aw_scorers,
+      motm: {name: motm, team: motm_team},
+      matchday: fixture.matchday,
+    };
+  }));
+
+  return fixturesJsonArray;
+}
+
+
+// Assumi che questa funzione restituisca il nome del giocatore dato il suo ID
+async function getPlayerName(playerId) {
+  const playerQuery = 'SELECT name FROM players_list WHERE id = ?';
+  const players = await query(playerQuery, [playerId]);
+  return players[0]?.name || 'Unknown Player'; // Gestisci il caso in cui il giocatore non è trovato
+}
+
+// Funzione per ottenere la squadra di un giocatore dato il suo ID
+async function getPlayerTeam(playerId) {
+  const playerQuery = 'SELECT team FROM players_list WHERE id = ?';
+  const result = await query(playerQuery, [playerId]);
+  return result[0]?.team; // Usa l'optional chaining in caso la query non restituisca risultati
+}
+
+// Get a specific player name using his id
+async function getPlayerNameById(playerId) {
+  const playerQuery = 'SELECT name FROM players_list WHERE id = ?';
+  const playerData = await query(playerQuery, [playerId]);
+  return playerData.length > 0 ? playerData[0].name : null;
+}
+
+async function getIdName(motmId) {
+  if (!motmId) {
+    return null;
+  }
+  const playerQuery = 'SELECT name FROM players_list WHERE id = ?';
+  const playerData = await query(playerQuery, [motmId]);
+  return playerData.length > 0 ? playerData[0].name : null;
+}
+
+async function getSeasonData() {
+  // Ottenere i top scorer, assist e MOTM
+  const topScorers = await getSeasonTopPlayers('players_list', 'goals');
+  const topAssist = await getSeasonTopPlayers('players_list', 'assist');
+  const topMotm = await getSeasonTopPlayers('players_list', 'motm');
+
+  // Ottenere il vincitore del Ballon d'Or
+  const ballonDOrQuery = 'SELECT * FROM players_list WHERE pots = "yes"';
+  const ballonDOrWinner = await query(ballonDOrQuery);
+
+  // Ottenere tutte le partite di fixtures
+  const fixtures = await getSeasonFixtures();
+
+  const league_tableQuery = 'SELECT * FROM league_table';
+  const league_table = await query(league_tableQuery);
+
+  const teamsQuery = 'SELECT * FROM teams';
+  const teams = await query(teamsQuery);
+
+  const seasonRecord = {
+    season_year: new Date().getFullYear().toString(),
+    season_top_scorers: JSON.stringify(topScorers),
+    season_top_assist: JSON.stringify(topAssist),
+    season_top_motm: JSON.stringify(topMotm),
+    season_ballon_dOr: JSON.stringify(ballonDOrWinner),
+    season_fixtures: JSON.stringify(fixtures),
+    season_league_table: JSON.stringify(league_table),
+    season_teams: JSON.stringify(teams),
+  };
+
+  return seasonRecord;
+}
+
+async function saveSeasonToHistory(seasonRecord) {
+  const insertQuery = 'INSERT INTO history SET ?';
+  await query(insertQuery, seasonRecord);
+}
+
+// This function retrieves and returns the last season's record id from the history table
+async function getLastSeasonId() {
+  const sqlQuery = 'SELECT season_id FROM history ORDER BY season_id DESC LIMIT 1';
+  const result = await query(sqlQuery);
+  return result.length > 0 ? result[0].season_id : null;
+}
+
+// This function updates the last season's record with the provided season data
+async function updateLastSeasonInHistory(lastSeasonId, seasonRecord) {
+  const updateQuery = 'UPDATE history SET ? WHERE season_id = ?';
+  await query(updateQuery, [seasonRecord, lastSeasonId]);
+}
+
+// This function creates a new season record with only the year set
+async function createNextSeasonRecord() {
+  const year = new Date().getFullYear().toString();
+  const insertQuery = 'INSERT INTO history (season_year) VALUES (?)';
+  await query(insertQuery, [year]);
+}
 
 // Start the server
 app.listen(3000, () => {
-    console.log('Server listening on port 3000');
-  });
+  console.log('Server listening on port 3000');
+});
 
-  module.exports = connection;
+module.exports = connection;

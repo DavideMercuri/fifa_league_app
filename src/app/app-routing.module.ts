@@ -7,6 +7,7 @@ import { PlayersComponent } from './views/players/players/players.component';
 import { LeagueTableComponent } from './views/league-table/league-table/league-table.component';
 import { LoginComponent } from './auth/login/login.component';
 import { TeamDetailComponent } from './views/team-detail/team-detail.component';
+import { HistoryComponent } from './views/history/history.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: 'players', component: PlayersComponent, canActivate: [AuthGuard] },
   { path: 'league-table', component: LeagueTableComponent, canActivate: [AuthGuard] },
   { path: 'team-detail/:id', component: TeamDetailComponent, canActivate: [AuthGuard] },
+  { path: 'history', component: HistoryComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '/home' }
 ];
 

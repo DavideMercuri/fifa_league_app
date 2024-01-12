@@ -115,6 +115,12 @@ button:hover .submenu {
   cursor: pointer;
 }
 
+.enable-click-a-element {
+  cursor: pointer;
+  text-decoration: none; /* Removes the underline from the links */
+  color: black; /* Sets the text color to black or any color you desire */
+}
+
 .disabled-element {
   pointer-events: none;
   opacity: 0.5;
@@ -837,4 +843,75 @@ div.twitter-picker {
   height: auto;
   margin-top: 40px;
   margin-left: 50px;
+}
+
+//History style
+
+.operation-header {
+  font: var(--tui-font-text-l);
+  display: flex;
+  align-items: center;
+}
+
+.operation-date {
+  font: var(--tui-font-text-xl);
+  text-align: center;
+}
+
+.operation-date,
+.operation-info {
+  color: var(--tui-text-02);
+}
+
+.operation-month,
+.operation-status {
+  font: var(--tui-font-text-s);
+}
+
+.operation-pic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin: 0 1.5rem;
+  background: var(--tui-secondary-active);
+  border-radius: 100%;
+  width: 3rem;
+  height: 3rem;
+  color: var(--tui-text-03);
+}
+
+.operation-title {
+  .text-overflow();
+  margin-right: 1.5rem;
+  margin-left: 20px;
+}
+
+.operation-info {
+  text-align: right;
+}
+
+.operation-status {
+  &_success {
+      color: var(--tui-success-fill);
+  }
+
+  &_error {
+      color: var(--tui-error-fill);
+  }
+}
+
+.zoom-on-hover:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+  color: #000;
+}
+
+tui-accordion.custom-accordion-no-click .t-header_hoverable{
+  cursor: default;
+}
+
+/* Nel tuo file CSS */
+.no-bullets {
+  list-style-type: none; /* Rimuove i punti */
 }

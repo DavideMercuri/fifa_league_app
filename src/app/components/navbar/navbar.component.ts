@@ -53,6 +53,11 @@ export class NavbarComponent implements OnInit, AfterViewInit {
         { text: '', routerLink: '', logo: '' }
       ]
     },
+    {
+      text: 'Storico',
+      icon: 'tuiIconFileTextLarge',
+      routerLink: '/history'
+    },
   ];
 
   constructor(private router: Router, public authService: AuthService, private http: HttpClient, private subMenuVoices: SubMenuVoicesService) {
