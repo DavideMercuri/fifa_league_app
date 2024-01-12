@@ -3,9 +3,8 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { faCircleXmark, faPlus, faRightLong, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TuiStringHandler, TuiContextWithImplicit, TuiIdentityMatcher } from '@taiga-ui/cdk';
-import { TuiAlertService, TuiDialogService, TuiNotification, tuiNumberFormatProvider } from '@taiga-ui/core';
+import { TuiAlertService, TuiNotification, tuiNumberFormatProvider } from '@taiga-ui/core';
 import { Observable, Subject } from 'rxjs';
-import { DataService } from 'src/app/data.service';
 import { Player } from 'src/interfaces/player.interface';
 import { Team } from 'src/interfaces/team.interfaces';
 import { TeamDetailComponent } from '../team-detail.component';
@@ -41,9 +40,7 @@ class PlayerSearch implements Player {
 })
 export class TradePlayersComponent implements OnInit {
 
-  constructor(private http: HttpClient, private dataService: DataService,
-    @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
-    @Inject(TuiAlertService) private readonly alerts: TuiAlertService, private teamDetail: TeamDetailComponent) { }
+  constructor(private http: HttpClient, @Inject(TuiAlertService) private readonly alerts: TuiAlertService, private teamDetail: TeamDetailComponent) { }
 
   @Input() player: any;
   @Input() teamPlayers: any;
@@ -127,6 +124,7 @@ export class TradePlayersComponent implements OnInit {
           this.itemsTeams = res.map((item: any) => item.team);
           this.itemsTeams = this.itemsTeams.filter(item => item != this.selectedTeam.team_name);
           this.itemsTeams.push('Svincolati');
+          this.itemsTeams = [...new Set(this.itemsTeams)];
         }
       }
     })

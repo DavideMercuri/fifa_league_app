@@ -282,7 +282,7 @@ export class PlayersComponent implements OnInit, AfterViewInit {
     // Find the object where the team name matches the parameter
     const teamObj = array.find((obj: any) => obj.team === teamName);
     // If found, return the team_logo, otherwise return a message or null
-    return teamObj ? teamObj.team_logo : 'No logo found for this team';
+    return teamObj ? teamObj.team_logo : '../../../../assets/media/Icons/img/pCC3lju.png';
   }
 }
 
