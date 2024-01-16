@@ -2,11 +2,14 @@
 
         <div>
             <ng-container *ngFor="let fixture of selectedSummary.season_fixtures; let i = index">
+                <div class="tui-space_right-2 col-12 matchday" *ngIf="i % 3 === 0">
+                    <span>{{'Giornata ' + fixture.matchday}}</span>
+                </div>
                 <tui-accordion class="container" [rounded]="false">
                     <tui-accordion-item borders="top-bottom" [showArrow]="true" [size]="'s'">
                         <div tuiAccordionItemContext>
                             <div class="tui-row" style="justify-content: center;">
-                                <span class="tui-col_md-1"><img [src]="teamLogo(teams, fixture.home_team)" alt="" style="width: 20px; height: auto;"></span>
+                                <span class="tui-col_md-1" style="margin-left: 50px;"><img [src]="teamLogo(teams, fixture.home_team)" alt="" style="width: 20px; height: auto;"></span>
                                 <span class="tui-col_md-2">{{fixture.home_team}}</span>
                                 <span class="tui-col_md-1" style="font-size: 15px;">{{fixture.ht_goals}}</span>
                                 <span class="tui-col_md-1" style="width: 3%; padding-left: 0px; padding-right: 0px;"> - </span>
@@ -18,7 +21,7 @@
                         <ng-template tuiAccordionItemContent>
                             <div class="tui-row">
                                 <div class="tui-col_md-3" style="padding-right: 0px; width: 23%"><div *ngIf="fixture.motm.team == fixture.home_team"><fa-icon [icon]="faStar" style="color: #f0c912;"></fa-icon><span style="margin-left: 3px;">{{formatPlayerName(fixture.motm.name)}}</span></div></div>
-                                <div class="tui-col_md-4" style="width: 27%">
+                                <div class="tui-col_md-4" style="width: 27%; margin-left: auto;">
                                     <ul class="no-bullets">
                                         <li *ngFor="let player of fixture.ht_scorers"><fa-icon [icon]="faFutbol"></fa-icon><span style="margin-left: 3px;">{{formatPlayerName(player)}}</span></li>
                                     </ul>
