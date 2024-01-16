@@ -1,9 +1,9 @@
 import { NgDompurifySanitizer } from "@tinkoff/ng-dompurify";
-import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButtonModule, TuiDataListModule, TuiTextfieldControllerModule, TuiLabelModule, TuiSvgModule, TuiLoaderModule, TuiFormatNumberPipeModule, TuiTooltipModule, TuiExpandModule, TuiDropdownModule, TuiHintModule } from "@taiga-ui/core";
+import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButtonModule, TuiDataListModule, TuiTextfieldControllerModule, TuiLabelModule, TuiSvgModule, TuiLoaderModule, TuiFormatNumberPipeModule, TuiTooltipModule, TuiExpandModule, TuiDropdownModule, TuiHintModule, TuiScrollbarModule } from "@taiga-ui/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { TuiAccordionModule, TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiCarouselModule, TuiCheckboxBlockModule, TuiCheckboxLabeledModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiElasticContainerModule, TuiInputFilesModule, TuiInputModule, TuiInputNumberModule, TuiInputPasswordModule, TuiInputYearModule, TuiIslandModule, TuiLazyLoadingModule, TuiMarkerIconModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule, TuiToggleModule } from "@taiga-ui/kit";
+import { TuiAccordionModule, TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiBadgedContentModule, TuiCarouselModule, TuiCheckboxBlockModule, TuiCheckboxLabeledModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiElasticContainerModule, TuiInputFilesModule, TuiInputModule, TuiInputNumberModule, TuiInputPasswordModule, TuiInputYearModule, TuiIslandModule, TuiLazyLoadingModule, TuiMarkerIconModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule, TuiTextAreaModule, TuiToggleModule } from "@taiga-ui/kit";
 import { TuiAppBarModule, TuiTabBarModule } from '@taiga-ui/addon-mobile';
 import { TuiCalendarModule } from '@taiga-ui/core';
 import { TuiLetModule } from '@taiga-ui/cdk';
@@ -81,6 +81,7 @@ import { HistoryPlayersStatsComponent } from './views/history/history-players-st
     TuiFormatNumberPipeModule,
     TuiActionModule,
     TuiInputModule,
+    TuiTextAreaModule,
     TuiInputFilesModule,
     TuiInputYearModule,
     TuiDropdownModule,
@@ -103,8 +104,10 @@ import { HistoryPlayersStatsComponent } from './views/history/history-players-st
     TuiButtonModule,
     TuiTabBarModule,
     TuiBadgeModule,
+    TuiBadgedContentModule,
     TuiCarouselModule,
     TuiIslandModule,
+    TuiScrollbarModule,
     TuiLazyLoadingModule,
     FormsModule,
     ReactiveFormsModule,

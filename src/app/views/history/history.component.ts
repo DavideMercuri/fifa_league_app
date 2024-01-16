@@ -20,9 +20,15 @@ export class HistoryComponent implements OnInit, AfterViewInit {
   });
 
   seasonsSummary: Array<any> = [];
-  
+
   faRectangleList: any = faRectangleList;
   faUsersRectangle: any = faUsersRectangle;
+  isLoading: boolean = true;
+
+  // Proprietà di paginazione
+  currentPage = 1;
+  pageSize = 10; // Numero di elementi per pagina
+  totalItems = 0;
 
   ngOnInit(): void {
     this.getHistory();
@@ -33,18 +39,23 @@ export class HistoryComponent implements OnInit, AfterViewInit {
   }
 
   getHistory() {
+    this.isLoading = true;
+    
     this.http.get('http://localhost:3000/players/history').subscribe({
       next: (res: any) => {
-        this.getSummary(res);
+        this.totalItems = (res.length % 10) + 1; // Imposta il numero totale di elementi
+        // Assicurati di prendere la fetta giusta dell'array per la pagina corrente
+        this.getSummary(res.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize));
       },
       complete: () => {
+        this.isLoading = false;
       }
-    })
+    });
   }
 
   getSummary(res: any) {
     let copyOfRes = [...res];
-    copyOfRes.pop();
+    //copyOfRes.pop();
 
     let seasonsSummaryTemp = copyOfRes.map(season => {
 
@@ -70,11 +81,16 @@ export class HistoryComponent implements OnInit, AfterViewInit {
         season_fixtures: JSON.parse(season.season_fixtures),
         season_league_table: JSON.parse(season.season_league_table),
         winnerTeam: winnerTeam,
-        winnerTeamUCL: winnerTeamUCL
+        winnerTeamUCL: winnerTeamUCL,
+        season_top_scorers: JSON.parse(season.season_top_scorers),
+        season_top_assist: JSON.parse(season.season_top_assist),
+        season_top_motm: JSON.parse(season.season_top_motm),
+        season_ballon_dOr: JSON.parse(season.season_ballon_dOr),
       };
     });
-
+    
     this.seasonsSummary = seasonsSummaryTemp.sort((a, b) => a.season_id - b.season_id);
+
   }
 
   convertImgToBase64(img: { data: number[] }): string {
@@ -88,6 +104,11 @@ export class HistoryComponent implements OnInit, AfterViewInit {
       size: size,
       dismissible: false,
     }).subscribe();
+  }
+
+  onPageChange(page: number) {
+    this.currentPage = page;
+    this.getHistory(); // Oppure un'altra funzione per ottenere solo i dati per la pagina corrente
   }
 
 }
