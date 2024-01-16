@@ -801,7 +801,7 @@ app.put('/players/team_detail/update-team-money', async (req, res) => {
   var query;
 
   if (payment) {
-    query = 'UPDATE teams SET money = ? WHERE team_id = ?;';
+    query = `UPDATE teams SET money = ?, paid_salaries = 'yes' WHERE team_id = ?;`;
   } else {
     query = 'UPDATE teams SET money = money + ? WHERE team_id = ?;';
   }
@@ -960,7 +960,7 @@ app.post('/start-new-season', async (req, res) => {
 
 // API endpoint to retrieve fixtures data from the database
 app.get('/players/history', (req, res) => {
-  const query = 'SELECT * FROM history';
+  const query = 'SELECT * FROM history WHERE season_id < (SELECT season_id FROM history ORDER BY season_id DESC LIMIT 1);';
   connection.query(query, (error, results) => {
     if (error) {
       return res.status(500).send(error);
@@ -1179,16 +1179,19 @@ async function clearUploadsDirectory(directoryPath) {
 }
 
 async function getSeasonTopPlayers(tableName, columnName) {
-  const sqlQuery = `SELECT id, name, team, ${columnName} FROM ${tableName} ORDER BY ${columnName} DESC LIMIT 3`;
-  const players = await query(sqlQuery);
+  const sqlQuery = `SELECT id, name, team, photo, ${columnName} FROM ${tableName} ORDER BY ${columnName} DESC LIMIT 3;`;
+  var players = await query(sqlQuery);
 
-  return players.map(player => (
+  players.map(player => (
     {
       id: player.id,
       name: player.name,
       team: player.team,
-      [columnName]: player[columnName],
+      photo: player.photo,
+      [columnName]: player[columnName]
     }));
+
+    return players;
 }
 
 async function getSeasonFixtures() {
@@ -1252,13 +1255,6 @@ async function getPlayerTeam(playerId) {
   return result[0]?.team; // Usa l'optional chaining in caso la query non restituisca risultati
 }
 
-// Get a specific player name using his id
-async function getPlayerNameById(playerId) {
-  const playerQuery = 'SELECT name FROM players_list WHERE id = ?';
-  const playerData = await query(playerQuery, [playerId]);
-  return playerData.length > 0 ? playerData[0].name : null;
-}
-
 async function getIdName(motmId) {
   if (!motmId) {
     return null;
@@ -1288,7 +1284,6 @@ async function getSeasonData() {
   const teams = await query(teamsQuery);
 
   const seasonRecord = {
-    season_year: new Date().getFullYear().toString(),
     season_top_scorers: JSON.stringify(topScorers),
     season_top_assist: JSON.stringify(topAssist),
     season_top_motm: JSON.stringify(topMotm),
