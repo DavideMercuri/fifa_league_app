@@ -90,6 +90,10 @@ export class MatchComponent implements OnInit, AfterViewInit {
 
   isLoading: boolean = true; // set this to true initially
 
+  plusSVGContent = '<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path fill="white" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3-32-32s-14.3-32-32-32H256V80z"/></svg>';
+  minusSVGContent = '<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path fill="white" d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z"/></svg>';
+
+
   constructor(private http: HttpClient, private cdRef: ChangeDetectorRef, @Inject(TuiAlertService)
   private readonly alerts: TuiAlertService, private fixtures: FixturesComponent) { }
 
@@ -100,19 +104,15 @@ export class MatchComponent implements OnInit, AfterViewInit {
     // Iscriviti ai cambiamenti delle selezioni attive e chiama `AddCounter` quando cambiano
     this.activeScorers.valueChanges.subscribe(() => {
       this.AddCounter('scorers', this.activeScorers.value);
-      this.onSearchChange('');
     });
     this.activeAssist.valueChanges.subscribe(() => {
       this.AddCounter('assists', this.activeAssist.value);
-      this.onSearchChange('');
     });
     this.activeInjured.valueChanges.subscribe(() => {
       this.AddCounter('injured', this.activeInjured.value);
-      this.onSearchChange('');
     });
     this.activeRedCards.valueChanges.subscribe(() => {
       this.AddCounter('redCard', this.activeRedCards.value);
-      this.onSearchChange('');
     });
 
   }
@@ -126,7 +126,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
 
     setTimeout(() => {
       this.cdRef.detectChanges();
-    }, 500);
+    }, 200);
 
   }
 
@@ -166,7 +166,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
       TUI_DEFAULT_MATCHER(user.name, searchQuery || ''),
     );
 
-    return of(result).pipe(delay(200));
+    return of(result).pipe(delay(0));
   }
 
   GetPlayers() {
@@ -366,28 +366,29 @@ export class MatchComponent implements OnInit, AfterViewInit {
 
   AddCounter(type: 'scorers' | 'assists' | 'redCard' | 'injured', playersCount?: { id: string, count: number }[]) {
 
+    // this.onSearchChange('');
+
     var playerCount: number;
     var tuiTags: any;
+    
     // Aggiungi una chiamata a detectChanges per assicurarti che l'elemento sia completamente renderizzato
     this.cdRef.detectChanges();
 
-    setTimeout(() => {
-      if (type == 'scorers') {
-        tuiTags = document.querySelectorAll('#tuitui:not(.modified)');
+    const tuiTagsMap = {
+      'scorers': document.querySelectorAll('#tuitui:not(.modified)'),
+      'assists': document.querySelectorAll('#tuituiAssist:not(.modified)'),
+      'redCard': document.querySelectorAll('#tuituiRedCard:not(.modified)'),
+      'injured': document.querySelectorAll('#tuituiInjured:not(.modified)')
+    };
 
-      }
-      if (type == 'assists') {
-        tuiTags = document.querySelectorAll('#tuituiAssist:not(.modified)');
-      }
-      if (type == 'redCard') {
-        tuiTags = document.querySelectorAll('#tuituiRedCard:not(.modified)');
-      }
-      if (type == 'injured') {
-        tuiTags = document.querySelectorAll('#tuituiInjured:not(.modified)');
-      }
+    tuiTags = tuiTagsMap[type];
+
+    setTimeout(() => {
+
+      const tuiTagsLength = tuiTags.length;
 
       // Itera attraverso ogni elemento nella collezione
-      for (let i = 0; i < tuiTags.length; i++) {
+      for (let i = 0; i < tuiTagsLength; i++) {
         const tuiTag = tuiTags[i];
         const playerData = this.FindPlayerDataForTag(tuiTag); // Trova i dati del calciatore corrispondenti al tui-tag
 
@@ -404,30 +405,17 @@ export class MatchComponent implements OnInit, AfterViewInit {
         // Il resto del codice per aggiungere il contatore e i pulsanti
         const divElement = tuiTag.querySelector('div');
         const closeButton = tuiTag.querySelector('svg[class="t-svg ng-star-inserted"]');
-        const plusSVGContent = '<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path fill="white" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3-32-32s-14.3-32-32-32H256V80z"/></svg>';
-        const minusSVGContent = '<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path fill="white" d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z"/></svg>';
-        const buttonStyle = 'color: white; background-color: transparent; border: none;';
 
         const count = document.createElement('span');
 
         count.textContent = !playerCount ? '1' : playerCount.toString();
         count.classList.add('counter');
 
-        const createButtonWithIcon = (svgContent: string, onClick: () => void) => {
-          const button = document.createElement('button');
-          button.setAttribute('style', buttonStyle);
-          const icon = document.createElement('tui-svg');
-          icon.innerHTML = svgContent;
-          button.appendChild(icon);
-          button.addEventListener('click', onClick);
-          return button;
-        };
-
-        const plusButton = createButtonWithIcon(plusSVGContent, () => {
+        const plusButton = this.createButtonWithIcon(this.plusSVGContent, () => {
           count.textContent = (parseInt(count.textContent!, 10) + 1).toString();
         });
 
-        const minusButton = createButtonWithIcon(minusSVGContent, () => {
+        const minusButton = this.createButtonWithIcon(this.minusSVGContent, () => {
           const newCount = parseInt(count.textContent!, 10) - 1;
           count.textContent = newCount.toString();
           if (newCount < 1 && closeButton) {
@@ -455,9 +443,23 @@ export class MatchComponent implements OnInit, AfterViewInit {
         tuiTag.classList.add('modified');
       }
     }, 0);
+
+    this.onSearchChange('');
   }
 
-  private FindPlayerDataForTag(tuiTag: Element): PlayerSearch {
+  createButtonWithIcon = (svgContent: string, onClick: () => void) => {
+
+    const buttonStyle = 'color: white; background-color: transparent; border: none;';
+    const button = document.createElement('button');
+    button.setAttribute('style', buttonStyle);
+    const icon = document.createElement('tui-svg');
+    icon.innerHTML = svgContent;
+    button.appendChild(icon);
+    button.addEventListener('click', onClick);
+    return button;
+  };
+
+  FindPlayerDataForTag(tuiTag: Element): PlayerSearch {
     // Trova l'elemento che contiene il nome del giocatore
     const playerNameElement = tuiTag.querySelector('[automation-id="tui-tag__text"]');
 

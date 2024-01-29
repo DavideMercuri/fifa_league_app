@@ -137,7 +137,7 @@
                             <p class="multiselect-label" style="margin-left: 10px; font-size: 17px;">Marcatori
                                 <fa-icon style="margin-left: 10px;" [icon]="faFutbol"></fa-icon>
                             </p>
-                            <tui-multi-select #tuituiSelect *tuiLet="items$ | async as items" class="b-form scorers-select custom-multi-select"
+                            <tui-multi-select #tuituiSelect *tuiLet="items$ | async as items" class="b-form scorers-select custom-multi-select" [tuiDropdownDirection]="'top'"
                                 tuiTextfieldSize="s" [formControl]="activeScorers" [stringify]="stringify" [tuiTextfieldCleaner]="true" [expandable]="false"
                                 [valueContent]="!activeScorers.value ? 'Selezionati: 0' : 'Selezionati: ' + activeScorers.value.length"
                                 (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
@@ -164,7 +164,7 @@
                             <p class="multiselect-label" style="margin-left: 10px; font-size: 17px;">Assist
                                 <fa-icon style="margin-left: 10px;" [icon]="faFutbol"></fa-icon>
                             </p>
-                            <tui-multi-select #tuituiAssistSelect *tuiLet="items$ | async as assist" class="b-form assist-select custom-multi-select"
+                            <tui-multi-select #tuituiAssistSelect *tuiLet="items$ | async as assist" class="b-form assist-select custom-multi-select" [tuiDropdownDirection]="'top'"
                                 tuiTextfieldSize="s" [formControl]="activeAssist" [stringify]="stringify" [tuiTextfieldCleaner]="true" [expandable]="false"
                                 [valueContent]="!activeAssist.value ? 'Selezionati: 0' : 'Selezionati: ' + activeAssist.value.length"
                                 (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
@@ -193,7 +193,7 @@
                             <p class="multiselect-label" style="margin-left: 10px; font-size: 17px;">MOTM
                                 <fa-icon style="margin-left: 10px;" [icon]="faMedal"></fa-icon>
                             </p>
-                            <tui-combo-box #tuicomboMotm *tuiLet="items$ | async as items" [formControl]="activeMotm" [tuiTextfieldCleaner]="true"
+                            <tui-combo-box #tuicomboMotm *tuiLet="items$ | async as items" [formControl]="activeMotm" [tuiTextfieldCleaner]="true" [tuiDropdownDirection]="'top'"
                                 [valueContent]="motmContent" [stringify]="stringify" (searchChange)="onSearchChange('')" tuiTextfieldSize="s"
                                 (focusedChange)="onSearchChange('')">
                                 <input tuiTextfield [placeholder]="'Selezionare il Migliore in Campo...'" class="centered-input-content"
@@ -228,7 +228,7 @@
                                 <img style="width:17px; height: 20px; vertical-align: unset; margin-left: 10px;"
                                     src="../../../../assets/media/Icons/Yellow_card.svg.png" alt="">
                             </p>
-                            <tui-multi-select #tuituiYellowCardSelect *tuiLet="items$ | async as items" class="b-form yellowCard-select custom-multi-select"
+                            <tui-multi-select #tuituiYellowCardSelect *tuiLet="items$ | async as items" class="b-form yellowCard-select custom-multi-select" [tuiDropdownDirection]="'top'"
                                 tuiTextfieldSize="s" [formControl]="activeYellowCards" [stringify]="stringify" [tuiTextfieldCleaner]="true" [expandable]="false"
                                 [valueContent]="!activeYellowCards.value ? 'Selezionati: 0' : 'Selezionati: ' + activeYellowCards.value.length"
                                 (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
@@ -261,7 +261,7 @@
                                 <img style="width:17px; height: 20px; vertical-align: unset; margin-left: 10px;"
                                     src="../../../../assets/media/Icons/300px-Red_card.svg.png" alt="">
                             </p>
-                            <tui-multi-select #tuituiRedCardSelect *tuiLet="items$ | async as items" class="b-form yellowCard-select custom-multi-select"
+                            <tui-multi-select #tuituiRedCardSelect *tuiLet="items$ | async as items" class="b-form yellowCard-select custom-multi-select" [tuiDropdownDirection]="'top'"
                                 tuiTextfieldSize="s" [formControl]="activeRedCards" [stringify]="stringify" [tuiTextfieldCleaner]="true" [expandable]="false"
                                 [valueContent]="!activeRedCards.value ? 'Selezionati: 0' : 'Selezionati: ' + activeRedCards.value.length"
                                 (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
@@ -294,7 +294,7 @@
                             <p class="multiselect-label" style="margin-left: 10px; font-size: 17px;">Infortunati
                                 <fa-icon style="margin-left: 10px;" [icon]="faTruckMedical"></fa-icon>
                             </p>
-                            <tui-multi-select #tuituiInjuredSelect *tuiLet="items$ | async as items" class="b-form yellowCard-select custom-multi-select"
+                            <tui-multi-select #tuituiInjuredSelect *tuiLet="items$ | async as items" class="b-form yellowCard-select custom-multi-select" [tuiDropdownDirection]="'top'"
                                 tuiTextfieldSize="s" [formControl]="activeInjured" [stringify]="stringify" [tuiTextfieldCleaner]="true" [expandable]="false"
                                 [valueContent]="!activeInjured.value ? 'Selezionati: 0' : 'Selezionati: ' + activeInjured.value.length"
                                 (searchChange)="onSearchChange($event)" (focusedChange)="onSearchChange('')">
