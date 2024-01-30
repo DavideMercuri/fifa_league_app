@@ -8,30 +8,31 @@
                 <tui-accordion class="container" [rounded]="false">
                     <tui-accordion-item borders="top-bottom" [showArrow]="true" [size]="'s'">
                         <div tuiAccordionItemContext>
-                            <div class="tui-row" style="justify-content: center;">
-                                <span class="tui-col_md-1" style="margin-left: 50px;"><img [src]="teamLogo(teams, fixture.home_team)" alt="" style="width: 20px; height: auto;"></span>
-                                <span class="tui-col_md-2">{{fixture.home_team}}</span>
-                                <span class="tui-col_md-1" style="font-size: 15px;">{{fixture.ht_goals}}</span>
-                                <span class="tui-col_md-1" style="width: 3%; padding-left: 0px; padding-right: 0px;"> - </span>
-                                <span class="tui-col_md-1" style="font-size: 15px;">{{fixture.aw_goals}}</span>
-                                <span class="tui-col_md-2">{{fixture.away_team}}</span>
+                            <div class="tui-row" style="justify-content: space-around;">
+                                <span class="tui-col_md-1" style="margin-left: 20px; width: 25px;"><img [src]="teamLogo(teams, fixture.home_team)" alt="" style="width: 20px; height: auto;"></span>
+                                <span class="tui-col_md-3" style="text-align: justify;">{{fixture.home_team}}</span>
+                                <span class="tui-col_md-1" style="font-size: 15px; width: 3%;">{{fixture.ht_goals}}</span>
+                                <span class="tui-col_md-auto" style="width: 3%; text-align: right;"> - </span>
+                                <span class="tui-col_md-1" style="font-size: 15px; text-align: right; width: 3%;">{{fixture.aw_goals}}</span>
+                                <span class="tui-col_md-3" style=" text-align: justify;">{{fixture.away_team}}</span>
                                 <span class="tui-col_md-1"><img [src]="teamLogo(teams, fixture.away_team)" alt="" style="width: 20px; height: auto;"></span>
                             </div>
                         </div>
                         <ng-template tuiAccordionItemContent>
-                            <div class="tui-row">
-                                <div class="tui-col_md-3" style="padding-right: 0px; width: 23%"><div *ngIf="fixture.motm.team == fixture.home_team"><fa-icon [icon]="faStar" style="color: #f0c912;"></fa-icon><span style="margin-left: 3px;">{{formatPlayerName(fixture.motm.name)}}</span></div></div>
-                                <div class="tui-col_md-4" style="width: 27%; margin-left: auto;">
+                            <div class="tui-row" style="justify-content: center; font-size: 11px;">
+                                <div class="tui-col_md-2" style="padding-right: 0px; padding-left: 0px; width: 13%"><div *ngIf="fixture.motm.team == fixture.home_team"><fa-icon [icon]="faStar" style="color: #f0c912;"></fa-icon><span class="truncated-text" style="margin-left: 3px;">{{formatPlayerName(fixture.motm.name)}}</span></div></div>
+                                <div class="tui-col_md-3" style="padding-right: 0px; padding-left: 0px; width: 27%;">
                                     <ul class="no-bullets">
                                         <li *ngFor="let player of fixture.ht_scorers"><fa-icon [icon]="faFutbol"></fa-icon><span style="margin-left: 3px;">{{formatPlayerName(player)}}</span></li>
                                     </ul>
                                 </div>
-                                <div class="tui-col_md-4">
-                                    <ul class="no-bullets" style="margin-left: 55px;">
+                                <div class="tui-col_md-2"></div>
+                                <div class="tui-col_md-3" style="padding-right: 0px; padding-left: 0px; width: 25%;">
+                                    <ul class="no-bullets" style="margin-left: 30px;">
                                         <li *ngFor="let player of fixture.aw_scorers"><fa-icon [icon]="faFutbol"></fa-icon><span style="margin-left: 3px;">{{formatPlayerName(player)}}</span></li>
                                     </ul>
                                 </div>
-                                <div class="tui-col_md-auto" style="text-align: right; padding-right: 0px; width: 14%"><span *ngIf="fixture.motm.team == fixture.away_team"><fa-icon [icon]="faStar" style="color: #f0c912;"></fa-icon><span style="margin-left: 3px;">{{formatPlayerName(fixture.motm.name)}}</span></span></div>
+                                <div class="tui-col_md-2" style="text-align: right; padding-right: 0px; padding-left: 0px; width: 14%"><span *ngIf="fixture.motm.team == fixture.away_team"><fa-icon [icon]="faStar" style="color: #f0c912;"></fa-icon><span class="truncated-text" style="margin-left: 3px;">{{formatPlayerName(fixture.motm.name)}}</span></span></div>
                             </div>
                         </ng-template>
                     </tui-accordion-item>

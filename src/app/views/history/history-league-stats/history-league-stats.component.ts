@@ -41,7 +41,7 @@ export class HistoryLeagueStatsComponent implements OnInit {
   getTeamsForSelectedSeason(season_id: any){
     this.http.get(`http://localhost:3000/players/history/${season_id}`).subscribe({
       next: (res: any) => {
-        this.teams = res;  
+        this.teams = res.leagueTable;  
       },
       error: (error) => {
         console.error(error);

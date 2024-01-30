@@ -20,9 +20,9 @@
                         <div class="operation-header tui-row">
                             <div class="operation-date tui-col_md-1" style="text-align: center;">{{ summary.season_id < 10 ? '0' + summary.season_id : summary.season_id }}</div>
                             <div class="operation-date tui-col_md-1" style="text-align: center;">{{ summary.season_year }}</div>
-                            <div class="operation-title tui-col_md-2"><img style="width: 23px; height: auto;" [src]="convertImgToBase64(summary.winnerTeam.team_logo)" alt=""><span style="margin-left: 20px; font-size: 18px; vertical-align: middle;">{{ summary.winnerTeam.team }}</span></div>
+                            <div class="operation-title tui-col_md-2"><img style="width: 23px; height: auto;" [src]="summary.winnerTeam.team_logo_base64" alt=""><span style="margin-left: 20px; font-size: 18px; vertical-align: middle;">{{ summary.winnerTeam.team }}</span></div>
                             <div class="operation-title tui-col_md-5" style="width: 36%;">
-                                <span *ngIf="summary.winnerTeamUCL"><img style="width: 23px; height: auto;" [src]="convertImgToBase64(summary.winnerTeamUCL.team_logo)" alt=""><span style="margin-left: 20px; font-size: 18px; vertical-align: middle;">{{ summary.winnerTeamUCL.team_name }}</span></span>
+                                <span *ngIf="summary.winnerTeamUCL"><img style="width: 23px; height: auto;" [src]="summary.winnerTeamUCL.team_logo_base64" alt=""><span style="margin-left: 20px; font-size: 18px; vertical-align: middle;">{{ summary.winnerTeamUCL.team_name }}</span></span>
                                 <span *ngIf="!summary.winnerTeamUCL"><span style="margin-left: 45px; font-size: 18px; vertical-align: middle;"> - - </span></span>
                             </div>
                             <a (click)="openDialog(historyLeagueStats, undefined, 'l')" class="enable-click-a-element zoom-on-hover operation-date tui-col_md-1" style="font-size: 25px;"><span><fa-icon [icon]="faRectangleList"></fa-icon><span></span></span></a>

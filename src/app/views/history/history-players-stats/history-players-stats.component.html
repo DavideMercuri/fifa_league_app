@@ -17,13 +17,13 @@
                                 <ng-container *ngFor="let scorer of top_scorers; let i = index">
                                     <tr class="tui-table__tr" style="border-top: 1px solid var(--tui-base-03);" col *ngIf="i == 0">
                                         <td class="tui-table__td tui-table__td_first first-row-top-players-style" style="font-weight: bold; font-size: 15px;">{{i+1}}°</td>
-                                        <td class="tui-table__td first-row-top-players-style"><div><img style="width: 35px; height: auto;" [src]="convertImgToBase64(scorer.photo)" alt=""><span style="padding-left: 5px; font-size: 15px;">{{scorer.name}}</span></div></td>
+                                        <td class="tui-table__td first-row-top-players-style"><div><img style="width: 35px; height: auto;" [src]="scorer.photo" alt=""><span style="padding-left: 5px; font-size: 15px;">{{scorer.name}}</span></div></td>
                                         <td class="tui-table__td first-row-top-players-style"><div><img style="width: 25px; height: auto;" [src]="teamLogo(teams, scorer.team)" alt=""><span style="padding-left: 5px; font-size: 15px;">{{scorer.team}}</span></div></td>
                                         <td class="tui-table__td tui-table__td_last first-row-top-players-style" style="font-weight: bold;"><div>{{scorer.goals}}</div></td>
                                     </tr>
                                     <tr class="tui-table__tr tui-table__tr_border_none" col *ngIf="i > 0">
                                         <td class="tui-table__td tui-table__td_first" style="font-size: 13px;">{{i == 1 ? 2 : 3}}°</td>
-                                        <td class="tui-table__td"><div><img style="width: 30px; height: auto; padding-left: 10px;" [src]="convertImgToBase64(scorer.photo)" alt=""><span style="padding-left: 10px; font-size: 12px;">{{scorer.name}}</span></div></td>
+                                        <td class="tui-table__td"><div><img style="width: 30px; height: auto; padding-left: 10px;" [src]="scorer.photo" alt=""><span style="padding-left: 10px; font-size: 12px;">{{scorer.name}}</span></div></td>
                                         <td class="tui-table__td"><div><img style="width: 18px; height: auto;" [src]="teamLogo(teams, scorer.team)" alt=""><span style="padding-left: 10px; font-size: 12px;">{{scorer.team}}</span></div></td>
                                         <td class="tui-table__td tui-table__td_last"><div style="font-size: 13px;">{{scorer.goals}}</div></td>
                                     </tr>
@@ -47,13 +47,13 @@
                                 <ng-container *ngFor="let assist of top_assist; let i = index">
                                     <tr class="tui-table__tr" style="border-top: 1px solid var(--tui-base-03);" col *ngIf="i == 0">
                                         <td class="tui-table__td tui-table__td_first first-row-top-players-style" style="font-weight: bold; font-size: 15px;">{{i+1}}°</td>
-                                        <td class="tui-table__td first-row-top-players-style"><div><img style="width: 35px; height: auto;" [src]="convertImgToBase64(assist.photo)" alt=""><span style="padding-left: 5px; font-size: 15px;">{{assist.name}}</span></div></td>
+                                        <td class="tui-table__td first-row-top-players-style"><div><img style="width: 35px; height: auto;" [src]="assist.photo" alt=""><span style="padding-left: 5px; font-size: 15px;">{{assist.name}}</span></div></td>
                                         <td class="tui-table__td first-row-top-players-style"><div><img style="width: 25px; height: auto;" [src]="teamLogo(teams, assist.team)" alt=""><span style="padding-left: 5px; font-size: 15px;">{{assist.team}}</span></div></td>
                                         <td class="tui-table__td tui-table__td_last first-row-top-players-style" style="font-weight: bold;"><div>{{assist.assist}}</div></td>
                                     </tr>
                                     <tr class="tui-table__tr tui-table__tr_border_none" col *ngIf="i > 0">
                                         <td class="tui-table__td tui-table__td_first" style="font-size: 13px;">{{i == 1 ? 2 : 3}}°</td>
-                                        <td class="tui-table__td"><div><img style="width: 30px; height: auto; padding-left: 10px;" [src]="convertImgToBase64(assist.photo)" alt=""><span style="padding-left: 10px; font-size: 12px;">{{assist.name}}</span></div></td>
+                                        <td class="tui-table__td"><div><img style="width: 30px; height: auto; padding-left: 10px;" [src]="assist.photo" alt=""><span style="padding-left: 10px; font-size: 12px;">{{assist.name}}</span></div></td>
                                         <td class="tui-table__td"><div><img style="width: 18px; height: auto;" [src]="teamLogo(teams, assist.team)" alt=""><span style="padding-left: 10px; font-size: 12px;">{{assist.team}}</span></div></td>
                                         <td class="tui-table__td tui-table__td_last"><div style="font-size: 13px;">{{assist.assist}}</div></td>
                                     </tr>
@@ -80,13 +80,13 @@
                                 <ng-container *ngFor="let motm of top_motm; let i = index">
                                     <tr class="tui-table__tr" style="border-top: 1px solid var(--tui-base-03);" col *ngIf="i == 0">
                                         <td class="tui-table__td tui-table__td_first first-row-top-players-style" style="font-weight: bold; font-size: 15px;">{{i+1}}°</td>
-                                        <td class="tui-table__td first-row-top-players-style"><div><img style="width: 35px; height: auto;" [src]="convertImgToBase64(motm.photo)" alt=""><span style="padding-left: 5px; font-size: 15px;">{{motm.name}}</span></div></td>
+                                        <td class="tui-table__td first-row-top-players-style"><div><img style="width: 35px; height: auto;" [src]="motm.photo" alt=""><span style="padding-left: 5px; font-size: 15px;">{{motm.name}}</span></div></td>
                                         <td class="tui-table__td first-row-top-players-style"><div><img style="width: 25px; height: auto;" [src]="teamLogo(teams, motm.team)" alt=""><span style="padding-left: 5px; font-size: 15px;">{{motm.team}}</span></div></td>
                                         <td class="tui-table__td tui-table__td_last first-row-top-players-style" style="font-weight: bold;"><div>{{motm.motm}}</div></td>
                                     </tr>
                                     <tr class="tui-table__tr tui-table__tr_border_none" col *ngIf="i > 0">
                                         <td class="tui-table__td tui-table__td_first" style="font-size: 13px;">{{i == 1 ? 2 : 3}}°</td>
-                                        <td class="tui-table__td"><div><img style="width: 30px; height: auto; padding-left: 10px;" [src]="convertImgToBase64(motm.photo)" alt=""><span style="padding-left: 10px; font-size: 12px;">{{motm.name}}</span></div></td>
+                                        <td class="tui-table__td"><div><img style="width: 30px; height: auto; padding-left: 10px;" [src]="motm.photo" alt=""><span style="padding-left: 10px; font-size: 12px;">{{motm.name}}</span></div></td>
                                         <td class="tui-table__td"><div><img style="width: 18px; height: auto;" [src]="teamLogo(teams, motm.team)" alt=""><span style="padding-left: 10px; font-size: 12px;">{{motm.team}}</span></div></td>
                                         <td class="tui-table__td tui-table__td_last"><div style="font-size: 13px;">{{motm.motm}}</div></td>
                                     </tr>
@@ -105,8 +105,8 @@
                             </tr>
                             <ng-container>
                                 <tr class="tui-table__tr" style="border-top: 1px solid var(--tui-base-03);">
-                                    <td class="tui-table__td first-row-top-players-style"><div><img style="width: 140px; height: auto;" [src]="convertImgToBase64(baloon_dor[0].photo)" alt=""><span style="padding-left: 20px; font-size: 30px; position: absolute; margin-top: 30px;">{{baloon_dor[0].name}}
-                                        <div style="text-align: end; margin-top: 10px;"><img style="width: 20px; height: auto;" [src]="teamLogo(teams, baloon_dor[0].team)" alt=""><span style="padding-left: 5px; font-size: 15px;">{{baloon_dor[0].team}}</span></div>
+                                    <td class="tui-table__td first-row-top-players-style"><div><img style="width: 140px; height: auto;" [src]=" baloon_dor_photo" alt=""><span style="padding-left: 20px; font-size: 30px; position: absolute; margin-top: 30px;">{{baloon_dor_name}}
+                                        <div style="text-align: end; margin-top: 10px;"><img style="width: 20px; height: auto;" [src]="teamLogo(teams, baloon_dor_team)" alt=""><span style="padding-left: 5px; font-size: 15px;">{{baloon_dor_team}}</span></div>
                                     </span>                                    
                                     </div></td>
                                     <td class="tui-table__td first-row-top-players-style">

@@ -6,7 +6,7 @@ import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/cor
   templateUrl: './history-players-stats.component.html',
   styleUrls: ['./history-players-stats.component.less']
 })
-export class HistoryPlayersStatsComponent implements OnInit, AfterViewInit, OnDestroy  {
+export class HistoryPlayersStatsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private http: HttpClient) { }
 
@@ -16,18 +16,15 @@ export class HistoryPlayersStatsComponent implements OnInit, AfterViewInit, OnDe
   top_scorers: Array<any> = [];
   top_assist: Array<any> = [];
   top_motm: Array<any> = [];
-  baloon_dor: Array<any> = [];
+  baloon_dor_photo: any = '';
+  baloon_dor_name: any = '';
+  baloon_dor_team: any = '';
 
   teams: Array<any> = [];
 
   ngOnInit(): void {
 
     this.getTeamsForSelectedSeason(this.selectedSummary.season_id);
-
-    this.top_scorers = this.selectedSummary.season_top_scorers;
-    this.top_assist = this.selectedSummary.season_top_assist;
-    this.top_motm = this.selectedSummary.season_top_motm;
-    this.baloon_dor = this.selectedSummary.season_ballon_dOr;
 
   }
 
@@ -58,7 +55,14 @@ export class HistoryPlayersStatsComponent implements OnInit, AfterViewInit, OnDe
   getTeamsForSelectedSeason(season_id: any) {
     this.http.get(`http://localhost:3000/players/history/${season_id}`).subscribe({
       next: (res: any) => {
-        this.teams = res;
+        this.teams = res.leagueTable;
+        this.top_scorers = res.topScorers;
+        this.top_assist = res.topAssists;
+        this.top_motm = res.topMOTM;
+        this.baloon_dor_photo = res.ballonDOr[0].photo;
+        this.baloon_dor_name = res.ballonDOr[0].name;
+        this.baloon_dor_team = res.ballonDOr[0].team;
+        
       },
       error: (error) => {
         console.error(error);

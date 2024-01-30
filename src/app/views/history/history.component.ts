@@ -40,7 +40,7 @@ export class HistoryComponent implements OnInit, AfterViewInit {
 
   getHistory() {
     this.isLoading = true;
-    
+
     this.http.get('http://localhost:3000/players/history').subscribe({
       next: (res: any) => {
         this.totalItems = (res.length % 10) + 1; // Imposta il numero totale di elementi
@@ -55,25 +55,14 @@ export class HistoryComponent implements OnInit, AfterViewInit {
 
   getSummary(res: any) {
     let copyOfRes = [...res];
-    //copyOfRes.pop();
 
     let seasonsSummaryTemp = copyOfRes.map(season => {
 
       let leagueTableArray = JSON.parse(season.season_league_table);
-      let leagueTeams = JSON.parse(season.season_teams);
 
       let winnerTeam = leagueTableArray.reduce((prev: any, current: any) => {
         return (prev.points > current.points) ? prev : current;
       });
-
-      let winnerTeamUCL = leagueTeams.reduce((acc: any, element: any) => {
-        // Se l'elemento corrente ha il campo season_champions_league_winner impostato su 'yes', lo restituisce
-        if (element.season_champions_league_winner === 'yes') {
-          return element;
-        }
-        return acc; // Altrimenti, continua con l'elemento accumulato
-      }, null); // Inizializza l'accumulatore a null
-
 
       return {
         season_id: season.season_id,
@@ -81,14 +70,14 @@ export class HistoryComponent implements OnInit, AfterViewInit {
         season_fixtures: JSON.parse(season.season_fixtures),
         season_league_table: JSON.parse(season.season_league_table),
         winnerTeam: winnerTeam,
-        winnerTeamUCL: winnerTeamUCL,
+        winnerTeamUCL: season.winnerTeamUCL,
         season_top_scorers: JSON.parse(season.season_top_scorers),
         season_top_assist: JSON.parse(season.season_top_assist),
         season_top_motm: JSON.parse(season.season_top_motm),
         season_ballon_dOr: JSON.parse(season.season_ballon_dOr),
       };
     });
-    
+
     this.seasonsSummary = seasonsSummaryTemp.sort((a, b) => a.season_id - b.season_id);
 
   }
