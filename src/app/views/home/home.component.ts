@@ -316,7 +316,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         console.error(err);
       },
       complete: () => {
-        //console.log('Reset Completato');
+        console.log('Reset Completato');
       }
     })
   }
@@ -327,7 +327,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         console.error(err);
       },
       complete: () => {
-        //console.log('Fatto');
       }
     })
   }
