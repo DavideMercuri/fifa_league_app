@@ -349,6 +349,25 @@ app.get('/players/roles', (req, res) => {
 });
 
 // API endpoint to retrieve fixtures data from the database
+app.get('/players/all-teams', (req, res) => {
+
+  const query = 'SELECT * FROM teams ORDER BY team_name ASC';
+  connection.query(query, (error, results) => {
+    if (error) {
+      res.status(500).send(error);
+    } else {
+      var editedTeams = results.map((team) => {
+        if (team.team_logo) {
+          team.team_logo = 'data:image/webp;base64,' + Buffer.from(team.team_logo).toString('base64');
+        }
+        return team;
+      });
+      res.status(200).send(editedTeams);
+    }
+  });
+});
+
+// API endpoint to retrieve fixtures data from the database
 app.get('/players/teams', (req, res) => {
 
   const query = 'SELECT DISTINCT team FROM players_list ORDER BY team ASC';
@@ -937,10 +956,30 @@ app.put('/players/edit-team/:id', upload.single('team_logo'), (req, res) => {
     .catch(error => res.status(500).json({ message: 'Error updating player: ' + error.message })); // Risposta JSON in caso di errore
 });
 
+// Endpoint API per recuperare i dati della stagione corrente dal database
+app.get('/players/get-current-season-info-review', async (req, res) => {
+  try {
+    const seasonData = await getSeasonData('partial');
+    res.json(seasonData);
+  } catch (error) {
+    res.status(500).send({ error: 'Si è verificato un errore durante il recupero dei dati della stagione' });
+  }
+});
+
+app.get('/players/get-current-season', async (req, res) => {
+  const query = 'SELECT season_id FROM history ORDER BY season_id DESC LIMIT 1';
+  connection.query(query, (error, results) => {
+    if (error) {
+      return res.status(500).send(error);
+    }
+    res.status(200).send(results);
+  });
+});
+
 // Your endpoint for starting a new season
 app.post('/start-new-season', async (req, res) => {
   try {
-    const seasonData = await getSeasonData();
+    const seasonData = await getSeasonData('all');
     const lastSeasonId = await getLastSeasonId();
 
     if (lastSeasonId) {
@@ -951,27 +990,54 @@ app.post('/start-new-season', async (req, res) => {
 
     await createNextSeasonRecord();
 
-    res.send('Current season saved and new season started.');
+    res.json({ message: 'Current season saved and new season started.' });
   } catch (error) {
     console.error(error);
     res.status(500).send('Error during the season update.');
   }
 });
 
-// API endpoint to retrieve fixtures data from the database
 app.get('/players/history', (req, res) => {
   const query = 'SELECT * FROM history WHERE season_id < (SELECT season_id FROM history ORDER BY season_id DESC LIMIT 1);';
-  connection.query(query, (error, results) => {
+  connection.query(query, async (error, results) => {
     if (error) {
       return res.status(500).send(error);
     }
-    res.status(200).send(results);
+    try {
+      const processedResults = await Promise.all(results.map(async (element) => {
+        // Processa la league table
+        let leagueTableArray = JSON.parse(element.season_league_table);
+        const processedLeagueTable = leagueTableArray.map(team => {
+          if (team.team_logo) {
+            team.team_logo_base64 = 'data:image/webp;base64,' + Buffer.from(team.team_logo.data).toString('base64');
+          }
+          return team;
+        });
+
+        let leagueTeams = JSON.parse(element.season_teams);
+        let winnerTeamUCL = leagueTeams.find(team => team.season_champions_league_winner === 'yes');
+        if (winnerTeamUCL && winnerTeamUCL.team_logo) {
+          winnerTeamUCL.team_logo_base64 = 'data:image/webp;base64,' + Buffer.from(winnerTeamUCL.team_logo.data).toString('base64');
+        }
+
+        element.season_league_table = JSON.stringify(processedLeagueTable);
+        element.winnerTeamUCL = winnerTeamUCL ? winnerTeamUCL : null;
+
+        return element;
+      }));
+      res.status(200).send(processedResults);
+    } catch (err) {
+      console.error('Error processing results', err);
+      res.status(500).send('Error processing results');
+    }
   });
 });
 
+
+
 app.get('/players/history/:seasonId', (req, res) => {
   const seasonId = req.params.seasonId;
-  const query = 'SELECT season_league_table FROM history WHERE season_id = ?';
+  const query = 'SELECT * FROM history WHERE season_id = ?'; // Modificato per selezionare tutte le colonne
 
   connection.query(query, [seasonId], (error, results) => {
     if (error) {
@@ -979,31 +1045,63 @@ app.get('/players/history/:seasonId', (req, res) => {
     }
 
     if (results.length > 0) {
-      const seasonLeagueTable = JSON.parse(results[0].season_league_table);
+      const seasonData = results[0];
+      const seasonLeagueTable = JSON.parse(seasonData.season_league_table);
 
+      // Funzione helper per convertire le foto in base64
+      const convertPhotoToBase64 = (player) => {
+        if (player.photo && player.photo.data) {
+          return 'data:image/jpeg;base64,' + Buffer.from(player.photo.data).toString('base64');
+        }
+        return null;
+      };
+
+      // Converti le foto per top scorers, assists, ecc.
+      const convertPlayerPhotos = (players) => {
+        return players.map(player => {
+          return {
+            ...player,
+            photo: convertPhotoToBase64(player)
+          };
+        });
+      };
+
+      // Converti le foto in ogni categoria
+      const topScorers = convertPlayerPhotos(JSON.parse(seasonData.season_top_scorers));
+      const topAssists = convertPlayerPhotos(JSON.parse(seasonData.season_top_assist));
+      const topMOTM = convertPlayerPhotos(JSON.parse(seasonData.season_top_motm));
+      const ballonDOr = convertPlayerPhotos(JSON.parse(seasonData.season_ballon_dOr));
+
+      // Continua con la conversione delle immagini della league table come hai già fatto
       const teamsWithLogos = seasonLeagueTable.map(team => {
         if (team.team_logo && team.team_logo.data) {
-          // Assumendo che team.team_logo.data sia un buffer binario
           const logoBase64 = 'data:image/webp;base64,' + Buffer.from(team.team_logo.data).toString('base64');
           return {
-            team: team.team,
+            ...team,
             team_logo: logoBase64
           };
         } else {
-          // Se non c'è un logo, puoi decidere di inviare un valore di default o null
           return {
-            team: team.team,
+            ...team,
             team_logo: null
           };
         }
       });
 
-      res.status(200).send(teamsWithLogos);
+      // Invia tutti i dati convertiti
+      res.status(200).send({
+        leagueTable: teamsWithLogos,
+        topScorers,
+        topAssists,
+        topMOTM,
+        ballonDOr
+      });
     } else {
       res.status(404).send({ message: 'Season not found' });
     }
   });
 });
+
 
 
 function savePlayerData(playerData, imageFile) {
@@ -1137,7 +1235,7 @@ function updateTeamData(team_id, teamData, imageFile, oldTeamName) {
               if (error) {
                 return connection.rollback(() => { reject(error); });
               }
-              
+
               // Commit della transazione
               connection.commit(async (commitError) => {
                 if (commitError) {
@@ -1165,10 +1263,10 @@ async function clearUploadsDirectory(directoryPath) {
   try {
     // Leggi i nomi dei file nella directory
     const files = await fs.readdir(directoryPath);
-    
+
     // Crea una promessa per ciascun file da rimuovere
     const deletePromises = files.map(file => fs.unlink(path.join(directoryPath, file)));
-    
+
     // Attendi che tutti i file siano rimossi
     await Promise.all(deletePromises);
 
@@ -1191,7 +1289,7 @@ async function getSeasonTopPlayers(tableName, columnName) {
       [columnName]: player[columnName]
     }));
 
-    return players;
+  return players;
 }
 
 async function getSeasonFixtures() {
@@ -1232,14 +1330,13 @@ async function getSeasonFixtures() {
       away_team: fixture.away_team,
       aw_goals: fixture.aw_goals,
       aw_scorers,
-      motm: {name: motm, team: motm_team},
+      motm: { name: motm, team: motm_team },
       matchday: fixture.matchday,
     };
   }));
 
   return fixturesJsonArray;
 }
-
 
 // Assumi che questa funzione restituisca il nome del giocatore dato il suo ID
 async function getPlayerName(playerId) {
@@ -1264,7 +1361,7 @@ async function getIdName(motmId) {
   return playerData.length > 0 ? playerData[0].name : null;
 }
 
-async function getSeasonData() {
+async function getSeasonData(flag) {
   // Ottenere i top scorer, assist e MOTM
   const topScorers = await getSeasonTopPlayers('players_list', 'goals');
   const topAssist = await getSeasonTopPlayers('players_list', 'assist');
@@ -1273,25 +1370,54 @@ async function getSeasonData() {
   // Ottenere il vincitore del Ballon d'Or
   const ballonDOrQuery = 'SELECT * FROM players_list WHERE pots = "yes"';
   const ballonDOrWinner = await query(ballonDOrQuery);
+  var fixtures;
+  var teams;
+  var league_table;
 
-  // Ottenere tutte le partite di fixtures
-  const fixtures = await getSeasonFixtures();
+  var seasonRecord = {};
 
-  const league_tableQuery = 'SELECT * FROM league_table';
-  const league_table = await query(league_tableQuery);
+  if (flag == 'all') {
+    // Ottenere tutte le partite di fixtures
+    fixtures = await getSeasonFixtures();
 
-  const teamsQuery = 'SELECT * FROM teams';
-  const teams = await query(teamsQuery);
+    const teamsQuery = 'SELECT * FROM teams';
+    teams = await query(teamsQuery);
 
-  const seasonRecord = {
-    season_top_scorers: JSON.stringify(topScorers),
-    season_top_assist: JSON.stringify(topAssist),
-    season_top_motm: JSON.stringify(topMotm),
-    season_ballon_dOr: JSON.stringify(ballonDOrWinner),
-    season_fixtures: JSON.stringify(fixtures),
-    season_league_table: JSON.stringify(league_table),
-    season_teams: JSON.stringify(teams),
-  };
+    const league_tableQuery = 'SELECT * FROM league_table';
+    league_table = await query(league_tableQuery);
+
+  } else {
+
+    const league_tableQuery = 'SELECT * FROM league_table ORDER BY points DESC LIMIT 1';
+    league_table = await query(league_tableQuery);
+
+    const teamsQuery = `SELECT * FROM teams WHERE season_champions_league_winner = 'yes'`;
+    teams = await query(teamsQuery);
+
+  }
+
+  if (flag == 'all') {
+
+    seasonRecord = {
+      season_top_scorers: JSON.stringify(topScorers),
+      season_top_assist: JSON.stringify(topAssist),
+      season_top_motm: JSON.stringify(topMotm),
+      season_ballon_dOr: JSON.stringify(ballonDOrWinner),
+      season_fixtures: JSON.stringify(fixtures),
+      season_league_table: JSON.stringify(league_table),
+      season_teams: JSON.stringify(teams),
+    };
+
+  } else {
+    seasonRecord = {
+      season_top_scorers: JSON.stringify(topScorers),
+      season_top_assist: JSON.stringify(topAssist),
+      season_top_motm: JSON.stringify(topMotm),
+      season_ballon_dOr: JSON.stringify(ballonDOrWinner),
+      season_league_winner: JSON.stringify(league_table),
+      season_ucl_winner: JSON.stringify(teams),
+    };
+  }
 
   return seasonRecord;
 }

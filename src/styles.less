@@ -911,6 +911,10 @@ tui-accordion.custom-accordion-no-click .t-header_hoverable {
   cursor: default;
 }
 
+.no-padding-h{
+  padding-left: 0px; padding-right: 0px;
+}
+
 /* Nel tuo file CSS */
 .no-bullets {
   list-style-type: none; /* Rimuove i punti */
@@ -938,35 +942,91 @@ div.scorers-table div.t-content {
   vertical-align: middle;
 }
 
-.last-table-row-style{
+.last-table-row-style {
   border-bottom: 1px solid var(--tui-base-03);
 }
 
-.color-light-text{
+.color-light-text {
   color: var(--tui-text-02);
 }
 
-.th-background-custom{
+.th-background-custom {
   border-top: 1px solid var(--tui-base-03);
   background-color: #f6f6f6;
 }
 
-.pd-40{
+.pd-40 {
   padding: 40px;
 }
 
-.island-borders-custom{
+.island-borders-custom {
   border: 1px solid #04040430;
 }
 
-.history-pagination div.t-content{
+.history-pagination div.t-content {
   padding-top: 15px;
 }
 
-.container-history{
+.container-history {
   min-height: 500px;
 }
 
-.container-history-load{
+.container-history-load {
   min-height: 530px;
+}
+
+.passed-color tui-svg.t-marker {
+  background: var(--tui-support-04) !important;
+  color: #fff;
+}
+
+button .passed-color ._active .t-marker_index {
+  background: var(--tui-support-04) !important;
+  color: #fff;
+}
+
+.error-color-ng .t-marker_index {
+  background: var(--tui-error-fill) !important;
+  color: #fff !important;
+}
+
+.err-background {
+  background: var(--tui-error-bg) !important;
+}
+
+.passed-color div.t-marker.t-marker_index {
+  background: var(--tui-support-04) !important;
+  color: #fff;
+}
+
+//List custom for season review
+
+.review-season-island {
+  .action {
+    max-width: 26rem;
+    align-items: center;
+  }
+
+  .icon {
+    color: var(--tui-support-10);
+  }
+
+  .header,
+  .description {
+    margin: 0;
+  }
+
+  .header {
+    font-weight: bold;
+  }
+
+  .description {
+    color: var(--tui-text-02);
+  }
+}
+
+.truncated-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

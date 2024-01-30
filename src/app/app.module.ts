@@ -3,7 +3,7 @@ import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButto
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { TuiAccordionModule, TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiBadgedContentModule, TuiCarouselModule, TuiCheckboxBlockModule, TuiCheckboxLabeledModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiElasticContainerModule, TuiInputFilesModule, TuiInputModule, TuiInputNumberModule, TuiInputPasswordModule, TuiInputYearModule, TuiIslandModule, TuiLazyLoadingModule, TuiMarkerIconModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiTabsModule, TuiTagModule, TuiTextAreaModule, TuiToggleModule } from "@taiga-ui/kit";
+import { TuiAccordionModule, TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiBadgedContentModule, TuiCarouselModule, TuiCheckboxBlockModule, TuiCheckboxLabeledModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiElasticContainerModule, TuiInputFilesModule, TuiInputModule, TuiInputNumberModule, TuiInputPasswordModule, TuiInputYearModule, TuiIslandModule, TuiLazyLoadingModule, TuiMarkerIconModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiStepperModule, TuiTabsModule, TuiTagModule, TuiTextAreaModule, TuiToggleModule } from "@taiga-ui/kit";
 import { TuiAppBarModule, TuiTabBarModule } from '@taiga-ui/addon-mobile';
 import { TuiCalendarModule } from '@taiga-ui/core';
 import { TuiLetModule } from '@taiga-ui/cdk';
@@ -23,22 +23,23 @@ import { TuiTableFiltersModule, TuiTableModule, TuiTablePaginationModule } from 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ColorChromeModule } from 'ngx-color/chrome';
 import { ColorTwitterModule } from 'ngx-color/twitter';
-import { PlayersComponent } from './views/players/players/players.component';
 import { of } from "rxjs";
-import { LeagueTableComponent } from './views/league-table/league-table/league-table.component';
 import { LoginComponent } from './auth/login/login.component';
 import { TeamDetailComponent } from './views/team-detail/team-detail.component';
 import { ScrollToNotPlayedDirective } from './scroll-to-not-played.directive';
 import { TrophyAwardMenuComponent } from './views/team-detail/trophy-award-menu/trophy-award-menu.component';
 import { SalariesPaymentComponent } from './views/team-detail/salaries-payment/salaries-payment.component';
-import { InsertPlayerComponent } from './views/players/players/insert-player/insert-player.component';
-import { EditPlayerComponent } from './views/players/players/edit-player/edit-player.component';
 import { TradePlayersComponent } from './views/team-detail/trade-players/trade-players.component';
 import { EditTeamComponent } from './views/team-detail/edit-team/edit-team.component';
 import { ClickOutsideDirective } from './components/navbar/click-outside.directive';
 import { HistoryComponent } from "./views/history/history.component";
 import { HistoryLeagueStatsComponent } from './views/history/history-league-stats/history-league-stats.component';
 import { HistoryPlayersStatsComponent } from './views/history/history-players-stats/history-players-stats.component';
+import { LeagueTableComponent } from "./views/league-table/league-table.component";
+import { EditPlayerComponent } from "./views/players/edit-player/edit-player.component";
+import { InsertPlayerComponent } from "./views/players/insert-player/insert-player.component";
+import { PlayersComponent } from "./views/players/players.component";
+import { SeasonCheckComponent } from './views/league-table/season-check/season-check.component';
 
 
 @NgModule({
@@ -64,6 +65,7 @@ import { HistoryPlayersStatsComponent } from './views/history/history-players-st
     HistoryComponent,
     HistoryLeagueStatsComponent,
     HistoryPlayersStatsComponent,
+    SeasonCheckComponent,
   ],
   imports: [
     BrowserModule,
@@ -89,6 +91,7 @@ import { HistoryPlayersStatsComponent } from './views/history/history-players-st
     TuiMarkerIconModule,
     TuiAccordionModule,
     TuiTooltipModule,
+    TuiStepperModule,
     TuiInputPasswordModule,
     TuiPaginationModule,
     TuiComboBoxModule,

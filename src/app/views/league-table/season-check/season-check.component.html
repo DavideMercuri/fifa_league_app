@@ -1,0 +1,78 @@
+<div style="margin-bottom: 50px; display: flex; justify-content: center;">
+    <tui-stepper [activeItemIndex]="indexStats">
+        <button id="step-one" [stepState]="playedCount == totalCount ? 'pass' : 'error'" tuiStep (click)="indexStats = 0" [ngClass]="playedCount == totalCount ? 'passed-color' : 'error-color-ng'">
+            Calendario
+        </button>
+        <button id="step-two" [stepState]="salariesCheck && playedCount == totalCount ? 'pass' : 'normal'" [disabled]="playedCount != totalCount" tuiStep (click)="indexStats = 1" [ngClass]="salariesCheck ? 'passed-color' : 'error-color-ng'">
+            Stipendi
+        </button>
+        <button id="step-three" stepState="normal" class="normal-color" tuiStep (click)="indexStats = 2" [disabled]="playedCount != totalCount || !salariesCheck">
+            Riepilogo stagione
+        </button>
+    </tui-stepper>
+</div>
+
+<div style="margin: 50px; text-align: center; display: ruby-base;">
+    <span tuiCarouselButtons class="wrapper w-30-perc">
+        <div class="tui-row">
+            <div class="tui-col_md-1">
+                <button icon="tuiIconChevronLeftLarge" title="Previous" tuiIconButton type="button" (click)="carousel.prev()" style="margin-top: 140px;"></button>
+            </div>
+            <div class="tui-col_md-10">
+                <tui-carousel #carousel [(index)]="indexStats">
+                    <h2 class="tui-island__title">Resoconto Calendario</h2>
+                    <tui-island *tuiItem class="txt-center-align">
+                        <div>
+                            <p>Incontri giocati: {{playedCount}}/{{totalCount}}</p>
+                        </div>
+                    </tui-island>
+                    <tui-island *tuiItem class="txt-center-align">
+                        <h2 class="tui-island__title">Resoconto Stipendi</h2>
+                        <table class="tui-table" style="margin-top: 10px;">
+                            <tbody>
+                                <tr class="tui-table__tr">
+                                    <th class="tui-table__th">Squadra</th>
+                                    <th class="tui-table__th" style="text-align: right;">Stipendi</th>
+                                    <th class="tui-table__th" style="text-align: center;"><span>Stato</span></th>
+                                </tr>
+                                <ng-container *ngFor="let team of leagueTeams; let i = index">
+                                    <tr class="tui-table__tr" [ngClass]="team.paid_salaries == 'no' ? 'err-background' : ''">
+                                        <td class="tui-table__td" style="vertical-align: middle;">
+                                            <span><img style="width: 30px; height: 30px;" [src]="team.team_logo"></span><span style="margin-left: 20px;">{{team.team_name}}</span>
+                                        </td>
+                                        <td class="tui-table__td" style="text-align: right; vertical-align: middle;">{{team.salary | tuiFormatNumber: {thousandSeparator:'.', decimalSeparator: ','} }}</td>
+                                        <td class="tui-table__td" style="text-align: center;">
+                                            <span>
+                                                <tui-marker-icon [mode]="team.paid_salaries == 'yes' ? 'success' : 'error'" new size="s" [src]="team.paid_salaries == 'yes' ? 'tuiIconCheckLarge' : 'tuiIconXLarge'" class="tui-space_right-2"></tui-marker-icon>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </tui-island>
+                    <tui-island *tuiItem class="review-season-island">
+                        <h2 class="tui-island__title">Resoconto Stagione</h2>
+                        <div class="tui-row">
+                            <div class="tui-col_md-4">
+                                <button tuiAction type="button" class="action">
+                                    <tui-loader *ngIf="!season_league_winner || !season_league_winner.team || !season_league_winner.team_logo || !season_league_winner.poins"></tui-loader>
+                                    <section *ngIf="season_league_winner && season_league_winner.team && season_league_winner.team_logo && season_league_winner.poins">
+                                        <h5 class="header tui-text_h6">Vincitore Campionato</h5>
+                                        <p class="description tui-text_body-m">{{season_league_winner.team}}</p>
+                                    </section>
+                                    <tui-avatar size="m" [avatarUrl]="''" class="tui-island__marker icon"></tui-avatar>
+                                </button>
+                            </div>
+                        </div>
+        
+                    </tui-island>
+                </tui-carousel>
+            </div>
+            <div class="tui-col_md-1">
+                <button icon="tuiIconChevronRightLarge" title="Next" tuiIconButton type="button" (click)="carousel.next()" style="margin-top: 140px;" [disabled]="checkMoveToStepStatus(indexStats)"></button>
+            </div>
+        </div>
+
+    </span>
+</div>

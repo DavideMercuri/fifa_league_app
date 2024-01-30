@@ -3,11 +3,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { FixturesComponent } from './views/fixtures/fixtures.component';
 import { HomeComponent } from './views/home/home.component';
-import { PlayersComponent } from './views/players/players/players.component';
-import { LeagueTableComponent } from './views/league-table/league-table/league-table.component';
 import { LoginComponent } from './auth/login/login.component';
 import { TeamDetailComponent } from './views/team-detail/team-detail.component';
 import { HistoryComponent } from './views/history/history.component';
+import { LeagueTableComponent } from './views/league-table/league-table.component';
+import { PlayersComponent } from './views/players/players.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },

@@ -7,9 +7,11 @@ export interface Team {
     players_number: number;
     salary: number;
     captain: string;
-    team_logo: string;
+    team_logo: any;
     club_value: number;
     team_main_color: string;
     team_secondary_color: string;
     team_text_color: string;
+    season_champions_league_winner: string;
+    paid_salaries: string;
 }
