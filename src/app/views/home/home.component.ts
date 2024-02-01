@@ -310,25 +310,4 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.cd.detectChanges();
   }
 
-  resetLeague() {
-    this.http.put('http://localhost:3000/reset-league', undefined).subscribe({
-      error: (err: any) => {
-        console.error(err);
-      },
-      complete: () => {
-        console.log('Reset Completato');
-      }
-    })
-  }
-
-  startNewLeague() {
-    this.http.post('http://localhost:3000/start-new-season', undefined).subscribe({
-      error: (err: any) => {
-        console.error(err);
-      },
-      complete: () => {
-      }
-    })
-  }
-
 }
