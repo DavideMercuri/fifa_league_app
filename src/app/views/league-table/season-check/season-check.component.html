@@ -52,26 +52,83 @@
                         </table>
                     </tui-island>
                     <tui-island *tuiItem class="review-season-island">
-                        <h2 class="tui-island__title">Resoconto Stagione</h2>
-                        <div class="tui-row">
+                        <h2 class="tui-island__title" style="text-align: center;">Resoconto Stagione</h2>
+
+                        <div *ngIf="leagueWinner && ballonDor" class="tui-row" style="margin-top: 50px;">
                             <div class="tui-col_md-4">
-                                <button tuiAction type="button" class="action">
-                                    <tui-loader *ngIf="!season_league_winner || !season_league_winner.team || !season_league_winner.team_logo || !season_league_winner.poins"></tui-loader>
-                                    <section *ngIf="season_league_winner && season_league_winner.team && season_league_winner.team_logo && season_league_winner.poins">
-                                        <h5 class="header tui-text_h6">Vincitore Campionato</h5>
-                                        <p class="description tui-text_body-m">{{season_league_winner.team}}</p>
+                                <button tuiAction type="button" class="action tui-space_vertical-4" style="width: 90%;">
+                                    <section>
+                                        <p class="description tui-text_body-m">Vincitore Campionato</p>
+                                            <h6 class="header tui-text_h6" style="margin-top: 35px;">{{leagueWinner.team}}</h6>
                                     </section>
-                                    <tui-avatar size="m" [avatarUrl]="''" class="tui-island__marker icon"></tui-avatar>
+                                    <tui-avatar size="l" [avatarUrl]="leagueWinner.team_logo" class="tui-island__marker icon" style="margin-top: auto;"></tui-avatar>
+                                </button>
+                            </div>
+                            <div class="tui-col_md-4" *ngIf="uclWinner">
+                                <button tuiAction type="button" class="action tui-space_vertical-4" style="width: 90%">
+                                    <section>
+                                        <p class="description tui-text_body-m">Vincitore UCL</p>
+                                            <h6 class="header tui-text_h6" style="margin-top: 35px;">{{uclWinner.team_name}}</h6>
+                                    </section>
+                                    <tui-avatar *ngIf="uclWinner.team_logo" size="l" [avatarUrl]="uclWinner.team_logo" class="tui-island__marker icon" style="margin-top: auto;"></tui-avatar>
+                                </button>
+                            </div>
+                            <div class="tui-col_md-4">
+                                <button tuiAction type="button" class="action tui-space_vertical-4" style="width: 90%">
+                                    <section>
+                                        <p class="description tui-text_body-m">Pallone D'oro</p>
+                                            <h6 class="header tui-text_h6" style="margin-top: 35px;">{{formatPlayerName(ballonDor.name)}}</h6>
+                                    </section>
+                                    <tui-avatar size="l" [avatarUrl]="ballonDor.photo" class="tui-island__marker icon" style="margin-top: auto;"></tui-avatar>
+                                </button> 
+                            </div>
+                        </div>
+                        <div *ngIf="topScorer && topAssist && topMotm" class="tui-row">
+                            <div class="tui-col_md-4">
+                                <button tuiAction type="button" class="action tui-space_vertical-4" style="width: 90%">
+                                    <section>
+                                        <p class="description tui-text_body-m">Miglior Marcatore</p>
+                                            <h6 class="header tui-text_h6" style="margin-top: 35px;">{{formatPlayerName(topScorer.name)}}</h6>
+                                    </section>
+                                    <tui-avatar size="l" [avatarUrl]="topScorer.photo" class="tui-island__marker icon" style="margin-top: auto;"></tui-avatar>
+                                </button>
+                            </div>
+                            <div class="tui-col_md-4">
+                                <button tuiAction type="button" class="action tui-space_vertical-4" style="width: 90%">
+                                    <section>
+                                        <p class="description tui-text_body-m">Miglior Assistman</p>
+                                            <h6 class="header tui-text_h6" style="margin-top: 35px;">{{formatPlayerName(topAssist.name)}}</h6>
+                                    </section>
+                                    <tui-avatar size="l" [avatarUrl]="topAssist.photo" class="tui-island__marker icon" style="margin-top: auto;"></tui-avatar>
+                                </button>
+                            </div>
+                            <div class="tui-col_md-4">
+                                <button tuiAction type="button" class="action tui-space_vertical-4" style="width: 90%">
+                                    <section>
+                                        <p class="description tui-text_body-m">Motm</p>
+                                            <h6 class="header tui-text_h6" style="margin-top: 35px;">{{formatPlayerName(topMotm.name)}}</h6>
+                                    </section>
+                                    <tui-avatar size="l" [avatarUrl]="topMotm.photo" class="tui-island__marker icon" style="margin-top: auto;"></tui-avatar>
                                 </button>
                             </div>
                         </div>
-        
+                        <button tuiButton [size]="'l'" (click)="openConfirmModal(confirmModal, undefined, 's')" class="save-button" style="float: right; color: #fff; margin-top: 20px;">Termina Stagione</button>                    
                     </tui-island>
                 </tui-carousel>
             </div>
             <div class="tui-col_md-1">
                 <button icon="tuiIconChevronRightLarge" title="Next" tuiIconButton type="button" (click)="carousel.next()" style="margin-top: 140px;" [disabled]="checkMoveToStepStatus(indexStats)"></button>
             </div>
+            <ng-template #confirmModal let-confirmObserver>
+                    <div *ngIf="!load">
+                        <p>vuoi confermare?</p>
+                        <button tuiButton (click)="startNewLeague(confirmObserver)">Conferma</button>
+                    </div>
+                    <div *ngIf="load" style="text-align: center;">
+                        <p>Inizio Nuova Stagione in corso</p>
+                        <progress max="100" tuiProgressBar></progress>
+                    </div>
+            </ng-template>
         </div>
 
     </span>
