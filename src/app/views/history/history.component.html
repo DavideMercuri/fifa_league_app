@@ -4,10 +4,10 @@
     <div class="tui-row">
         <div class="operation-date tui-col_md-1">Stagione</div>
         <div class="operation-date tui-col_md-1">Anno</div>
-        <div class="operation-date tui-col_md-3" style="text-align: start; width: 21.6%">Vincitore Campionato</div>
-        <div class="operation-date tui-col_md-4" style="text-align: start; width: 38.333%;">Vincitore UCL</div>
-        <div class="operation-date tui-col_md-1">Incontri</div>
-        <div class="operation-date tui-col_md-2" style="width: 15%">Albo D'oro</div>
+        <div class="operation-date tui-col_md-3" style="text-align: start; width: 21.6%; padding-left: 40px;">Vincitore Campionato</div>
+        <div class="operation-date tui-col_md-4" style="text-align: start; width: 38.333%; padding-left: 65px;">Vincitore UCL</div>
+        <div class="operation-date tui-col_md-1" style="padding-left: 60px;">Incontri</div>
+        <div class="operation-date tui-col_md-2" style="width: 15%; padding-left: 86px;">Albo D'oro</div>
     </div>
 </div>
 <tui-loader *ngIf="isLoading" style="margin-top: 200px;"></tui-loader>
@@ -18,15 +18,15 @@
                 <tui-accordion-item borders="top-bottom" [showArrow]="false" [size]="'s'">
                     <div tuiAccordionItemContext class="disabled-click">
                         <div class="operation-header tui-row">
-                            <div class="operation-date tui-col_md-1" style="text-align: center;">{{ summary.season_id < 10 ? '0' + summary.season_id : summary.season_id }}</div>
+                            <div class="operation-date tui-col_md-1" style="text-align: center; padding-left: 35px;">{{ summary.season_id < 10 ? '0' + summary.season_id : summary.season_id }}</div>
                             <div class="operation-date tui-col_md-1" style="text-align: center;">{{ summary.season_year }}</div>
-                            <div class="operation-title tui-col_md-2"><img style="width: 23px; height: auto;" [src]="summary.winnerTeam.team_logo_base64" alt=""><span style="margin-left: 20px; font-size: 18px; vertical-align: middle;">{{ summary.winnerTeam.team }}</span></div>
+                            <div class="operation-title tui-col_md-2" style="width: 20%;"><img style="width: 23px; height: auto;" [src]="summary.winnerTeam.team_logo_base64" alt=""><span style="margin-left: 20px; font-size: 18px; vertical-align: middle;">{{ summary.winnerTeam.team }}</span></div>
                             <div class="operation-title tui-col_md-5" style="width: 36%;">
                                 <span *ngIf="summary.winnerTeamUCL"><img style="width: 23px; height: auto;" [src]="summary.winnerTeamUCL.team_logo_base64" alt=""><span style="margin-left: 20px; font-size: 18px; vertical-align: middle;">{{ summary.winnerTeamUCL.team_name }}</span></span>
                                 <span *ngIf="!summary.winnerTeamUCL"><span style="margin-left: 45px; font-size: 18px; vertical-align: middle;"> - - </span></span>
                             </div>
-                            <a (click)="openDialog(historyLeagueStats, undefined, 'l')" class="enable-click-a-element zoom-on-hover operation-date tui-col_md-1" style="font-size: 25px;"><span><fa-icon [icon]="faRectangleList"></fa-icon><span></span></span></a>
-                            <a (click)="openDialog(historyTopPlayersStats, undefined, 'fullscreen')" class="enable-click-a-element zoom-on-hover operation-date tui-col_md-1" style="font-size: 25px; margin-left: 3%"><span><fa-icon [icon]="faUsersRectangle"></fa-icon><span></span></span></a>
+                            <a [ngClass]="!summary.season_fixtures ? 'disabled-element' : '' " (click)="openDialog(historyLeagueStats, undefined, 'l')" class="enable-click-a-element zoom-on-hover operation-date tui-col_md-1" style="font-size: 25px;"><span><fa-icon [icon]="faRectangleList"></fa-icon><span></span></span></a>
+                            <a [ngClass]="!summary.season_top_scorers || !summary.season_top_assist || !summary.season_top_motm || !summary.season_ballon_dOr ? 'disabled-element' : '' " (click)="openDialog(historyTopPlayersStats, undefined, 'fullscreen')" class="enable-click-a-element zoom-on-hover operation-date tui-col_md-1" style="font-size: 25px; padding-left: 70px;"><span><fa-icon [icon]="faUsersRectangle"></fa-icon><span></span></span></a>
                         </div>
                     </div>
                 </tui-accordion-item>

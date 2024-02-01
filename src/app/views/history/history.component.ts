@@ -43,7 +43,7 @@ export class HistoryComponent implements OnInit, AfterViewInit {
 
     this.http.get('http://localhost:3000/players/history').subscribe({
       next: (res: any) => {
-        this.totalItems = (res.length % 10) + 1; // Imposta il numero totale di elementi
+        this.totalItems = (Math.floor(res.length / 10)) + 1; // Imposta il numero totale di elementi
         // Assicurati di prendere la fetta giusta dell'array per la pagina corrente
         this.getSummary(res.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize));
       },

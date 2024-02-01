@@ -20,7 +20,7 @@ const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'password',
-  database: 'players'
+  database: 'players_test'
 });
 connection.connect();
 
@@ -1409,17 +1409,32 @@ async function getSeasonData(flag) {
     };
 
   } else {
+
     seasonRecord = {
-      season_top_scorers: JSON.stringify(topScorers),
-      season_top_assist: JSON.stringify(topAssist),
-      season_top_motm: JSON.stringify(topMotm),
-      season_ballon_dOr: JSON.stringify(ballonDOrWinner),
-      season_league_winner: JSON.stringify(league_table),
-      season_ucl_winner: JSON.stringify(teams),
+      season_top_scorers: JSON.stringify(convertPhoto(topScorers, 'player')),
+      season_top_assist: JSON.stringify(convertPhoto(topAssist, 'player')),
+      season_top_motm: JSON.stringify(convertPhoto(topMotm, 'player')),
+      season_ballon_dOr: JSON.stringify(convertPhoto(ballonDOrWinner, 'player')),
+      season_league_winner: JSON.stringify(convertPhoto(league_table, 'team')),
+      season_ucl_winner: JSON.stringify(convertPhoto(teams, 'team')),
     };
   }
 
   return seasonRecord;
+}
+
+function convertPhoto(photoArray, type){
+  var temp = photoArray;
+  var info = temp.map(element => {
+    if(type == 'player'){
+      element.photo = 'data:image/webp;base64,' + Buffer.from(element.photo).toString('base64');
+      return element;
+    }else if(type == 'team'){
+      element.team_logo = 'data:image/webp;base64,' + Buffer.from(element.team_logo).toString('base64');
+      return element;
+    }
+  });
+  return info;
 }
 
 async function saveSeasonToHistory(seasonRecord) {
