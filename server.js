@@ -20,7 +20,8 @@ const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'password',
-  database: 'players'
+  //database: 'players'
+  database: 'players_test'
 });
 connection.connect();
 
