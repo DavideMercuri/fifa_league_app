@@ -166,7 +166,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
       TUI_DEFAULT_MATCHER(user.name, searchQuery || ''),
     );
 
-    return of(result).pipe(delay(0));
+    return of(result).pipe();
   }
 
   GetPlayers() {
