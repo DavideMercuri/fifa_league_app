@@ -1,4 +1,11 @@
-<div *ngIf="match">
+<div class="match-component" *ngIf="match">
+
+    <button tuiIconButton [icon]="'tuiIconBarChartLarge'" style="position: absolute; left: 30px; top: 30px;" [size]="'s'" [shape]="'rounded'" (click)="toggle(true)" (tuiActiveZoneChange)="toggle($event)">
+        <div *tuiSidebar="open; direction: 'right'">
+            <app-league-table [fullModeVisualization]="false"></app-league-table>
+            <button class="close-custom" tuiIconButton [icon]="'tuiIconCloseLarge'"[size]="'m'" [shape]="'rounded'" [appearance]="'flat'" (click)="toggle(false)"></button>
+        </div>
+    </button>
 
     <ng-container class="col-12 col-md-4">
         <table id="match-table" class="tui-table tui-table__tr_hover_disabled tui-table_font-size_s">
@@ -60,8 +67,6 @@
 
                     <div *ngIf="!isLoading">
 
-
-
                     </div>
                     
                 </div>
@@ -103,7 +108,7 @@
 
         </div>
 
-    </ng-container>
+    </ng-container>    
     <br>
     <br>
 

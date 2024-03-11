@@ -480,4 +480,10 @@ export class MatchComponent implements OnInit, AfterViewInit {
     return player;
   }
 
+  open = false;
+
+  toggle(open: boolean): void {
+      this.open = open;
+  }
+
 }

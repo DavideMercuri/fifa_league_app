@@ -1,9 +1,9 @@
 <div>
-    <div *ngIf="true" style="margin-left: 5px; margin-top: 25px; width: 95%; text-align: right; font-size: 26px;">
+    <div *ngIf="fullModeVisualization" style="margin-left: 5px; margin-top: 25px; width: 95%; text-align: right; font-size: 26px;">
         <a class="enable-click" (click)="openCheckSeasonModal(checkSeason, undefined, 'auto')"><fa-icon [icon]="faFolderPlus"></fa-icon></a>
     </div>
 
-    <table tuiTable class="table" [columns]="columns" style="margin: 30px; margin-top: 10px; width: 95%;">
+    <table *ngIf="fullModeVisualization" tuiTable class="table" [columns]="columns" style="margin: 30px; margin-top: 10px; width: 95%;">
         <thead>
             <tr tuiThGroup>
                 <th class="txt-center-align v-align-middle w-100" tuiTh>Posizione</th>
@@ -33,6 +33,28 @@
             </tr>
         </tbody>
     </table>
+
+    <div *ngIf="!fullModeVisualization" style="margin-top: 50px;">
+        <h3 style="margin: 30px;">Classifica</h3>
+        <table tuiTable class="table" [columns]="columnsMin" style="margin-top: 5px; margin: 30px; width: 95%;">
+            <thead>
+                <tr tuiThGroup>
+                    <th class="txt-center-align v-align-middle w-100" tuiTh>Posizione</th>
+                    <th class="txt-center-align v-align-middle" style="width: fit-content;" tuiTh>Squadra</th>
+                    <th class="txt-center-align v-align-middle font-b" tuiTh>Punti</th>
+                </tr>
+            </thead>
+            <tbody tuiTbody [data]="leagueTable">
+                <tr *ngFor="let item of leagueTable" tuiTr>
+                    <td *tuiCell="'position'" class="txt-center-align v-align-middle ftsz-15" tuiTd>{{ item.position }}</td>
+                    <td *tuiCell="'team'" class="v-align-middle ftsz-15" tuiTd>
+                        <span><img style="width: 30px; height: 30px; margin-right: 10px; margin-left: 10px;" src="{{item.team_logo}}">{{ item.team }}</span>
+                    </td>
+                    <td *tuiCell="'points'" class="txt-center-align v-align-middle ftsz-15-b" tuiTd>{{ item.points }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
 </div>
 
