@@ -6,6 +6,7 @@ import { TuiFileLike } from '@taiga-ui/kit';
 import { Observable, Subject, finalize, map, of, switchMap, timer } from 'rxjs';
 import { playerOSV } from 'src/app/components/navbar/common-data';
 import { PlayersComponent } from '../players.component';
+import { Transaction } from 'src/interfaces/transaction.interface';
 // import {tuiInputNumberOptionsProvider} from '@taiga-ui/kit';
 
 @Component({
@@ -207,13 +208,16 @@ export class InsertPlayerComponent {
   }
 
 
-  loadDataBasedOnTeamName(team_name: any): void {
+  loadDataBasedOnTeamName(team_name: any, transaction: any): void {
 
     var httpParams: HttpParams = new HttpParams().append('team_name', team_name);
     this.http.get(`http://localhost:3000/players/team-detail`, { params: httpParams }).subscribe({
       next: (res: any) => {
+        transaction.updated_team_money = res[0].money - this.newPlayer.controls['player_value'].value;
+        this.registerTransaction(String(transaction.transaction_team), transaction);
         this.moneyUpdateOnPlayerInsert(res[0], team_name);
         this.updateTeamSalaryAndValue();
+
       }
     });
   }
@@ -225,10 +229,10 @@ export class InsertPlayerComponent {
         console.error(err);
       },
     });
-
   }
 
   insert() {
+
     const formData = new FormData();
 
     // Aggiungi i dati del form al FormData
@@ -251,18 +255,48 @@ export class InsertPlayerComponent {
   sendDataToServer(formData: FormData) {
 
     var teamSelected: any = this.newPlayer.controls['team'].value;
+    var transaction: Transaction;
 
     this.http.post('http://localhost:3000/players/insert-new-player', formData).subscribe({
+      next: () => {
+        transaction = {
+          transaction_mode: 'DEBIT',
+          transaction_amount: this.newPlayer.controls['player_value'].value,
+          transaction_date: new Date().toString(),
+          transaction_team: String(this.newPlayer.controls['team'].value),
+          transaction_detail: {
+            type: 'player_sign',
+            player_name: this.newPlayer.controls['name'].value,
+            buyer: String(this.newPlayer.controls['team'].value),
+          },
+        }
+      },
       error: (error) => {
         console.error('Errore durante il salvataggio dei dati', error);
       },
       complete: () => {
         if (teamSelected != 'Svincolati') {
-          this.loadDataBasedOnTeamName(teamSelected);
+
+          this.loadDataBasedOnTeamName(teamSelected, transaction);
         }
         this.observer.complete();
         this.players.FilterPlayers(this.filteredValue[0], this.filteredValue[1], this.filteredValue[2]);
         this.alerts.open('Calciatore aggiunto con Successo!!', { label: 'Operazione Effettuata', status: TuiNotification.Success }).subscribe();
+      }
+    });
+  }
+
+  registerTransaction(transaction_team: string, transaction: Transaction) {
+
+    const teamName = transaction_team;
+
+    // Invia la transazione al server. Assicurati che il server accetti il nome del team anziché l'ID del team.
+    this.http.post('http://localhost:3000/players/register-transaction', { teamName, transaction: transaction }).subscribe({
+      next: (response) => {
+        console.log('Transaction registered successfully', response);
+      },
+      error: (error) => {
+        console.error('Error registering transaction', error);
       }
     });
   }
