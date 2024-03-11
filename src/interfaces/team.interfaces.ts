@@ -1,3 +1,5 @@
+import { Transaction } from "./transaction.interface";
+
 export interface Team {
     team_id: string;
     team_name: string;
@@ -14,4 +16,5 @@ export interface Team {
     team_text_color: string;
     season_champions_league_winner: string;
     paid_salaries: string;
+    team_transactions?: any;
 }

@@ -20,8 +20,8 @@ const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'password',
-  //database: 'players'
   database: 'players_test'
+  //database: 'players'
 });
 connection.connect();
 
@@ -397,35 +397,41 @@ app.put('/players/team-detail/update-value-salary', async (req, res) => {
   });
 })
 
-// API endpoint to retrieve fixtures data from the database
 app.get('/players/team-detail', (req, res) => {
+  let query;
 
-  var id;
-  var team_name;
-  var query
-
-  if (!req.query.id) {
-    team_name = req.query.team_name;
-    query = `SELECT * FROM teams WHERE team_name = '${team_name}'`;
+  if (req.query.team_name) {
+    const team_name = req.query.team_name;
+    // Utilizza i placeholder per prevenire SQL Injection
+    query = `SELECT * FROM teams WHERE team_name = ?`;
+  } else if (req.query.id) {
+    const id = req.query.id;
+    // Utilizza i placeholder per prevenire SQL Injection
+    query = `SELECT * FROM teams WHERE team_id = ?`;
   } else {
-    id = req.query.id;
-    query = `SELECT * FROM teams WHERE team_id = ${id}`;
+    // Gestisci il caso in cui non ci sono parametri validi
+    return res.status(400).send('Team name or ID is required');
   }
 
-  connection.query(query, (error, results) => {
+  // Utilizza il pooling di connessioni per eseguire la query in modo sicuro contro SQL Injection
+  connection.query(query, [req.query.team_name || req.query.id], (error, results) => {
+    if (error) {
+      return res.status(500).send(error);
+    }
+
+    if (results.length === 0) {
+      return res.status(404).send('Team not found');
+    }
 
     const team = results[0];
     if (team.team_logo) {
       team.team_logo = 'data:image/webp;base64,' + Buffer.from(team.team_logo).toString('base64');
     }
 
-    if (error) {
-      res.status(500).send(error);
-    } else {
-      res.status(200).send(results);
-    }
+    res.status(200).send(results);
   });
 });
+
 
 // API endpoint to retrieve fixtures data from the database
 app.get('/players/players_list/filters', (req, res) => {
@@ -1104,6 +1110,41 @@ app.get('/players/history/:seasonId', (req, res) => {
 });
 
 
+app.post('/players/register-transaction', async (req, res) => {
+  const { teamName, transaction } = req.body;
+
+  try {
+    // Ottieni transazioni esistenti
+    const results = await query('SELECT team_transactions FROM teams WHERE team_name = ?', [teamName]);
+
+    // Se non ci sono risultati, invia un errore appropriato
+    if (!results || results.length === 0) {
+      return res.status(404).json({ message: 'Team not found' });
+    }
+
+    const team = results[0];
+    let existingTransactions = team.team_transactions ? JSON.parse(team.team_transactions) : [];
+
+    // Calcola il prossimo transaction_id
+    const nextId = existingTransactions.length === 0 ? 1 : Math.max(...existingTransactions.map(t => t.transaction_id)) + 1;
+
+    // Imposta l'id della nuova transazione
+    transaction.transaction_id = nextId;
+
+    // Aggiungi la nuova transazione
+    existingTransactions.push(transaction);
+
+    // Aggiorna le transazioni nel database
+    await query('UPDATE teams SET team_transactions = ? WHERE team_name = ?', [JSON.stringify(existingTransactions), teamName]);
+
+    res.status(200).json({ message: 'Transaction added successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error processing transaction', error: error.message });
+  }
+});
+
+/*------------------------------------------------FUNCTION SECTION--------------------------------------------------*/
 
 function savePlayerData(playerData, imageFile) {
   return new Promise(async (resolve, reject) => {
@@ -1424,13 +1465,13 @@ async function getSeasonData(flag) {
   return seasonRecord;
 }
 
-function convertPhoto(photoArray, type){
+function convertPhoto(photoArray, type) {
   var temp = photoArray;
   var info = temp.map(element => {
-    if(type == 'player'){
+    if (type == 'player') {
       element.photo = 'data:image/webp;base64,' + Buffer.from(element.photo).toString('base64');
       return element;
-    }else if(type == 'team'){
+    } else if (type == 'team') {
       element.team_logo = 'data:image/webp;base64,' + Buffer.from(element.team_logo).toString('base64');
       return element;
     }

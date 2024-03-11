@@ -164,6 +164,10 @@ div.submenu-square a:hover {
   color: rgb(209, 32, 32);
 }
 
+.success-color {
+  color: var(--tui-success-fill);
+}
+
 .matchday {
   height: 40px;
   background: linear-gradient(
@@ -365,7 +369,7 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
 
 .custom-multi-select {
   max-height: 400px;
-  width: 345px;
+  max-width: 345px;
   overflow-y: auto;
 }
 
@@ -393,6 +397,34 @@ input .t-input.ng-untouched.ng-pristine.ng-valid {
 .img-size-l {
   width: 30px;
   height: 30px;
+}
+
+aside div.t-wrapper {
+  width: 80rem !important;
+  height: 65% !important;
+  margin-top: 45px !important;
+  border-radius: 20px;
+}
+
+aside {
+  justify-content: center !important;
+  align-items: middle !important;
+}
+
+aside:before {
+  background: rgb(0 0 0 / 72%) !important;
+}
+
+.close-custom {
+  float: right;
+  right: 15px;
+  top: -350px;
+  font-size: 24px;
+}
+
+.close-custom div.t-wrapper {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .h-40 {
@@ -915,8 +947,9 @@ tui-accordion.custom-accordion-no-click .t-header_hoverable {
   cursor: default;
 }
 
-.no-padding-h{
-  padding-left: 0px; padding-right: 0px;
+.no-padding-h {
+  padding-left: 0px;
+  padding-right: 0px;
 }
 
 /* Nel tuo file CSS */
@@ -1027,7 +1060,6 @@ button .passed-color ._active .t-marker_index {
   .description {
     color: var(--tui-text-02);
   }
-
 }
 
 .truncated-text {
@@ -1036,6 +1068,63 @@ button .passed-color ._active .t-marker_index {
   text-overflow: ellipsis;
 }
 
-.save-button [tuiWrapper]{
+.save-button [tuiWrapper] {
   color: #fff !important;
+}
+
+.transactions-table {
+  td,
+  th {
+    white-space: nowrap;
+    border-color: transparent;
+    border-right-color: var(--tui-base-04);
+    text-align: center;
+
+    &:last-child {
+      border-right-color: transparent;
+    }
+  }
+
+  tbody {
+    border-color: transparent;
+  }
+
+  .alive:before {
+    background: var(--tui-success-fill);
+  }
+  
+  tui-tag.tag-debit .t-tag, tui-tag.tag-credit .t-tag{
+    width: 100px !important;
+    text-align: center !important;
+  }
+}
+
+tui-tag.tag-debit{
+  background-color: rgb(209, 32, 32);
+  color: #fff;
+}
+
+tui-tag.tag-credit{
+  background-color: var(--tui-support-04);
+  color: #fff;
+}
+
+tui-tag.tag-player-sign{
+  background: var(--tui-accent-hover);
+  color: #fff;
+
+  .t-tag{
+    width: 150px !important;
+  }
+
+}
+
+tui-tag.tag-prize{
+  background: var(--tui-positive-hover);
+  color: #fff;
+
+  .t-tag{
+    width: 150px !important;
+  }
+
 }

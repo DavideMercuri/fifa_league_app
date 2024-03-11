@@ -27,6 +27,9 @@
         <span>
             <a style="margin-right: 25px; cursor: pointer;" (click)="onClick(editTeamMenu, undefined, 'l')"><fa-icon [style.color]="team.team_text_color" [title]="'Modifica Squadra'" [icon]="faGear"></fa-icon></a>
         </span>
+        <span>
+            <a style="margin-right: 25px; cursor: pointer;" (click)="onClick(transactionTeamMenu, undefined, 'auto')"><fa-icon [style.color]="team.team_text_color" [title]="'Visualizza Movimenti'" [icon]="faMagnifyingGlassDollar"></fa-icon></a>
+        </span>
     </div>
 </div>
 
@@ -151,4 +154,8 @@
 
 <ng-template #editTeamMenu let-observer>
     <app-edit-team [selectedTeam]="team" [observer]="observer"></app-edit-team>
+</ng-template>
+
+<ng-template #transactionTeamMenu let-observer>
+    <app-team-transaction [selectedTeam]="team" [observer]="observer"></app-team-transaction>
 </ng-template>

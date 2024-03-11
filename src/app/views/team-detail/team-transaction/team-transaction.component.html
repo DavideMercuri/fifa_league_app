@@ -1,0 +1,76 @@
+<ng-container *ngIf="teamTransactions != null">
+    <table tuiTable [columns]="columns" class="transactions-table">
+        <thead>
+            <tr tuiThGroup>
+                <th *tuiHead="'tipo'" tuiTh [sorter]="null">
+                    Tipo
+                </th>
+                <th *tuiHead="'importo'" tuiTh [sorter]="null">
+                    Importo
+                </th>
+                <th *tuiHead="'data'" tuiTh [sorter]="null">
+                    Data
+                </th>
+                <th *tuiHead="'causale'" tuiTh [sorter]="null">
+                    Causale
+                </th>
+                <th *tuiHead="'dettaglio'" tuiTh [sorter]="null">
+                    Dettaglio
+                </th>
+                <th *tuiHead="'saldo'" tuiTh [sorter]="null">
+                    Saldo
+                </th>
+            </tr>
+        </thead>
+            <tbody *tuiLet="teamTransactions | tuiTableSort as teamTransactionsSorted" tuiTbody [data]="teamTransactionsSorted">
+                <tr *ngFor="let transaction of teamTransactionsSorted; let index = index" tuiTr>
+                    <td *tuiCell="'tipo'" tuiTd>
+                        <tui-tag [ngClass]="transaction.transaction_mode == 'DEBIT' ? 'tag-debit' : 'tag-credit'" [status]="'custom'" [value]="transaction.transaction_mode == 'DEBIT' ? 'ADDEBITO' : 'ACCREDITO'"></tui-tag>
+                    </td>
+                    <td *tuiCell="'importo'" tuiTd style="text-align: right;">
+                        <span *ngIf="transaction.transaction_mode == 'DEBIT'" class="error-color">
+                        - {{ transaction.transaction_amount | tuiFormatNumber: {thousandSeparator:'.', decimalSeparator: ','} }}
+                        </span>
+                        <span *ngIf="transaction.transaction_mode == 'CREDIT'" class="success-color">
+                            + {{ transaction.transaction_amount | tuiFormatNumber: {thousandSeparator:'.', decimalSeparator: ','} }}
+                        </span>
+                    </td>
+                    <td *tuiCell="'data'" tuiTd>
+                        {{ transaction.transaction_date | date: "d MMMM yyyy, HH:mm" }}
+                    </td>
+                    <ng-container [ngSwitch]="transaction.transaction_detail.type">
+                        <ng-container *ngSwitchCase="'player_sign'">
+                            <td *tuiCell="'causale'" style="width: max-content;" tuiTd>
+                                <tui-tag class="tag-player-sign" [status]="'custom'" [value]="'Acquisto Calciatore'"></tui-tag>
+                            </td>
+                            <td *tuiCell="'dettaglio'" tuiTd>
+                                {{ transaction.transaction_detail.player_name }}
+                            </td>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'prize'">
+                            <td *tuiCell="'causale'" style="width: max-content;" tuiTd>
+                                <tui-tag class="tag-prize" [status]="'custom'" [value]="'Assegnazione Premio'"></tui-tag>
+                            </td>
+                            <td *tuiCell="'dettaglio'" tuiTd>
+                                {{ transaction.transaction_detail.prize }}
+                            </td>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'salary_payment'">
+                            <td *tuiCell="'causale'" style="width: max-content;" tuiTd>
+                                <tui-tag class="tag-salary-payment" [status]="'custom'" [value]="'Pagamento Stipendi'"></tui-tag>
+                            </td>
+                            <td *tuiCell="'dettaglio'" tuiTd>
+                                {{ transaction.transaction_detail.prize }}
+                            </td>
+                        </ng-container>
+                    </ng-container>
+                    <td *tuiCell="'saldo'" tuiTd style="font-weight: bold;">
+                        {{ transaction.updated_team_money | tuiFormatNumber: {thousandSeparator:'.', decimalSeparator: ','} }}
+                    </td>
+                </tr>
+            </tbody>
+    </table>
+</ng-container>
+<ng-container *ngIf="teamTransactions == null">
+    <h5>Nessun Movimento disponibile</h5>
+</ng-container>

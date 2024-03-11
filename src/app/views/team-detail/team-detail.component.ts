@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { faUser, faShieldHalved, faPenToSquare, faTrashCan, faIdCard, faStar, faSackDollar, faCommentDollar, faTrophy, faFileInvoiceDollar, faGear, faAward } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faShieldHalved, faPenToSquare, faTrashCan, faIdCard, faStar, faSackDollar, faCommentDollar, faTrophy, faFileInvoiceDollar, faGear, faAward, faMagnifyingGlassDollar } from '@fortawesome/free-solid-svg-icons';
 import { TuiComparator } from '@taiga-ui/addon-table';
 import { tuiIsFalsy, tuiIsPresent, TUI_DEFAULT_MATCHER, tuiDefaultSort } from '@taiga-ui/cdk';
 import { TuiDialogContext, TuiDialogService, TuiDialogSize } from '@taiga-ui/core';
@@ -44,6 +44,7 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
   faFileInvoiceDollar = faFileInvoiceDollar;
   faGear = faGear;
   faAward = faAward;
+  faMagnifyingGlassDollar = faMagnifyingGlassDollar;
 
   imageSrc: string | ArrayBuffer | null = null;
 

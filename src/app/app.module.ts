@@ -1,14 +1,14 @@
 import { NgDompurifySanitizer } from "@tinkoff/ng-dompurify";
 import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButtonModule, TuiDataListModule, TuiTextfieldControllerModule, TuiLabelModule, TuiSvgModule, TuiLoaderModule, TuiFormatNumberPipeModule, TuiTooltipModule, TuiExpandModule, TuiDropdownModule, TuiHintModule, TuiScrollbarModule } from "@taiga-ui/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { TuiAccordionModule, TuiActionModule, TuiAvatarModule, TuiBadgeModule, TuiBadgedContentModule, TuiCarouselModule, TuiCheckboxBlockModule, TuiCheckboxLabeledModule, TuiComboBoxModule, TuiDataListWrapperModule, TuiElasticContainerModule, TuiInputFilesModule, TuiInputModule, TuiInputNumberModule, TuiInputPasswordModule, TuiInputYearModule, TuiIslandModule, TuiLazyLoadingModule, TuiMarkerIconModule, TuiMultiSelectModule, TuiPaginationModule, TuiSelectModule, TuiStepperModule, TuiTabsModule, TuiTagModule, TuiTextAreaModule, TuiToggleModule } from "@taiga-ui/kit";
-import { TuiAppBarModule, TuiTabBarModule } from '@taiga-ui/addon-mobile';
+import { TuiAppBarModule, TuiSidebarModule, TuiTabBarModule } from '@taiga-ui/addon-mobile';
 import { TuiCalendarModule } from '@taiga-ui/core';
-import { TuiLetModule } from '@taiga-ui/cdk';
+import { TuiActiveZoneModule, TuiLetModule } from '@taiga-ui/cdk';
 
-import {TUI_LANGUAGE, TUI_ITALIAN_LANGUAGE} from '@taiga-ui/i18n';
+import { TUI_LANGUAGE, TUI_ITALIAN_LANGUAGE } from '@taiga-ui/i18n';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -40,6 +40,12 @@ import { EditPlayerComponent } from "./views/players/edit-player/edit-player.com
 import { InsertPlayerComponent } from "./views/players/insert-player/insert-player.component";
 import { PlayersComponent } from "./views/players/players.component";
 import { SeasonCheckComponent } from './views/league-table/season-check/season-check.component';
+import { TeamTransactionComponent } from './views/team-detail/team-transaction/team-transaction.component';
+import localeIt from '@angular/common/locales/it';
+import { registerLocaleData } from '@angular/common';
+
+// Registra il locale italiano
+registerLocaleData(localeIt);
 
 
 @NgModule({
@@ -66,6 +72,7 @@ import { SeasonCheckComponent } from './views/league-table/season-check/season-c
     HistoryLeagueStatsComponent,
     HistoryPlayersStatsComponent,
     SeasonCheckComponent,
+    TeamTransactionComponent,
   ],
   imports: [
     BrowserModule,
@@ -92,6 +99,9 @@ import { SeasonCheckComponent } from './views/league-table/season-check/season-c
     TuiAccordionModule,
     TuiTooltipModule,
     TuiStepperModule,
+    TuiDialogModule,
+    TuiSidebarModule,
+    TuiActiveZoneModule,
     TuiInputPasswordModule,
     TuiPaginationModule,
     TuiComboBoxModule,
@@ -116,7 +126,7 @@ import { SeasonCheckComponent } from './views/league-table/season-check/season-c
     ReactiveFormsModule,
     TuiMultiSelectModule,
     TuiSelectModule,
-    TuiDataListWrapperModule ,
+    TuiDataListWrapperModule,
     TuiAvatarModule,
     TuiLabelModule,
     TuiLetModule,
@@ -127,22 +137,23 @@ import { SeasonCheckComponent } from './views/league-table/season-check/season-c
     TuiElasticContainerModule,
     TuiExpandModule,
     HttpClientModule,
-    
+
   ],
   providers: [
-  {
-    provide: TUI_SANITIZER,
-    useClass: NgDompurifySanitizer
-  },
-  {
-    provide: TUI_SANITIZER,
-    useClass: NgDompurifySanitizer
-  },
-  {
-    provide: TUI_LANGUAGE,
-    useValue: of(TUI_ITALIAN_LANGUAGE),
-  },
-],
+    {
+      provide: TUI_SANITIZER,
+      useClass: NgDompurifySanitizer
+    },
+    {
+      provide: TUI_SANITIZER,
+      useClass: NgDompurifySanitizer
+    },
+    {
+      provide: TUI_LANGUAGE,
+      useValue: of(TUI_ITALIAN_LANGUAGE),
+    },
+    { provide: LOCALE_ID, useValue: 'it' }
+  ],
   bootstrap: [AppComponent]
   ,
   exports: [ScrollToNotPlayedDirective]
