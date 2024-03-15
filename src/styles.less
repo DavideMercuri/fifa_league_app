@@ -1092,48 +1092,85 @@ button .passed-color ._active .t-marker_index {
   .alive:before {
     background: var(--tui-success-fill);
   }
-  
-  tui-tag.tag-debit .t-tag, tui-tag.tag-credit .t-tag{
+
+  tui-tag.tag-debit .t-tag,
+  tui-tag.tag-credit .t-tag {
     width: 100px !important;
     text-align: center !important;
   }
 }
 
-tui-tag.tag-debit{
+tui-tag.tag-debit {
   background-color: rgb(209, 32, 32);
   color: #fff;
 }
 
-tui-tag.tag-credit{
+tui-tag.tag-credit {
   background-color: var(--tui-support-04);
   color: #fff;
 }
 
-tui-tag.tag-player-sign{
+tui-tag.tag-player-sign {
   background: var(--tui-accent-hover);
   color: #fff;
 
-  .t-tag{
+  .t-tag {
     width: 150px !important;
   }
-
 }
 
-tui-tag.tag-prize{
+tui-tag.tag-prize {
   background: var(--tui-positive-hover);
   color: #fff;
 
-  .t-tag{
+  .t-tag {
     width: 150px !important;
   }
-
 }
 
-tui-tag.tag-salary-payment{
+tui-tag.tag-salary-payment {
   background: var(--tui-accent-hover);
   color: #fff;
 
-  .t-tag{
+  .t-tag {
     width: 150px !important;
   }
+}
+
+tui-tag.tag-players-transfer {
+  background: var(--tui-support-07);
+  color: #fff;
+
+  .t-tag {
+    width: 150px !important;
+  }
+}
+
+.tui-tag-custom {
+  position: relative;
+  display: flex;
+  padding: 0 0.5rem;
+  height: var(--tui-height-xs);
+  background-color: var(--tui-support-08);
+  border-radius: var(--tui-radius-s);
+  font-family: var(--tui-font-text-s);
+  align-items: center;
+  grid-gap: 0.25rem;
+  gap: 0.25rem;
+  color: #fff;
+  justify-content: center;
+}
+
+tui-hint{
+  padding-right: 5rem !important;
+  background: var(--tui-support-08) !important;
+}
+
+.title-label-hint{
+  font-weight: bolder;
+  font-size: 14px;
+}
+
+.custom-space-sub-label{
+  margin-top: 20px;
 }

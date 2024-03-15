@@ -20,8 +20,8 @@ const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'password',
-  database: 'players_test'
-  //database: 'players'
+  //database: 'players_test'
+  database: 'players'
 });
 connection.connect();
 
@@ -1113,13 +1113,24 @@ app.get('/players/history/:seasonId', (req, res) => {
 app.post('/players/register-transaction', async (req, res) => {
   const { teamName, transaction } = req.body;
 
+  var results;
+
   try {
-    // Ottieni transazioni esistenti
-    const results = await query('SELECT team_transactions FROM teams WHERE team_name = ?', [teamName]);
+
+    if (teamName == 'Svincolati') {
+      results = '';
+    } else {
+      // Ottieni transazioni esistenti
+      results = await query('SELECT team_transactions FROM teams WHERE team_name = ?', [teamName]);
+    }
+
 
     // Se non ci sono risultati, invia un errore appropriato
-    if (!results || results.length === 0) {
+    if (results != '' && (!results || results.length === 0)) {
       return res.status(404).json({ message: 'Team not found' });
+    }
+    else if(results == ''){
+      return res.status(200).json({ message: 'Added to Svincolati' });
     }
 
     const team = results[0];

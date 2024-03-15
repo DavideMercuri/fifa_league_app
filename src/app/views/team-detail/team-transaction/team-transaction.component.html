@@ -63,6 +63,34 @@
                                 nessun dettaglio
                             </td>
                         </ng-container>
+                        <ng-container *ngSwitchCase="'players_transfer'">
+                            <td *tuiCell="'causale'" style="width: max-content;" tuiTd>
+                                <tui-tag class="tag-players-transfer" [status]="'custom'" [value]="'Trasferimento'"></tui-tag>
+                            </td>
+                            <td *tuiCell="'dettaglio'" tuiTd>
+                                <div class="tui-tag-custom" [tuiHint]="transferAdditionInfo" [ngClass]="transaction.transaction_detail.sold_players.length == 0 && transaction.transaction_detail.purchased_players.length == 0 ? 'disabled-element disabled-click' : 'enable-click'">
+                                    <span>
+                                        Informazioni<fa-icon style="padding-left: 5px;" [icon]="faMagnifyingGlass"></fa-icon>
+                                    </span>
+                                </div>    
+                                <ng-template #transferAdditionInfo>
+                                    <div>
+                                        <div *ngIf="transaction.transaction_detail.sold_players.length > 0">
+                                            <div class="title-label-hint">Ceduti</div>
+                                            <ng-container *ngFor="let player of transaction.transaction_detail.sold_players">
+                                                <div>{{player}}</div>
+                                            </ng-container>
+                                        </div>
+                                        <div *ngIf="transaction.transaction_detail.purchased_players.length > 0" [ngClass]="transaction.transaction_detail.sold_players.length > 0 ? 'custom-space-sub-label' : ''">
+                                            <div class="title-label-hint">Acquistati</div>
+                                            <ng-container *ngFor="let player of transaction.transaction_detail.purchased_players">
+                                                <div>{{player}}</div>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </td>
+                        </ng-container>
                     </ng-container>
                     <td *tuiCell="'saldo'" tuiTd style="font-weight: bold;">
                         {{ transaction.updated_team_money | tuiFormatNumber: {thousandSeparator:'.', decimalSeparator: ','} }}

@@ -198,9 +198,6 @@ export class TrophyAwardMenuComponent implements OnInit {
           updated_team_money: this.tempMoney
         }
 
-        console.log(this.tempMoney);
-
-
         await this.registerTransaction(this.selectedTeam.team_name, transaction);
 
         if (typeof control.value === 'object' && control.value.hasOwnProperty('awardValue')) {

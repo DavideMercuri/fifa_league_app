@@ -11,6 +11,8 @@ export interface Transaction {
         buyer?: string;
         seller?: string;
         prize?: string;
+        sold_players?: Array<string>;
+        purchased_players?: Array<string>;
     };
     updated_team_money?: number;
 

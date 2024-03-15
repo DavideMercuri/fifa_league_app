@@ -8,6 +8,7 @@ import { Observable, Subject } from 'rxjs';
 import { Player } from 'src/interfaces/player.interface';
 import { Team } from 'src/interfaces/team.interfaces';
 import { TeamDetailComponent } from '../team-detail.component';
+import { Transaction } from 'src/interfaces/transaction.interface';
 
 class PlayerSearch implements Player {
   constructor(
@@ -145,17 +146,18 @@ export class TradePlayersComponent implements OnInit {
 
     this.http.get<Player[]>('http://localhost:3000/players/players_list/filters', { params: httpParams }).subscribe({
       next: (res: Player[]) => {
-        if(tradeFlag){
+        if (tradeFlag) {
           this.playersBuyerTeam = res;
-        }else{
+        } else {
           this.selectedTeamPlayers = res;
-          this.selectedTeamPlayers = this.selectedTeamPlayers.filter( item => item.id != this.player.id);
+          this.selectedTeamPlayers = this.selectedTeamPlayers.filter(item => item.id != this.player.id);
         }
       }
     });
   }
 
   confirmTransfer() {
+
     const transferData = {
       sellingTeam: this.selectedTeam.team_name,
       buyingTeam: this.selectTeam.value,
@@ -164,18 +166,80 @@ export class TradePlayersComponent implements OnInit {
       additionalPlayers: this.additionalPlayers.value,
       additionalBuyerPlayers: this.additionalBuyerPlayers.value,
     };
-  
+    
+    let sold_players: Array<string> = [];
+    let purchased_players: Array<string> = [];
+
+    sold_players.push(this.player.name);
+
+    if (this.additionalPlayers.value) {
+
+      this.additionalPlayers.value.forEach((element: any) => {
+        sold_players.push(element.name)
+      });
+    }
+
+    if (this.additionalBuyerPlayers.value) {
+      this.additionalBuyerPlayers.value.forEach((element: any) => {
+        purchased_players.push(element.name)
+      });
+    }
+
+    const transactionSeller: Transaction = {
+      transaction_mode: 'CREDIT',
+      transaction_amount: this.transferValueInput.value,
+      transaction_date: new Date().toString(),
+      transaction_team: this.selectedTeam.team_name,
+      transaction_detail: {
+        type: 'players_transfer',
+        sold_players: sold_players,
+        purchased_players: purchased_players
+      },
+      updated_team_money: this.selectedTeam.money + this.transferValueInput.value
+    }
+
+    const transactionBuyer: Transaction = {
+      transaction_mode: 'DEBIT',
+      transaction_amount: this.transferValueInput.value,
+      transaction_date: new Date().toString(),
+      transaction_team: this.selectTeam.value,
+      transaction_detail: {
+        type: 'players_transfer',
+        sold_players: purchased_players,
+        purchased_players: sold_players
+      },
+      updated_team_money: this.selectedTeam.money - this.transferValueInput.value
+    }
+
     this.http.post('http://localhost:3000/transfer', transferData).subscribe({
       error: (error) => {
         console.error('Transfer failed', error);
       },
       complete: () => {
+        this.registerTransaction(this.selectedTeam.team_name, transactionSeller);
+        this.registerTransaction(this.selectTeam.value, transactionBuyer);
         this.updateTeamSalaryAndValue();
         this.observer.complete();
         this.teamDetail.loadDataBasedOnId(this.selectedTeam.team_id);
         this.teamDetail.FilterPlayers('', '', this.selectedTeam.team_name);
         this.alerts.open('Trasferimento effettuato con Successo!!', { label: 'Operazione Effettuata', status: TuiNotification.Success }).subscribe();
       }
+    });
+  }
+
+  registerTransaction(transaction_team: string, transaction: Transaction): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.http.post('http://localhost:3000/players/register-transaction', { teamName: transaction_team, transaction })
+        .subscribe({
+          next: (response) => {
+            console.log('Transaction registered successfully', response);
+            resolve(response);
+          },
+          error: (error) => {
+            console.error('Error registering transaction', error);
+            reject(error);
+          }
+        });
     });
   }
 
@@ -194,9 +258,9 @@ export class TradePlayersComponent implements OnInit {
     var httpParams: HttpParams = new HttpParams().append('team_name', team_name);
     this.http.get(`http://localhost:3000/players/team-detail`, { params: httpParams }).subscribe({
       next: (res: any) => {
-        if(team_name == 'Svincolati'){
+        if (team_name == 'Svincolati') {
           this.buyerTeamLogo = 'https://i.imgur.com/pCC3lju.png'
-        }else{
+        } else {
           this.buyerTeamLogo = res[0].team_logo;
         }
       }
