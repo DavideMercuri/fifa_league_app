@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { DataService } from 'src/app/data.service';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { FormControl } from '@angular/forms';
+import { Fixture } from 'src/interfaces/fixture.interfaces';
 
 Chart.register(...registerables);
 
@@ -27,6 +28,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
   homeLosses: Array<number> = [];
   awayLosses: Array<number> = [];
   topPlayersList: any = [];
+  lastMatch!: Fixture;
+
+  tdStyleClass: string = 'tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last';
+  trStyleClass: string = 'tui-table__tr tui-table__tr_border_none tui-table__tr_hover_disabled';
+  tableStyleClass: string = 'tui-table tui-table__tr_hover_disabled tui-table_font-size_s';
+  fixturesButtonStyleClass: string = 'action tui-table col-4 button-fixture';
 
   index = 0;
   indexStats = 0;
@@ -34,11 +41,20 @@ export class HomeComponent implements OnInit, AfterViewInit {
   leagueNumber: FormControl = new FormControl();
   year: FormControl = new FormControl();
 
+  teams: any;
+
   @ViewChild('carousel') carousel: any;
 
   ngOnInit(): void {
 
+    this.http.get('http://localhost:3000/players/league_table').subscribe({
+      next: (res) => {
+        this.teams = res;
+      }
+    });
+
     setTimeout(() => {
+      this.getLastAvalaibleMatch();
       this.getTopPlayersInfo('goals');
       this.getTopPlayersInfo('assist');
       this.getTopPlayersInfo('motm');
@@ -308,6 +324,30 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }, 500)
     }
     this.cd.detectChanges();
+  }
+
+  getLastAvalaibleMatch() {
+
+    this.http.get(`http://localhost:3000/players/fixtures/get-last-avalaible-match`).subscribe({
+      next: (res: any) => {
+
+        console.log(res);
+
+        this.lastMatch = res[0];
+      }
+    })
+  }
+
+  teamLogo(array: any, teamName: string) {
+    if (array) {
+      const teamObj = array.find((obj: any) => obj.team === teamName);
+      return teamObj ? teamObj.team_logo : 'No logo found for this team';
+    } else {
+      setTimeout(() => {
+        this.teamLogo(array, teamName);
+      }, 100)
+    }
+
   }
 
 }

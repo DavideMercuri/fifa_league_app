@@ -1,62 +1,141 @@
-<div class="wrapper row w-30-perc" style="margin: 30px;" *ngIf="topPlayersList.length == 0">
-    <tui-carousel>
-        <tui-island *tuiItem>
-            <tui-loader [overlay]="true">
-                <h2 class="tui-island__title">Caricamento dati...</h2>
-                <span>
-                    <img src="https://i.imgur.com/rLQbuSV.png" style="width: 70px; height: 70px;">
-                </span>
-            </tui-loader>
-        </tui-island>
-    </tui-carousel>
-</div>
+<div class="tui-row">
 
-<div class="w-30-perc" style="margin: 30px;" *ngIf="topPlayersList.length != 0">
-    <tui-carousel [duration]="3000" [(index)]="index">
-        <ng-container *ngFor="let item of topPlayersList">
-            <tui-island *tuiItem>
-                <span>
-                    <h2 style="margin-left: 5px;" class="tui-island__title">{{ item.label }}</h2>
-                </span>
-                <div style="float: left; margin-top: 10px;" class="v-align-bottom">
-                    <img src="{{item.photo}}" style="width: 80px; height: 80px;">
-                </div>
+    <div class="tui-col_md-4 w-30-perc" style="margin-top: 50px;">
 
-                <div style="margin-left: 105px; margin-top: 25px;">
-                    <p style="font-weight: bold;">{{!item.name ? '' : item?.name}}</p>
-                    <p style="vertical-align: bottom">
-                        <tui-badge style="font-size: 20px;" class="badge-top-stats" size="l" status="primary"
-                            [value]="item.stat" [hoverable]="true"></tui-badge>
-                        <span style="margin-left: 10px;">{{item.subLabel}}</span>
-                    </p>
-                </div>
-                <div style="float: right;">
+        <div class="wrapper" style="margin: 30px;" *ngIf="topPlayersList.length == 0">
+            <tui-carousel>
+                <tui-island *tuiItem>
+                    <tui-loader [overlay]="true">
+                        <h2 class="tui-island__title">Caricamento dati...</h2>
+                        <span>
+                            <img src="https://i.imgur.com/rLQbuSV.png" style="width: 90px; height: auto;">
+                        </span>
+                    </tui-loader>
+                </tui-island>
+            </tui-carousel>
+        </div>
 
-                </div>
-            </tui-island>
-        </ng-container>
-    </tui-carousel>
-    <tui-pagination size="s" class="pagination" [length]="3" [(index)]="index"
-        style="margin-top: 10px;"></tui-pagination>
-</div>
+        <div style="margin: 30px; width: 100%;" *ngIf="topPlayersList.length != 0">
+            <tui-carousel [duration]="3000" [(index)]="index">
+                <ng-container *ngFor="let item of topPlayersList">
+                    <tui-island *tuiItem>
+                        <span>
+                            <h2 style="margin-left: 5px;" class="tui-island__title">{{ item.label }}</h2>
+                        </span>
+                        <div style="float: left; margin-top: 10px;" class="v-align-bottom">
+                            <img src="{{item.photo}}" style="width: 90px; height: auto;">
+                        </div>
 
-<div style="margin: 50px; align-items: center;">
-    <div tuiCarouselButtons class="wrapper w-30-perc">
-        <tui-carousel [duration]="3000" [(index)]="indexStats">
-            <tui-island *tuiItem class="txt-center-align">
-                <h2 class="tui-island__title">Vittorie</h2>
-                <canvas id="winsChart"></canvas>
-            </tui-island>
-            <tui-island *tuiItem class="txt-center-align">
-                <h2 class="tui-island__title">Pareggi</h2>
-                <canvas id="drawsChart"></canvas>
-            </tui-island>
-            <tui-island *tuiItem class="txt-center-align">
-                <h2 class="tui-island__title">Sconfitte</h2>
-                <canvas id="lossesChart"></canvas>
-            </tui-island>
-        </tui-carousel>
-        <tui-pagination size="s" class="pagination" style="margin-top: 10px;" [length]="3"
-            [(index)]="indexStats"></tui-pagination>
+                        <div style="margin-left: 105px; margin-top: 25px;">
+                            <p style="font-weight: bold;">{{!item.name ? '' : item?.name}}</p>
+                            <p style="vertical-align: bottom">
+                                <tui-badge style="font-size: 20px;" class="badge-top-stats" size="l" status="primary"
+                                    [value]="item.stat" [hoverable]="true"></tui-badge>
+                                <span style="margin-left: 10px;">{{item.subLabel}}</span>
+                            </p>
+                        </div>
+                        <div style="float: right;">
+
+                        </div>
+                    </tui-island>
+                </ng-container>
+            </tui-carousel>
+            <tui-pagination size="s" class="pagination" [length]="3" [(index)]="index" style="margin-top: 10px;"></tui-pagination>
+        </div>
+
+        <div style="align-items: center; margin: 30px; width: 100%;">
+            <div tuiCarouselButtons class="wrapper">
+                <tui-carousel [duration]="3000" [(index)]="indexStats">
+                    <tui-island *tuiItem class="txt-center-align">
+                        <h2 class="tui-island__title">Vittorie</h2>
+                        <canvas id="winsChart"></canvas>
+                    </tui-island>
+                    <tui-island *tuiItem class="txt-center-align">
+                        <h2 class="tui-island__title">Pareggi</h2>
+                        <canvas id="drawsChart"></canvas>
+                    </tui-island>
+                    <tui-island *tuiItem class="txt-center-align">
+                        <h2 class="tui-island__title">Sconfitte</h2>
+                        <canvas id="lossesChart"></canvas>
+                    </tui-island>
+                </tui-carousel>
+                <tui-pagination size="s" class="pagination" style="margin-top: 10px;" [length]="3"
+                    [(index)]="indexStats"></tui-pagination>
+            </div>
+        </div>
+
     </div>
+
+    <div class="tui-col_md-4 w-30-perc" style="margin-top: 50px;">
+        <div style="margin: 30px; width: 100%;" *ngIf="lastMatch">
+            <tui-island>
+                <span style="text-align: center;">
+                    <h2 style="margin-left: 5px;" class="tui-island__title">Prossimo Match</h2>
+                </span>
+                <table class="{{tableStyleClass}}">
+                    <tbody>
+                        <tr class="{{trStyleClass}} v-align-middle">
+                            <td class="{{tdStyleClass}} h-50 w-40"><img class="h-70 w-70" [src]="teamLogo(teams,lastMatch.home_team)"></td>
+                            <td class="{{tdStyleClass}} h-50 w-100 v-align-middle" style="font-size: 16px;">{{lastMatch.home_team}}</td>
+                            <td class="{{tdStyleClass}} h-50 w-20 v-align-middle" style="font-size: 19px; font-weight: bolder;"> VS </td>
+                            <td class="{{tdStyleClass}} h-50 w-100 v-align-middle" style="font-size: 16px;">{{ lastMatch.away_team }}</td>
+                            <td class="{{tdStyleClass}} h-50 w-40"><img class="h-70 w-70" [src]="teamLogo(teams,lastMatch.away_team)"></td>
+                        </tr>
+                        <tr style="position: relative; width: 100%;">
+                            <td class="match-status-info" colspan="7">
+                                <fa-icon *ngIf="lastMatch.notation_expelled && lastMatch.played == 'no' || lastMatch.notation_injured && lastMatch.played == 'no' || lastMatch.notation_warned && lastMatch.played == 'no' " class="exclamation-info-home"></fa-icon>    
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </tui-island>
+        </div>
+
+        <div style="margin: 30px; width: 100%;" *ngIf="!lastMatch">
+            <tui-island>
+                <p>Nessun Match Disponibile</p>
+            </tui-island>
+        </div>
+
+        <div style="margin: 30px; margin-top: 50px; width: 100%;">
+            <tui-island style="height: 216px;">
+                <span style="text-align: center;">
+                    <h2 class="tui-island__title">Classifica</h2>
+                </span>
+                <app-league-table [fullModeVisualization]="false" [homeVisualization]="true"></app-league-table>
+            </tui-island>
+        </div>
+    </div>
+
+    <div class="tui-col_md-4 w-30-perc" style="margin-top: 50px;">
+
+        <div style="margin: 30px; width: 100%;" *ngIf="topPlayersList.length != 0">
+            <tui-carousel [duration]="3000" [(index)]="index">
+                <ng-container *ngFor="let item of topPlayersList">
+                    <tui-island *tuiItem>
+                        <span>
+                            <h2 style="margin-left: 5px;" class="tui-island__title">{{ item.label }}</h2>
+                        </span>
+                        <div style="float: left; margin-top: 10px;" class="v-align-bottom">
+                            <img src="{{item.photo}}" style="width: 90px; height: auto;">
+                        </div>
+
+                        <div style="margin-left: 105px; margin-top: 25px;">
+                            <p style="font-weight: bold;">{{!item.name ? '' : item?.name}}</p>
+                            <p style="vertical-align: bottom">
+                                <tui-badge style="font-size: 20px;" class="badge-top-stats" size="l" status="primary"
+                                    [value]="item.stat" [hoverable]="true"></tui-badge>
+                                <span style="margin-left: 10px;">{{item.subLabel}}</span>
+                            </p>
+                        </div>
+                        <div style="float: right;">
+
+                        </div>
+                    </tui-island>
+                </ng-container>
+            </tui-carousel>
+            <tui-pagination size="s" class="pagination" [length]="3" [(index)]="index" style="margin-top: 10px;"></tui-pagination>
+        </div>        
+    </div>
+
 </div>

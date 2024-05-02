@@ -87,6 +87,21 @@ app.get('/players/fixture', (req, res) => {
   });
 });
 
+// API endpoint to retrieve last avalaible match info from the database
+app.get('/players/fixtures/get-last-avalaible-match', (req, res) => {
+
+  const query = `SELECT * FROM fixtures WHERE played = 'no' ORDER BY id_game ASC LIMIT 1;`;
+  
+  connection.query(query, (error, results) => {
+    if (error) {
+      res.status(500).send(error);
+    } else {
+      res.status(200).send(results);
+    }
+  });
+});
+
+
 // Promisifica la query per poterla usare con async/await
 const queryAsync = util.promisify(connection.query).bind(connection);
 
