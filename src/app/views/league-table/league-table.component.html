@@ -34,9 +34,9 @@
         </tbody>
     </table>
 
-    <div *ngIf="!fullModeVisualization" style="margin-top: 50px;">
-        <h3 style="margin: 30px;">Classifica</h3>
-        <table tuiTable class="table" [columns]="columnsMin" style="margin-top: 5px; margin: 30px; width: 95%;">
+    <div *ngIf="!fullModeVisualization" [ngStyle]="{'margin-top': !homeVisualization ? '30px' : '0px'}">
+        <h3 *ngIf="!homeVisualization" style="margin: 30px;">Classifica</h3>
+        <table tuiTable class="table" [columns]="columnsMin" style="margin-top: 5px; width: 95%;" [ngStyle]="{'margin': !homeVisualization ? '30px' : '0px', 'width': !homeVisualization ? '95%' : '100%'}">
             <thead>
                 <tr tuiThGroup>
                     <th class="txt-center-align v-align-middle w-100" tuiTh>Posizione</th>

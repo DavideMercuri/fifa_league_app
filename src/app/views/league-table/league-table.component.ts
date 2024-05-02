@@ -15,6 +15,7 @@ export class LeagueTableComponent implements OnInit {
 
   faFolderPlus = faFolderPlus;
   @Input('fullModeVisualization') fullModeVisualization: boolean = true;
+  @Input('homeVisualization') homeVisualization: boolean = false;
 
   ngOnInit(): void {
     this.GetLeagueTable();
