@@ -54,7 +54,9 @@ export class SalariesPaymentComponent implements OnInit {
       complete: () => {
         this.registerTransaction(teamSelected, transaction);
         this.observer.complete();
-        this.teamDetail.loadDataBasedOnId(String(id));
+        setTimeout(() => {
+          this.teamDetail.loadDataBasedOnId(String(id));
+        }, 500);
         this.alerts.open('Stipendi pagati con Successo!!', { label: 'Operazione Effettuata', status: TuiNotification.Success }).subscribe();
       }
     });
