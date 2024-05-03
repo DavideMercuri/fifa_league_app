@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { faRectangleList, faUsersRectangle } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarDays, faMoneyCheckDollar, faRankingStar, faUsersRectangle } from '@fortawesome/free-solid-svg-icons';
 import { TuiDialogContext, TuiDialogService, TuiDialogSize } from '@taiga-ui/core';
 import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
 
@@ -21,9 +21,13 @@ export class HistoryComponent implements OnInit, AfterViewInit {
 
   seasonsSummary: Array<any> = [];
 
-  faRectangleList: any = faRectangleList;
+  faCalendarDays: any = faCalendarDays;
   faUsersRectangle: any = faUsersRectangle;
+  faRankingStar: any = faRankingStar;
+  faMoneyCheckDollar = faMoneyCheckDollar;
   isLoading: boolean = true;
+
+  dropdownIndex: number | null = null;
 
   // Proprietà di paginazione
   currentPage = 1;
@@ -37,7 +41,7 @@ export class HistoryComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
 
   }
-
+  
   getHistory() {
     this.isLoading = true;
 
