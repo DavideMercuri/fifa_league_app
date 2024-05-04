@@ -1,0 +1,12 @@
+<tui-tabs tuiMobileTabs [(activeItemIndex)]="activeItemIndex" style="margin-left: -50px;">
+    <button *ngFor="let item of selectedSummary.season_teams; let i = index" tuiRipple="var(--tui-text-01)" tuiTab>
+        <img style="width: 23px; height: auto;" [src]="selectedSummary.season_league_table[i].team_logo_base64" alt="">
+            <span style="padding-left: 10px; font-size: 18px; vertical-align: middle;">{{ item.team_name }}</span>
+    </button>
+</tui-tabs>
+<br>
+<ng-container *ngFor="let item of selectedSummary.season_teams; let i = index" class="scrollable-container">
+    <div *ngIf="i == activeItemIndex" class="tab-pane" style="margin-left: -60px;">
+        <app-team-transaction [selectedTeam]="selectedSummary.season_teams[i]"></app-team-transaction>
+    </div>
+</ng-container>

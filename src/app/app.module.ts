@@ -44,6 +44,7 @@ import { TeamTransactionComponent } from './views/team-detail/team-transaction/t
 import localeIt from '@angular/common/locales/it';
 import { registerLocaleData } from '@angular/common';
 import { HistoryLeagueTableComponent } from './views/history/history-league-table/history-league-table.component';
+import { HistoryTransactionsListComponent } from './views/history/history-transactions-list/history-transactions-list.component';
 
 // Registra il locale italiano
 registerLocaleData(localeIt);
@@ -75,6 +76,7 @@ registerLocaleData(localeIt);
     SeasonCheckComponent,
     TeamTransactionComponent,
     HistoryLeagueTableComponent,
+    HistoryTransactionsListComponent,
   ],
   imports: [
     BrowserModule,

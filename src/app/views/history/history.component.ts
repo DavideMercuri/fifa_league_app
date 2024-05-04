@@ -73,6 +73,7 @@ export class HistoryComponent implements OnInit, AfterViewInit {
         season_year: season.season_year,
         season_fixtures: JSON.parse(season.season_fixtures),
         season_league_table: JSON.parse(season.season_league_table),
+        season_teams: JSON.parse(season.season_teams),
         winnerTeam: winnerTeam,
         winnerTeamUCL: season.winnerTeamUCL,
         season_top_scorers: JSON.parse(season.season_top_scorers),
@@ -84,12 +85,6 @@ export class HistoryComponent implements OnInit, AfterViewInit {
 
     this.seasonsSummary = seasonsSummaryTemp.sort((a, b) => a.season_id - b.season_id);
 
-  }
-
-  convertImgToBase64(img: { data: number[] }): string {
-    const byteCharacters = String.fromCharCode(...img.data);
-    const base64String = btoa(byteCharacters);
-    return `data:image/png;base64,${base64String}`;
   }
 
   openDialog(content: PolymorpheusContent<TuiDialogContext>, header: PolymorpheusContent, size: TuiDialogSize): void {

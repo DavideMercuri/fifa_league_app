@@ -24,7 +24,7 @@ export class TeamTransactionComponent implements OnInit {
 
 
   ngOnInit(): void {
-
+    
     this.teamTransactions = JSON.parse(String(this.selectedTeam.team_transactions));
 
   }
