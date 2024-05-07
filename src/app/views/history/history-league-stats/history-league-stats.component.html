@@ -1,4 +1,4 @@
-<div style="text-align: center; margin-bottom: 20px;">Calendario Stagione: {{ selectedSummary.season_id < 10 ? '0' + selectedSummary.season_id : selectedSummary.season_id}} / {{selectedSummary.season_year}}</div>
+<div style="text-align: center; font-size: larger;">Calendario Stagione: {{selectedSummary.season_id < 10 ? 0 + selectedSummary.season_id : selectedSummary.season_id }}, Anno: {{selectedSummary.season_year}}</div>
 
         <div>
             <ng-container *ngFor="let fixture of selectedSummary.season_fixtures; let i = index">

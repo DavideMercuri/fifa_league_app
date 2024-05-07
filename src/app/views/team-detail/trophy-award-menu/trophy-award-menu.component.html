@@ -1,8 +1,9 @@
 <div>
 
-    <label tuiLabel="Seleziona i trofei ed i premi da assegnare..."></label>
+    <div style="text-align: center; font-size: larger;">Seleziona i trofei ed i premi da assegnare</div>
 
-    <form class="b-form" [formGroup]="awardForm" style="width: 100%">
+
+    <form class="b-form" [formGroup]="awardForm" style="width: 100%; margin-top: 30px">
 
         <div class="separator">
             <div class="separator-line"></div>
@@ -94,7 +95,7 @@
 
             <div class="tui-col_md-3" style="margin-left: 10px; width: 30%;">
                 <tui-checkbox-labeled formControlName="awardGoldenBall" size="l" class="tui-space_top-5 labeled-checkbox-custom" (ngModelChange)="setCheckboxStatus()">
-                    <span style="font-size: 12px;">Pallone D'oro <tui-badge size="xs" [value]="'10m'" class="gold"
+                    <span style="font-size: 12px;">Pallone D'oro <tui-badge size="xs" [value]="'5m'" class="gold"
                             style="margin-left: 5px; margin-bottom: 5px"></tui-badge></span>
                 </tui-checkbox-labeled>
                 <tui-combo-box #tuicomboMotm [disabled]="awardForm.controls['awardGoldenBall'].value == false" *tuiLet="items$ | async as items" [formControl]="pots" class="tui-space_top-5"

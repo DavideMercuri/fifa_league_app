@@ -1,8 +1,9 @@
 <div>
 
-    <label [tuiLabel]="label"></label>
+    <div style="text-align: center; font-size: larger;">Pagamento Stipendi e spese squadra: {{selectedTeam.team_name}}</div>
 
-    <div style="margin-top: 10px; font-size: 16px;">
+
+    <div style="margin-top: 50px; font-size: 16px;">
         <div style="margin-top: 7px; font-weight: bold;">Saldo Squadra: <span style="font-weight: normal;">{{selectedTeam.money | tuiFormatNumber: {thousandSeparator: '.', decimalSeparator: ','} }}</span></div>
         <div style="margin-top: 7px; font-weight: bold;">Stipendi: <span style="font-weight: normal;">{{selectedTeam.salary | tuiFormatNumber: {thousandSeparator: '.', decimalSeparator: ','} }}</span></div>
     </div>

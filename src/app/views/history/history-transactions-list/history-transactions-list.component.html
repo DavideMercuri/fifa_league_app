@@ -1,4 +1,6 @@
-<tui-tabs tuiMobileTabs [(activeItemIndex)]="activeItemIndex" style="margin-left: -50px;">
+<div style="text-align: center; font-size: larger;">Movimenti e Finanze Squadre - Stagione: {{selectedSummary.season_id < 10 ? 0 + selectedSummary.season_id : selectedSummary.season_id }}, Anno: {{selectedSummary.season_year}}</div>
+
+<tui-tabs tuiMobileTabs [(activeItemIndex)]="activeItemIndex" style="margin-left: -50px; margin-top: 40px;">
     <button *ngFor="let item of selectedSummary.season_teams; let i = index" tuiRipple="var(--tui-text-01)" tuiTab>
         <img style="width: 23px; height: auto;" [src]="selectedSummary.season_league_table[i].team_logo_base64" alt="">
             <span style="padding-left: 10px; font-size: 18px; vertical-align: middle;">{{ item.team_name }}</span>
