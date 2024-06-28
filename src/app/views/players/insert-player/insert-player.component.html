@@ -18,8 +18,7 @@
                         </tui-select>
                     </div>
                     <div class="tui-col-3" style="width: 30%;">
-                        <tui-input 
-                        [ngClass]="newPlayer.controls['country'].invalid && (newPlayer.controls['country'].dirty || newPlayer.controls['country'].touched) ? 'ng-invalid _invalid ng-touched' : ''"
+                        <tui-input [ngClass]="newPlayer.controls['country'].invalid && (newPlayer.controls['country'].dirty || newPlayer.controls['country'].touched) ? 'ng-invalid _invalid ng-touched' : ''"
                         tuiTextfield tuiTextfieldSize="m" [tuiTextfieldCleaner]="true" formControlName="country" class="tui-space_horizontal-1">
                             <span [ngClass]="newPlayer.controls['country'].invalid && (newPlayer.controls['country'].dirty || newPlayer.controls['country'].touched) ? 'text-danger' : ''">Nazione*</span>
                         </tui-input>
