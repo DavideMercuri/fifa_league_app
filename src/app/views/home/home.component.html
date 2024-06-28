@@ -1,3 +1,5 @@
+<div class="home-background">
+
 <div class="tui-row">
 
     <div class="tui-col_md-4 w-30-perc" style="margin-top: 50px;">
@@ -48,7 +50,7 @@
                 <tui-carousel [duration]="3000" [(index)]="indexStats">
                     <tui-island *tuiItem class="txt-center-align">
                         <h2 class="tui-island__title">Vittorie</h2>
-                        <canvas id="winsChart"></canvas>
+                        <canvas id="winsChart" ></canvas>
                     </tui-island>
                     <tui-island *tuiItem class="txt-center-align">
                         <h2 class="tui-island__title">Pareggi</h2>
@@ -66,7 +68,7 @@
 
     </div>
 
-    <div class="tui-col_md-4 w-30-perc" style="margin-top: 50px;">
+    <div class="tui-col_md-3" style="margin-top: 50px; width: 30%">
         <div style="margin: 30px; width: 100%;" *ngIf="lastMatch">
             <tui-island>
                 <span style="text-align: center;">
@@ -76,9 +78,9 @@
                     <tbody>
                         <tr class="{{trStyleClass}} v-align-middle">
                             <td class="{{tdStyleClass}} h-50 w-40"><img class="h-70 w-70" [src]="teamLogo(teams,lastMatch.home_team)"></td>
-                            <td class="{{tdStyleClass}} h-50 w-100 v-align-middle" style="font-size: 16px;">{{lastMatch.home_team}}</td>
-                            <td class="{{tdStyleClass}} h-50 w-20 v-align-middle" style="font-size: 19px; font-weight: bolder;"> VS </td>
-                            <td class="{{tdStyleClass}} h-50 w-100 v-align-middle" style="font-size: 16px;">{{ lastMatch.away_team }}</td>
+                            <td class="{{tdStyleClass}} h-50 w-100 v-align-middle" style="font-size: 12px;">{{lastMatch.home_team}}</td>
+                            <td class="{{tdStyleClass}} h-50 w-20 v-align-middle" style="font-size: 18px; font-weight: bolder;"> VS </td>
+                            <td class="{{tdStyleClass}} h-50 w-100 v-align-middle" style="font-size: 12px;">{{ lastMatch.away_team }}</td>
                             <td class="{{tdStyleClass}} h-50 w-40"><img class="h-70 w-70" [src]="teamLogo(teams,lastMatch.away_team)"></td>
                         </tr>
                         <tr style="position: relative; width: 100%;">
@@ -92,8 +94,9 @@
         </div>
 
         <div style="margin: 30px; width: 100%;" *ngIf="!lastMatch">
-            <tui-island>
-                <p>Nessun Match Disponibile</p>
+            <tui-island style="height: 135px; text-align: center;">
+                <h2 style="margin-left: 5px;" class="tui-island__title">Prossimo Match</h2>
+                <p style="padding-top: 30px; font-size: 20px;">Nessun Match Disponibile</p>
             </tui-island>
         </div>
 
@@ -107,35 +110,99 @@
         </div>
     </div>
 
-    <div class="tui-col_md-4 w-30-perc" style="margin-top: 50px;">
+    <div class="tui-col_md-5" style="margin-top: 50px; width: 36%;">
 
-        <div style="margin: 30px; width: 100%;" *ngIf="topPlayersList.length != 0">
-            <tui-carousel [duration]="3000" [(index)]="index">
-                <ng-container *ngFor="let item of topPlayersList">
-                    <tui-island *tuiItem>
-                        <span>
-                            <h2 style="margin-left: 5px;" class="tui-island__title">{{ item.label }}</h2>
+        <div style="margin: 30px; width: 100%;">
+            <tui-carousel [duration]="3000" [(index)]="indexTransactions">
+                <ng-container *ngFor="let teamTransactions of transactions">
+                    <tui-island *tuiItem style="height: 430px;">
+                        <span style="text-align: center;">
+                            <h2 style="margin-left: 5px;" class="tui-island__title">Movimenti Recenti</h2>
                         </span>
-                        <div style="float: left; margin-top: 10px;" class="v-align-bottom">
-                            <img src="{{item.photo}}" style="width: 90px; height: auto;">
+                        <div style="padding-top: 20px">
+                            
+                            <span style="padding-left: 20px;"><img class="h-50 w-50" [src]="teamLogo(teams, teamTransactions.team_name)"><span style="padding-left: 15px; font-size: 20px;">{{ teamTransactions.team_name }}</span></span>
+                            <ng-container *ngIf="teamTransactions.transactions[0] != null">
+                            <table tuiTable [columns]="columns" class="transactions-table-small" style="padding-top: 20px">
+                                <thead>
+                                    <tr tuiThGroup>
+                                        <th *tuiHead="'tipo'" tuiTh [sorter]="null">
+                                            Tipo
+                                        </th>
+                                        <th *tuiHead="'importo'" tuiTh [sorter]="null">
+                                            Importo
+                                        </th>
+                                        <th *tuiHead="'data'" tuiTh [sorter]="null">
+                                            Data
+                                        </th>
+                                        <th *tuiHead="'causale'" tuiTh [sorter]="null">
+                                            Causale
+                                        </th>
+                                        <th *tuiHead="'saldo'" tuiTh [sorter]="null">
+                                            Saldo
+                                        </th>
+                                    </tr>
+                                </thead>
+    
+                                <tbody *tuiLet="teamTransactions.transactions | tuiTableSort as teamTransactionsSorted" tuiTbody [data]="teamTransactionsSorted">
+                                    <tr *ngFor="let transaction of teamTransactionsSorted; let index = index" tuiTr>
+                                        <td *tuiCell="'tipo'" tuiTd>
+                                            <tui-tag [ngClass]="transaction.transaction_mode == 'DEBIT' ? 'tag-debit' : 'tag-credit'" [status]="'custom'" [value]="transaction.transaction_mode == 'DEBIT' ? 'ADDEBITO' : 'ACCREDITO'"></tui-tag>
+                                        </td>
+                                        <td *tuiCell="'importo'" tuiTd style="text-align: right;">
+                                            <span *ngIf="transaction.transaction_mode == 'DEBIT'" class="error-color">
+                                            - {{ transaction.transaction_amount | tuiFormatNumber: {thousandSeparator:'.', decimalSeparator: ','} }}
+                                            </span>
+                                            <span *ngIf="transaction.transaction_mode == 'CREDIT'" class="success-color">
+                                                + {{ transaction.transaction_amount | tuiFormatNumber: {thousandSeparator:'.', decimalSeparator: ','} }}
+                                            </span>
+                                        </td>
+                                        <td *tuiCell="'data'" tuiTd>
+                                            {{ transaction.transaction_date | date: "d/MM/yyyy" }}
+                                        </td>
+                                        <ng-container [ngSwitch]="transaction.transaction_detail.type">
+                                            <ng-container *ngSwitchCase="'player_sign'">
+                                                <td *tuiCell="'causale'" style="width: max-content;" tuiTd>
+                                                    <tui-tag class="tag-player-sign" [status]="'custom'" [value]="'Acquisto'"></tui-tag>
+                                                </td>
+                                            </ng-container>
+                                            <ng-container *ngSwitchCase="'prize'">
+                                                <td *tuiCell="'causale'" style="width: max-content;" tuiTd>
+                                                    <tui-tag class="tag-prize" [status]="'custom'" [value]="'Premio'"></tui-tag>
+                                                </td>
+                                            </ng-container>
+                                            <ng-container *ngSwitchCase="'salary_payment'">
+                                                <td *tuiCell="'causale'" style="width: max-content;" tuiTd>
+                                                    <tui-tag class="tag-salary-payment" [status]="'custom'" [value]="'Stipendi'"></tui-tag>
+                                                </td>
+                                            </ng-container>
+                                            <ng-container *ngSwitchCase="'players_transfer'">
+                                                <td *tuiCell="'causale'" style="width: max-content;" tuiTd>
+                                                    <tui-tag class="tag-players-transfer" [status]="'custom'" [value]="'Trasfer.'"></tui-tag>
+                                                </td>
+                                            </ng-container>
+                                        </ng-container>
+                                        <td *tuiCell="'saldo'" tuiTd style="font-weight: bold;">
+                                            {{ transaction.updated_team_money | tuiFormatNumber: {thousandSeparator:'.', decimalSeparator: ','} }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+    
+                                </table>
+                            </ng-container>
+                            <ng-container *ngIf="teamTransactions.transactions[0] == null">
+                                <h5 style="padding-top: 115px; text-align: center;">Nessun Movimento disponibile</h5>
+                            </ng-container>
                         </div>
 
-                        <div style="margin-left: 105px; margin-top: 25px;">
-                            <p style="font-weight: bold;">{{!item.name ? '' : item?.name}}</p>
-                            <p style="vertical-align: bottom">
-                                <tui-badge style="font-size: 20px;" class="badge-top-stats" size="l" status="primary"
-                                    [value]="item.stat" [hoverable]="true"></tui-badge>
-                                <span style="margin-left: 10px;">{{item.subLabel}}</span>
-                            </p>
-                        </div>
-                        <div style="float: right;">
 
-                        </div>
                     </tui-island>
                 </ng-container>
             </tui-carousel>
-            <tui-pagination size="s" class="pagination" [length]="3" [(index)]="index" style="margin-top: 10px;"></tui-pagination>
+            <tui-pagination size="s" class="pagination" [length]="3" [(index)]="indexTransactions" style="margin-top: 10px;"></tui-pagination>
         </div>        
     </div>
+
+</div>
 
 </div>

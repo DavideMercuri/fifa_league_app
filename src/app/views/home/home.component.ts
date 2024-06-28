@@ -5,6 +5,7 @@ import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { FormControl } from '@angular/forms';
 import { Fixture } from 'src/interfaces/fixture.interfaces';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 Chart.register(...registerables);
 
@@ -29,6 +30,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   awayLosses: Array<number> = [];
   topPlayersList: any = [];
   lastMatch!: Fixture;
+  transactions: any;
 
   tdStyleClass: string = 'tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last';
   trStyleClass: string = 'tui-table__tr tui-table__tr_border_none tui-table__tr_hover_disabled';
@@ -37,11 +39,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   index = 0;
   indexStats = 0;
+  indexTransactions = 0;
 
   leagueNumber: FormControl = new FormControl();
   year: FormControl = new FormControl();
 
   teams: any;
+
+  readonly columns = ['tipo', 'importo', 'data', 'causale', 'saldo'];
+
+  faMagnifyingGlass = faMagnifyingGlass;
 
   @ViewChild('carousel') carousel: any;
 
@@ -59,6 +66,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.getTopPlayersInfo('assist');
       this.getTopPlayersInfo('motm');
       this.GetPlayers();
+      this.getTransactions();
     }, 0);
   }
 
@@ -92,6 +100,65 @@ export class HomeComponent implements OnInit, AfterViewInit {
         console.error(err);
       }
     });
+  }
+
+  getTransactions() {
+    this.http.get(`http://localhost:3000/players/transactions`).subscribe({
+      next: (res: any) => {
+
+        this.transactions = this.convertJsonStrings(res);
+
+        console.log(this.transactions);
+        
+        
+
+      },
+      error: (err: any) => {
+        console.error(err);
+      }
+    });
+  }
+
+
+  convertJsonStrings(array: any[]): any[] {
+    let transactions: any[] = [];
+
+    array.forEach((item, index) => {
+      if (item && item.team_transactions && item.team_name) {
+        try {
+          console.log(`Processing item at index ${index}`);
+          const parsedJsonArray = JSON.parse(item.team_transactions);
+          if (Array.isArray(parsedJsonArray)) {
+            // Prendi solo gli ultimi 5 risultati (o meno)
+            const lastFiveTransactions = parsedJsonArray.slice(-6);
+            transactions.push({
+              team_name: item.team_name,
+              transactions: lastFiveTransactions
+            });
+          } else {
+            console.warn(`Parsed JSON is not an array at index ${index}`);
+            transactions.push({
+              team_name: item.team_name,
+              transactions: []
+            });
+          }
+        } catch (e) {
+          console.error('Error parsing JSON at index', index, ':', e);
+          transactions.push({
+            team_name: item.team_name,
+            transactions: []
+          });
+        }
+      } else {
+        console.warn(`Invalid item at index ${index}`, item);
+        transactions.push({
+          team_name: item.team_name || 'Unknown Team',
+          transactions: []
+        });
+      }
+    });
+
+    return transactions;
   }
 
   GetPlayers() {
@@ -330,9 +397,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     this.http.get(`http://localhost:3000/players/fixtures/get-last-avalaible-match`).subscribe({
       next: (res: any) => {
-
-        console.log(res);
-
         this.lastMatch = res[0];
       }
     })
