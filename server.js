@@ -20,8 +20,8 @@ const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'password',
-  //database: 'players_test'
-  database: 'players'
+  database: 'players_test'
+  //database: 'players'
 });
 connection.connect();
 
@@ -859,7 +859,13 @@ app.put('/players/team_detail/update-team-trophy', async (req, res) => {
 
   const { id, trophyType } = req.body;
 
-  var query = `UPDATE teams SET ${trophyType} = ${trophyType} + 1 WHERE team_id = ?;`;
+  var query = ``;
+
+  if(trophyType == 'cup_win'){
+    query = `UPDATE teams SET ${trophyType} = ${trophyType} + 1, season_champions_league_winner = 'yes' WHERE team_id = ?;`;
+  }else{
+    query = `UPDATE teams SET ${trophyType} = ${trophyType} + 1 WHERE team_id = ?;`;
+  }
 
   connection.query(query, [id], (error, results) => {
     if (error) {
@@ -889,6 +895,18 @@ app.put('/players/team_detail/reset-baloon-dor', async (req, res) => {
 
   var query = `UPDATE players_list SET pots = 'no';`;
 
+  connection.query(query, (error, results) => {
+    if (error) {
+      res.status(500).send(error);
+    } else {
+      res.status(200).send(results);
+    }
+  });
+});
+
+app.get('/players/transactions', (req, res) => {
+
+  const query = 'SELECT team_transactions, team_name FROM teams';
   connection.query(query, (error, results) => {
     if (error) {
       res.status(500).send(error);
@@ -949,13 +967,14 @@ app.put('/reset-league', async (req, res) => {
     // Avvia una transazione
     await query(`START TRANSACTION`);
 
-    // Prima query di aggiornamento
+    //Avvio delle query di aggiornamento
     await query(`UPDATE fixtures SET ht_goals = 0, aw_goals = 0, scorers = NULL, assists = NULL, yellow_card = NULL, red_card = NULL, injured = NULL, notation_injured = NULL, notation_expelled = NULL, notation_warned = NULL, motm = '', played = 'no'`);
 
-    // Seconda query di aggiornamento
     await query(`UPDATE league_table SET points = 0`);
 
     await query(`UPDATE players_list SET goals = 0, assist = 0, motm = 0, yellow_card = 0, red_card = 0, injured = 0`);
+
+    await query(`UPDATE teams SET season_champions_league_winner = 'no' , paid_salaries = 'no', team_transactions = NULL`);
 
     // Commit della transazione
     await query(`COMMIT`);
