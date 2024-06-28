@@ -260,23 +260,39 @@ export class PlayersComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private getData(
-    key: 'name' | 'overall' | 'position' | 'team' | 'goals' | 'assist' | 'motm' | 'yellow_card' | 'red_card',
-    direction: -1 | 1,
-    page: number,
-    size: number,
-  ): Observable<ReadonlyArray<Player | null>> {
-    //console.info('Making a request', this.dataService.getPlayersList());
-    let start = page * size;
-    let end = start + size;
-    let result = [...this.players]
+  // private getData(
+  //   key: 'name' | 'overall' | 'position' | 'team' | 'goals' | 'assist' | 'motm' | 'yellow_card' | 'red_card',
+  //   direction: -1 | 1,
+  //   page: number,
+  //   size: number,
+  // ): Observable<ReadonlyArray<Player | null>> {
+  //   //console.info('Making a request', this.dataService.getPlayersList());
+  //   let start = page * size;
+  //   let end = start + size;
+  //   let result = [...this.players]
+  //     .sort(sortBy(key, direction))
+  //     .map((player, index) => (index >= start && index < end ? player : null));
+
+  //   // Imitating server response
+  //   return timer(500).pipe(map(() => result));
+  // }
+
+// Use the modified sortBy function in your getData method
+private getData(
+  key: Key,
+  direction: -1 | 1,
+  page: number,
+  size: number,
+): Observable<ReadonlyArray<Player | null>> {
+  let start = page * size;
+  let end = start + size;
+  let result = [...this.players]
       .sort(sortBy(key, direction))
       .map((player, index) => (index >= start && index < end ? player : null));
 
-    // Imitating server response
-    return timer(500).pipe(map(() => result));
-  }
-
+  // Imitating server response
+  return timer(500).pipe(map(() => result));
+}
 
   teamLogo(array: any, teamName: string) {
     // Find the object where the team name matches the parameter
@@ -287,8 +303,42 @@ export class PlayersComponent implements OnInit, AfterViewInit {
 }
 
 
-function sortBy(key: 'name' | 'overall' | 'position' | 'team' | 'goals' | 'assist' | 'motm' | 'yellow_card' | 'red_card', direction: -1 | 1): TuiComparator<Player> {
-  return (a, b) =>
-    direction * tuiDefaultSort(a[key], b[key]);
+// function sortBy(key: 'name' | 'overall' | 'position' | 'team' | 'goals' | 'assist' | 'motm' | 'yellow_card' | 'red_card', direction: -1 | 1): TuiComparator<Player> {
+//   return (a, b) =>
+//     direction * tuiDefaultSort(a[key], b[key]);
 
+// }
+
+  // Define the custom order for positions
+  const POSITION_ORDER: Record<string, number> = {
+    'POR': 1,
+    'TD': 2,
+    'DC': 3,
+    'TS': 4,
+    'CDC': 5,
+    'CC': 6,
+    'ED': 7,
+    'COC': 8,
+    'ES': 9,
+    'AD': 10,
+    'AT': 11,
+    'AS': 12,
+    'ATT': 13,
+  };
+
+  // Custom comparator function for positions
+function positionComparator(a: Player, b: Player, direction: -1 | 1): number {
+    const aPositionOrder = POSITION_ORDER[a.position] || 99; // Default to 99 if position is not in the order
+    const bPositionOrder = POSITION_ORDER[b.position] || 99; // Default to 99 if position is not in the order
+    return direction * (aPositionOrder - bPositionOrder);
+  }
+
+// Modify the sortBy function to include position comparator
+function sortBy(key: Key, direction: -1 | 1): TuiComparator<Player> {
+  if (key === 'position') {
+      return (a, b) => positionComparator(a, b, direction);
+  }
+  return (a, b) => direction * tuiDefaultSort(a[key], b[key]);
 }
+
+

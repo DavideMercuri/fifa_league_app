@@ -1,26 +1,19 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, ChangeDetectorRef, OnInit, Input, Inject } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, ChangeDetectorRef, OnInit, Input, Inject, AfterViewChecked } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TuiAlertService, TuiNotification } from '@taiga-ui/core';
 import { TuiFileLike } from '@taiga-ui/kit';
 import { Observable, Subject, finalize, map, of, switchMap, timer } from 'rxjs';
 import { playerOSV } from 'src/app/components/navbar/common-data';
 import { PlayersComponent } from '../players.component';
 import { Transaction } from 'src/interfaces/transaction.interface';
-// import {tuiInputNumberOptionsProvider} from '@taiga-ui/kit';
 
 @Component({
   selector: 'app-insert-player',
   templateUrl: './insert-player.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  // providers: [
-  //   tuiInputNumberOptionsProvider({
-  //     decimal: 'never',
-  //     step: 1,
-  //   }),
-  // ],
 })
-export class InsertPlayerComponent {
+export class InsertPlayerComponent implements AfterViewChecked  {
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef, @Inject(TuiAlertService)
   private readonly alerts: TuiAlertService, private players: PlayersComponent) { }
@@ -45,10 +38,10 @@ export class InsertPlayerComponent {
   );
 
   newPlayer = new FormGroup({
-    name: new FormControl(),
-    position: new FormControl(),
-    country: new FormControl(),
-    team: new FormControl('Svincolati'),
+    name: new FormControl('', Validators.required),
+    position: new FormControl(null, Validators.required),
+    country: new FormControl('', Validators.required),
+    team: new FormControl('Svincolati', Validators.required),
     goals: new FormControl(0),
     assist: new FormControl(0),
     motm: new FormControl(0),
@@ -56,9 +49,14 @@ export class InsertPlayerComponent {
     red_card: new FormControl(0),
     injured: new FormControl(0),
     salary: new FormControl(),
-    overall: new FormControl(),
+    overall: new FormControl('', Validators.required),
     player_value: new FormControl(),
+    transfer_amount: new FormControl()
   });
+
+  ngAfterViewChecked(): void {
+    this.cdr.detectChanges();
+  }
 
   getDropDown(type: string) {
 
@@ -182,10 +180,12 @@ export class InsertPlayerComponent {
     if (playerData) {
       this.newPlayer.controls['salary'].setValue(playerData.salary);
       this.newPlayer.controls['player_value'].setValue(playerData.player_value);
+      this.newPlayer.controls['transfer_amount'].setValue(playerData.player_value);
     } else {
       // Handle the case where overall doesn't match any entry
       this.newPlayer.controls['salary'].reset();
       this.newPlayer.controls['player_value'].reset();
+      this.newPlayer.controls['transfer_amount'].reset();
     }
 
     this.newPlayer.controls['salary'].disable();
@@ -194,7 +194,7 @@ export class InsertPlayerComponent {
 
   moneyUpdateOnPlayerInsert(res: any, team_name: any) {
 
-    var sum = res.money - this.newPlayer.controls['player_value'].value;
+    var sum = this.newPlayer.controls['team'].value != 'Svincolati' ? res.money - this.newPlayer.controls['transfer_amount'].value : res.money - this.newPlayer.controls['player_value'].value;
     var id = res.team_id;
     var payment = true;
 
@@ -233,23 +233,35 @@ export class InsertPlayerComponent {
 
   insert() {
 
-    const formData = new FormData();
+    if (this.newPlayer.invalid) {
 
-    // Aggiungi i dati del form al FormData
-    Object.entries(this.newPlayer.value).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
+      this.newPlayer.markAllAsTouched();
+      this.cdr.detectChanges();
+      this.alerts.open('I Campi Indicati con <b>*</b> risultano vuoti o non conformi.', { label: 'Errore compilazione Form!', status: TuiNotification.Error }).subscribe();
 
-    if (this.bufferedImg) {
-      // formData.append('image', this.bufferedImg); // Se `this.bufferedImg` è già un Blob, usalo direttamente
-      formData.append('photo', new Blob([this.bufferedImg], { type: 'image/jpeg' })); // Solo se `this.bufferedImg` è un ArrayBuffer o un'altra struttura di dati binari
+      return;
+      
+    } else {
+      const formData = new FormData();
+
+      // Aggiungi i dati del form al FormData
+      Object.entries(this.newPlayer.value).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
+      if (this.bufferedImg) {
+        formData.append('photo', new Blob([this.bufferedImg], { type: 'image/jpeg' }));
+      }
+
+      formData.append('salary', this.newPlayer.controls['salary'].value);
+      formData.append('player_value', this.newPlayer.controls['player_value'].value);
+
+      // Invia i dati al tuo server
+      this.sendDataToServer(formData);
     }
 
-    formData.append('salary', this.newPlayer.controls['salary'].value);
-    formData.append('player_value', this.newPlayer.controls['player_value'].value);
+    this.cdr.detectChanges();
 
-    // Invia i dati al tuo server
-    this.sendDataToServer(formData);
   }
 
   sendDataToServer(formData: FormData) {
@@ -261,12 +273,12 @@ export class InsertPlayerComponent {
       next: () => {
         transaction = {
           transaction_mode: 'DEBIT',
-          transaction_amount: this.newPlayer.controls['player_value'].value,
+          transaction_amount: this.newPlayer.controls['team'].value != 'Svincolati' ? this.newPlayer.controls['transfer_amount'].value : this.newPlayer.controls['player_value'].value,
           transaction_date: new Date().toString(),
           transaction_team: String(this.newPlayer.controls['team'].value),
           transaction_detail: {
             type: 'player_sign',
-            player_name: this.newPlayer.controls['name'].value,
+            player_name: this.newPlayer.controls['name'].value!,
             buyer: String(this.newPlayer.controls['team'].value),
           },
         }
