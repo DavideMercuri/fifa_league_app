@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, ChangeDetectorRef, OnInit, Input, Inject } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TuiAlertService, TuiNotification } from '@taiga-ui/core';
 import { TuiFileLike } from '@taiga-ui/kit';
 import { Observable, Subject, finalize, map, of, switchMap, timer } from 'rxjs';
@@ -39,9 +39,9 @@ export class EditPlayerComponent implements OnInit {
   );
 
   player = new FormGroup({
-    name: new FormControl(),
-    position: new FormControl(),
-    country: new FormControl(),
+    name: new FormControl('',Validators.required),
+    position: new FormControl(null, Validators.required),
+    country: new FormControl('',Validators.required),
     goals: new FormControl(),
     assist: new FormControl(),
     motm: new FormControl(),
@@ -49,7 +49,7 @@ export class EditPlayerComponent implements OnInit {
     red_card: new FormControl(),
     injured: new FormControl(),
     salary: new FormControl(),
-    overall: new FormControl(),
+    overall: new FormControl('',Validators.required),
     player_value: new FormControl(),
   });
 
@@ -228,6 +228,17 @@ export class EditPlayerComponent implements OnInit {
   }
 
   update(id: any) {
+
+    if (this.player.invalid) {
+
+      this.player.markAllAsTouched();
+      this.cdr.detectChanges();
+      this.alerts.open('I Campi Indicati con <b>*</b> risultano vuoti o non conformi.', { label: 'Errore compilazione Form!', status: TuiNotification.Error }).subscribe();
+
+      return;
+      
+    } else {
+
     const formData = new FormData();
 
     // Aggiungi i dati del form al FormData
@@ -245,6 +256,8 @@ export class EditPlayerComponent implements OnInit {
 
     // Invia i dati al tuo server
     this.sendDataToServer(formData, id);
+
+  }
 
   }
 
