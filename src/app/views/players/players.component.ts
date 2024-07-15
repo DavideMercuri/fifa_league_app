@@ -312,17 +312,17 @@ private getData(
   // Define the custom order for positions
   const POSITION_ORDER: Record<string, number> = {
     'POR': 1,
-    'TD': 2,
-    'DC': 3,
-    'TS': 4,
+    'DC': 2,
+    'TS': 3,
+    'TD': 4,
     'CDC': 5,
     'CC': 6,
-    'ED': 7,
-    'COC': 8,
-    'ES': 9,
-    'AD': 10,
-    'AT': 11,
-    'AS': 12,
+    'COC': 7,
+    'ES': 8,
+    'ED': 9,
+    'AS': 10,
+    'AD': 11,
+    'AT': 12,
     'ATT': 13,
   };
 
