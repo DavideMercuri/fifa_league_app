@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const mysql = require('mysql');
@@ -55,6 +57,103 @@ app.post('/login', async (req, res) => {
     res.status(500).send({ message: 'Errore durante il login.' });
   }
 });
+
+
+//---------------------------------------------------------BACKUP-----------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------
+
+// Funzione per creare un dump del database
+const dumpDatabase = async (databaseName, user, password, host, outputPath) => {
+  const command = `mysqldump -u ${user} -p${password} -h ${host} ${databaseName} > ${outputPath}`;
+  console.log('Esecuzione del comando:', command); // Log del comando
+  return new Promise((resolve, reject) => {
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        console.error('Errore durante il dump del database:', error); // Log dell'errore
+        reject(`Errore durante il dump del database: ${error.message}`);
+        return;
+      }
+      if (stderr && !stderr.includes('[Warning] Using a password on the command line interface can be insecure.')) {
+        console.error('stderr durante il dump del database:', stderr); // Log di stderr
+        reject(`stderr: ${stderr}`);
+        return;
+      }
+      console.log('stdout durante il dump del database:', stdout); // Log di stdout
+      resolve(`Dump del database completato e salvato in: ${outputPath}`);
+    });
+  });
+};
+
+// Funzione per formattare la data
+const formatDate = (date) => {
+  const dd = String(date.getDate()).padStart(2, '0');
+  const mm = String(date.getMonth() + 1).padStart(2, '0'); // Gennaio è 0
+  const yyyy = date.getFullYear();
+  const hh = String(date.getHours()).padStart(2, '0');
+  const min = String(date.getMinutes()).padStart(2, '0');
+  const ss = String(date.getSeconds()).padStart(2, '0');
+
+  return `${dd}-${mm}-${yyyy} ${hh}:${min}:${ss}`;
+};
+
+const DROPBOX_ACCESS_TOKEN = process.env.DROPBOX_ACCESS_TOKEN;
+
+// Funzione per caricare il dump su Dropbox
+const uploadToDropbox = async (filePath, dropboxAccessToken) => {
+  const dbx = new Dropbox({ accessToken: dropboxAccessToken, fetch: fetch });
+
+  console.log('Lettura del file per il caricamento su Dropbox:', filePath); // Log del percorso del file
+  const contents = await fs.readFile(filePath);
+
+  var dateStamp = formatDate(new Date());
+  const dropboxPath = `/fc-league-app-dump/dump-${dateStamp}.sql`;
+  console.log('Inizio del caricamento su Dropbox'); // Log di inizio caricamento
+  const response = await dbx.filesUpload({ path: dropboxPath, contents });
+  
+  console.log('Risposta di Dropbox:', response); // Log della risposta di Dropbox
+  return response;
+};
+
+// Funzione per eliminare il file dump
+const deleteFile = async (filePath) => {
+  try {
+    await fs.unlink(filePath);
+    console.log(`File ${filePath} eliminato con successo`);
+  } catch (error) {
+    console.error(`Errore durante l'eliminazione del file ${filePath}:`, error);
+  }
+};
+
+
+// Endpoint per creare e caricare il dump del database
+app.post('/backup-db', async (req, res) => {
+  try {
+    const dumpPath = path.join(__dirname, 'dump.sql');
+    console.log('Inizio del processo di dump del database...'); // Log di inizio processo
+    await dumpDatabase('players', 'root', 'password', 'localhost', dumpPath);
+
+    console.log('Dump del database completato. Inizio del caricamento su Dropbox...'); // Log dopo il dump
+    const dropboxResponse = await uploadToDropbox(dumpPath, DROPBOX_ACCESS_TOKEN);
+
+    console.log('Caricamento su Dropbox completato. Eliminazione del file dump...'); // Log dopo l'upload
+    await deleteFile(dumpPath);
+    res.json({
+      message: 'Backup creato, caricato e file eliminato con successo',
+      dropboxResponse: dropboxResponse
+    });
+  } catch (error) {
+    console.error('Errore durante il processo di backup:', error); // Log dell'errore generale
+    res.status(500).json({ error: 'Errore durante il backup del database' });
+  }
+});
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Secondary Server running on port ${PORT}`);
+});
+
+//--------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------
 
 // Un endpoint protetto come esempio
 app.get('/players/protected', authMiddleware, (req, res) => {
