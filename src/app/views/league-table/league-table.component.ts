@@ -18,6 +18,8 @@ export class LeagueTableComponent implements OnInit {
   faFolderPlus = faFolderPlus;
   faCloudArrowUp = faCloudArrowUp;
 
+  disableDumpButton: boolean = false;
+
   @Input('fullModeVisualization') fullModeVisualization: boolean = true;
   @Input('homeVisualization') homeVisualization: boolean = false;
 
@@ -66,13 +68,18 @@ export class LeagueTableComponent implements OnInit {
   }
 
   createBackup(){
+
+    this.disableDumpButton = true;
+
     this.http.post('http://localhost:3000/backup-db', {}).subscribe({
       next: (response) => {
         console.log('Backup successfully created', response);
         this.alerts.open('Backup Creato con Successo!!', { label: 'Operazione Effettuata', status: TuiNotification.Success }).subscribe();
+        this.disableDumpButton = false;
       },
       error: (error) => {
         console.error('Error in Backup creation', error);
+        this.disableDumpButton = false;
       }
     });
   }

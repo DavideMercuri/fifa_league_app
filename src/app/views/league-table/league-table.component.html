@@ -1,7 +1,7 @@
 <div>
 
     <div *ngIf="fullModeVisualization" style="margin-left: 5px; margin-top: 25px; width: 95%; text-align: right; font-size: 26px;">
-        <a class="enable-click" (click)="createBackup()"><fa-icon [icon]="faCloudArrowUp"></fa-icon></a>
+        <a [ngClass]="disableDumpButton == true ? 'disabled-element' : 'enable-click'" (click)="createBackup()"><fa-icon [icon]="faCloudArrowUp"></fa-icon></a>
         &nbsp;
         <a class="enable-click" (click)="openCheckSeasonModal(checkSeason, undefined, 'auto')"><fa-icon [icon]="faFolderPlus"></fa-icon></a>
     </div>
