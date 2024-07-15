@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, ChangeDetectorRef, Component, Inject, Input, OnInit } from '@angular/core';
-import { faFolderPlus } from '@fortawesome/free-solid-svg-icons';
-import { TuiDialogContext, TuiDialogService, TuiDialogSize } from '@taiga-ui/core';
+import { faCloudArrowUp, faFolderPlus } from '@fortawesome/free-solid-svg-icons';
+import { TuiAlertService, TuiDialogContext, TuiDialogService, TuiDialogSize, TuiNotification } from '@taiga-ui/core';
 import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-league-table',
@@ -11,9 +12,12 @@ import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
 })
 export class LeagueTableComponent implements OnInit {
 
-  constructor(private http: HttpClient, @Inject(TuiDialogService) private readonly dialogs: TuiDialogService, private cdRef: ChangeDetectorRef) { }
+  constructor(private http: HttpClient, @Inject(TuiDialogService) private readonly dialogs: TuiDialogService, private cdRef: ChangeDetectorRef, @Inject(TuiAlertService)
+  private readonly alerts: TuiAlertService,) { }
 
   faFolderPlus = faFolderPlus;
+  faCloudArrowUp = faCloudArrowUp;
+
   @Input('fullModeVisualization') fullModeVisualization: boolean = true;
   @Input('homeVisualization') homeVisualization: boolean = false;
 
@@ -59,6 +63,18 @@ export class LeagueTableComponent implements OnInit {
       size: size,
       dismissible: false,
     }).subscribe();
+  }
+
+  createBackup(){
+    this.http.post('http://localhost:3000/backup-db', {}).subscribe({
+      next: (response) => {
+        console.log('Backup successfully created', response);
+        this.alerts.open('Backup Creato con Successo!!', { label: 'Operazione Effettuata', status: TuiNotification.Success }).subscribe();
+      },
+      error: (error) => {
+        console.error('Error in Backup creation', error);
+      }
+    });
   }
 
 }
