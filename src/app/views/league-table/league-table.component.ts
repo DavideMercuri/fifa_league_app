@@ -3,7 +3,8 @@ import { AfterViewInit, ChangeDetectorRef, Component, Inject, Input, OnInit } fr
 import { faCloudArrowUp, faFolderPlus } from '@fortawesome/free-solid-svg-icons';
 import { TuiAlertService, TuiDialogContext, TuiDialogService, TuiDialogSize, TuiNotification } from '@taiga-ui/core';
 import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { WebsocketService } from 'src/app/websocket.service';
 
 @Component({
   selector: 'app-league-table',
@@ -11,9 +12,15 @@ import { Observable } from 'rxjs';
   styleUrls: ['./league-table.component.less']
 })
 export class LeagueTableComponent implements OnInit {
+  private activeNotifications: Subscription[] = []; // Array per memorizzare le notifiche attive
 
-  constructor(private http: HttpClient, @Inject(TuiDialogService) private readonly dialogs: TuiDialogService, private cdRef: ChangeDetectorRef, @Inject(TuiAlertService)
-  private readonly alerts: TuiAlertService,) { }
+  constructor(
+    private http: HttpClient,
+    @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
+    private cdRef: ChangeDetectorRef,
+    @Inject(TuiAlertService) private readonly alerts: TuiAlertService,
+    private websocketService: WebsocketService // Aggiungi WebsocketService al costruttore
+  ) {}
 
   faFolderPlus = faFolderPlus;
   faCloudArrowUp = faCloudArrowUp;
@@ -25,6 +32,30 @@ export class LeagueTableComponent implements OnInit {
 
   ngOnInit(): void {
     this.GetLeagueTable();
+
+    // Ascolta i messaggi WebSocket per le notifiche in tempo reale
+    this.websocketService.messages$.subscribe((message) => {
+      const { status, message: text } = message;
+      let notificationStatus: TuiNotification;
+
+      switch (status) {
+        case 'success':
+          notificationStatus = TuiNotification.Success;
+          break;
+        case 'warning':
+          notificationStatus = TuiNotification.Warning;
+          break;
+        case 'danger':
+          notificationStatus = TuiNotification.Error;
+          break;
+        default:
+          notificationStatus = TuiNotification.Info;
+          break;
+      }
+
+      const notification = this.alerts.open(text, { label: 'Notifica', status: notificationStatus });
+      this.activeNotifications.push(notification.subscribe());
+    });
   }
 
   leagueTable: any = [];
@@ -38,7 +69,7 @@ export class LeagueTableComponent implements OnInit {
         this.leagueTable = res;
       },
       error: (err: any) => {
-        console.error(err);        
+        console.error(err);
       },
       complete: () => {
         this.cdRef.detectChanges();
@@ -47,17 +78,15 @@ export class LeagueTableComponent implements OnInit {
   }
 
   goalDifferenceStyle(gd: any): string {
-    
     if (gd > 0) {
       return 'positive-gd-status';
     } else if (gd == 0) {
       return 'neutral-gd-status';
     } else if (gd < 0) {
       return 'negative-gd-status';
-    }else{
+    } else {
       return '';
     }
-
   }
 
   openCheckSeasonModal(content: PolymorpheusContent<TuiDialogContext>, header: PolymorpheusContent, size: TuiDialogSize): void {
@@ -67,21 +96,34 @@ export class LeagueTableComponent implements OnInit {
     }).subscribe();
   }
 
-  createBackup(){
-
+  createBackup() {
     this.disableDumpButton = true;
+
+    // Mostra una notifica di "Backup in corso..." all'inizio del processo
+    const backupInProgressNotification = this.alerts.open('Backup in corso...', { label: 'Operazione in corso', status: TuiNotification.Warning, autoClose: false });
+    this.activeNotifications.push(backupInProgressNotification.subscribe());
 
     this.http.post('http://localhost:3000/backup-db', {}).subscribe({
       next: (response) => {
         console.log('Backup successfully created', response);
-        this.alerts.open('Backup Creato con Successo!!', { label: 'Operazione Effettuata', status: TuiNotification.Success }).subscribe();
+
+        // Chiudi tutte le notifiche attive prima di mostrarne una nuova
+        this.activeNotifications.forEach(sub => sub.unsubscribe());
+        this.activeNotifications = [];
+
+        const successNotification = this.alerts.open('Backup Creato con Successo!!', { label: 'Operazione Effettuata', status: TuiNotification.Success });
+        this.activeNotifications.push(successNotification.subscribe());
+
         this.disableDumpButton = false;
       },
       error: (error) => {
         console.error('Error in Backup creation', error);
+
+        const errorNotification = this.alerts.open('Errore nel tentativo di Backup', { label: 'Operazione Fallita', status: TuiNotification.Error, autoClose: false });
+        this.activeNotifications.push(errorNotification.subscribe());
+
         this.disableDumpButton = false;
       }
     });
   }
-
 }

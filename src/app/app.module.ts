@@ -1,5 +1,5 @@
 import { NgDompurifySanitizer } from "@tinkoff/ng-dompurify";
-import { TuiRootModule, TuiDialogModule, TuiAlertModule, TUI_SANITIZER, TuiButtonModule, TuiDataListModule, TuiTextfieldControllerModule, TuiLabelModule, TuiSvgModule, TuiLoaderModule, TuiFormatNumberPipeModule, TuiTooltipModule, TuiExpandModule, TuiDropdownModule, TuiHintModule, TuiScrollbarModule } from "@taiga-ui/core";
+import { TuiRootModule, TuiDialogModule, TuiNotificationModule, TuiAlertModule, TUI_SANITIZER, TuiButtonModule, TuiDataListModule, TuiTextfieldControllerModule, TuiLabelModule, TuiSvgModule, TuiLoaderModule, TuiFormatNumberPipeModule, TuiTooltipModule, TuiExpandModule, TuiDropdownModule, TuiHintModule, TuiScrollbarModule } from "@taiga-ui/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -45,6 +45,8 @@ import localeIt from '@angular/common/locales/it';
 import { registerLocaleData } from '@angular/common';
 import { HistoryLeagueTableComponent } from './views/history/history-league-table/history-league-table.component';
 import { HistoryTransactionsListComponent } from './views/history/history-transactions-list/history-transactions-list.component';
+import { NotificationComponent } from './components/notification/notification.component';
+import { WebsocketService } from "./websocket.service";
 
 // Registra il locale italiano
 registerLocaleData(localeIt);
@@ -77,6 +79,7 @@ registerLocaleData(localeIt);
     TeamTransactionComponent,
     HistoryLeagueTableComponent,
     HistoryTransactionsListComponent,
+    NotificationComponent,
   ],
   imports: [
     BrowserModule,
@@ -86,6 +89,7 @@ registerLocaleData(localeIt);
     ColorChromeModule,
     ColorTwitterModule,
     TuiRootModule,
+    TuiNotificationModule,
     TuiDialogModule,
     TuiTableModule,
     TuiTablePaginationModule,
@@ -103,7 +107,6 @@ registerLocaleData(localeIt);
     TuiAccordionModule,
     TuiTooltipModule,
     TuiStepperModule,
-    TuiDialogModule,
     TuiSidebarModule,
     TuiActiveZoneModule,
     TuiInputPasswordModule,
@@ -156,7 +159,8 @@ registerLocaleData(localeIt);
       provide: TUI_LANGUAGE,
       useValue: of(TUI_ITALIAN_LANGUAGE),
     },
-    { provide: LOCALE_ID, useValue: 'it' }
+    { provide: LOCALE_ID, useValue: 'it' },
+    WebsocketService
   ],
   bootstrap: [AppComponent]
   ,
