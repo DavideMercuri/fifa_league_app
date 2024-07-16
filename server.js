@@ -7,15 +7,20 @@ const authMiddleware = require('./authMiddleware');
 const cors = require('cors');
 const util = require('util');
 const multer = require('multer');
-
+const { exec } = require('child_process');
 const fs = require('fs').promises;
 const path = require('path');
-const { log } = require('console');
+const { Dropbox } = require('dropbox');
+const fetch = require('node-fetch');
+const WebSocket = require('ws');
+
 const upload = multer({ dest: 'uploads/' });
 
 const SECRET_KEY = '7l5Ywkc6gV';
 
 const app = express();
+const server = require('http').createServer(app);
+const wss = new WebSocket.Server({ server });
 
 // Set up a connection to the MySQL database
 const connection = mysql.createConnection({
@@ -119,9 +124,21 @@ const deleteFile = async (filePath) => {
   try {
     await fs.unlink(filePath);
     console.log(`File ${filePath} eliminato con successo`);
+    console.log(`-----------------------------------------------------------------------------------------------------------------------------`);
+    console.log(`Secondary Server running on port ${PORT}`);
+    console.log(`Server listening on port 3000`);
   } catch (error) {
     console.error(`Errore durante l'eliminazione del file ${filePath}:`, error);
   }
+};
+
+// Funzione per inviare una notifica tramite WebSocket
+const notifyClient = (message) => {
+  wss.clients.forEach(client => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify(message));
+    }
+  });
 };
 
 
@@ -129,6 +146,7 @@ const deleteFile = async (filePath) => {
 app.post('/backup-db', async (req, res) => {
   try {
     const dumpPath = path.join(__dirname, 'dump.sql');
+    notifyClient({ message: 'Backup in corso...', status: 'warning' });
     console.log('Inizio del processo di dump del database...'); // Log di inizio processo
     await dumpDatabase('players', 'root', 'password', 'localhost', dumpPath);
 
@@ -137,12 +155,16 @@ app.post('/backup-db', async (req, res) => {
 
     console.log('Caricamento su Dropbox completato. Eliminazione del file dump...'); // Log dopo l'upload
     await deleteFile(dumpPath);
+
+    notifyClient({ message: 'Backup creato, caricato e file eliminato con successo' });
+
     res.json({
       message: 'Backup creato, caricato e file eliminato con successo',
       dropboxResponse: dropboxResponse
     });
   } catch (error) {
     console.error('Errore durante il processo di backup:', error); // Log dell'errore generale
+    notifyClient({ message: 'Errore nel tentativo di Backup', status: 'danger' });
     res.status(500).json({ error: 'Errore durante il backup del database' });
   }
 });
