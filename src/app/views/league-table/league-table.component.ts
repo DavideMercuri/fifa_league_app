@@ -34,28 +34,7 @@ export class LeagueTableComponent implements OnInit {
     this.GetLeagueTable();
 
     // Ascolta i messaggi WebSocket per le notifiche in tempo reale
-    this.websocketService.messages$.subscribe((message) => {
-      const { status, message: text } = message;
-      let notificationStatus: TuiNotification;
-
-      switch (status) {
-        case 'success':
-          notificationStatus = TuiNotification.Success;
-          break;
-        case 'warning':
-          notificationStatus = TuiNotification.Warning;
-          break;
-        case 'danger':
-          notificationStatus = TuiNotification.Error;
-          break;
-        default:
-          notificationStatus = TuiNotification.Info;
-          break;
-      }
-
-      const notification = this.alerts.open(text, { label: 'Notifica', status: notificationStatus });
-      this.activeNotifications.push(notification.subscribe());
-    });
+    this.websocketService.messages$.subscribe(() => {});
   }
 
   leagueTable: any = [];
@@ -121,6 +100,7 @@ export class LeagueTableComponent implements OnInit {
 
         const errorNotification = this.alerts.open('Errore nel tentativo di Backup', { label: 'Operazione Fallita', status: TuiNotification.Error, autoClose: false });
         this.activeNotifications.push(errorNotification.subscribe());
+        this.activeNotifications = [];
 
         this.disableDumpButton = false;
       }

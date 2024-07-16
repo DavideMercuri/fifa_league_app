@@ -8,8 +8,11 @@ const cors = require('cors');
 const util = require('util');
 const multer = require('multer');
 const { exec } = require('child_process');
-const fs = require('fs').promises;
+const fs = require('fs');
+const fsPromises = require('fs').promises;
 const path = require('path');
+const zlib = require('zlib'); // Importa zlib per la compressione gzip
+const axios = require('axios');
 const { Dropbox } = require('dropbox');
 const fetch = require('node-fetch');
 const WebSocket = require('ws');
@@ -22,12 +25,42 @@ const app = express();
 const server = require('http').createServer(app);
 const wss = new WebSocket.Server({ server });
 
+let DROPBOX_ACCESS_TOKEN = process.env.DROPBOX_ACCESS_TOKEN;
+const DROPBOX_REFRESH_TOKEN = process.env.DROPBOX_REFRESH_TOKEN;
+const DROPBOX_APP_KEY = process.env.DROPBOX_APP_KEY;
+const DROPBOX_APP_SECRET = process.env.DROPBOX_APP_SECRET;
+
+if (!DROPBOX_ACCESS_TOKEN || !DROPBOX_REFRESH_TOKEN || !DROPBOX_APP_KEY || !DROPBOX_APP_SECRET) {
+  console.error('Dropbox Access Token, Refresh Token, App Key o App Secret non configurati correttamente. Assicurati che il file .env contenga questi valori.');
+  process.exit(1);
+}
+
+// Funzione per aggiornare l'access token di Dropbox
+const refreshDropboxToken = async () => {
+  try {
+    const response = await axios.post('https://api.dropboxapi.com/oauth2/token', new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: DROPBOX_REFRESH_TOKEN,
+      client_id: DROPBOX_APP_KEY,
+      client_secret: DROPBOX_APP_SECRET
+    }).toString(), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
+    DROPBOX_ACCESS_TOKEN = response.data.access_token;
+    console.log('Access token aggiornato con successo:', DROPBOX_ACCESS_TOKEN);
+  } catch (error) {
+    console.error('Errore durante l\'aggiornamento dell\'access token:', error);
+    throw error;
+  }
+};
+
 // Set up a connection to the MySQL database
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'password',
-  //database: 'players_test'
   database: 'players'
 });
 connection.connect();
@@ -62,7 +95,6 @@ app.post('/login', async (req, res) => {
     res.status(500).send({ message: 'Errore durante il login.' });
   }
 });
-
 
 //---------------------------------------------------------BACKUP-----------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------------------
@@ -101,17 +133,26 @@ const formatDate = (date) => {
   return `${dd}-${mm}-${yyyy} ${hh}:${min}:${ss}`;
 };
 
-const DROPBOX_ACCESS_TOKEN = process.env.DROPBOX_ACCESS_TOKEN;
+// Funzione per comprimere il file dump utilizzando gzip
+const compressFile = async (inputPath, outputPath) => {
+  return new Promise((resolve, reject) => {
+    const input = fs.createReadStream(inputPath);
+    const output = fs.createWriteStream(outputPath);
+    const gzip = zlib.createGzip();
+
+    input.pipe(gzip).pipe(output).on('finish', resolve).on('error', reject);
+  });
+};
 
 // Funzione per caricare il dump su Dropbox
-const uploadToDropbox = async (filePath, dropboxAccessToken) => {
-  const dbx = new Dropbox({ accessToken: dropboxAccessToken, fetch: fetch });
+const uploadToDropbox = async (filePath) => {
+  const dbx = new Dropbox({ accessToken: DROPBOX_ACCESS_TOKEN, fetch: fetch });
 
   console.log('Lettura del file per il caricamento su Dropbox:', filePath); // Log del percorso del file
-  const contents = await fs.readFile(filePath);
+  const contents = await fsPromises.readFile(filePath);
 
   var dateStamp = formatDate(new Date());
-  const dropboxPath = `/fc-league-app-dump/dump-${dateStamp}.sql`;
+  const dropboxPath = `/fc-league-app-dump/dump-${dateStamp}.sql.gz`;
   console.log('Inizio del caricamento su Dropbox'); // Log di inizio caricamento
   const response = await dbx.filesUpload({ path: dropboxPath, contents });
   
@@ -122,11 +163,8 @@ const uploadToDropbox = async (filePath, dropboxAccessToken) => {
 // Funzione per eliminare il file dump
 const deleteFile = async (filePath) => {
   try {
-    await fs.unlink(filePath);
+    await fsPromises.unlink(filePath);
     console.log(`File ${filePath} eliminato con successo`);
-    console.log(`-----------------------------------------------------------------------------------------------------------------------------`);
-    console.log(`Secondary Server running on port ${PORT}`);
-    console.log(`Server listening on port 3000`);
   } catch (error) {
     console.error(`Errore durante l'eliminazione del file ${filePath}:`, error);
   }
@@ -141,22 +179,36 @@ const notifyClient = (message) => {
   });
 };
 
+// Middleware per verificare e aggiornare l'access token prima di ogni richiesta
+const ensureDropboxToken = async (req, res, next) => {
+  try {
+    await refreshDropboxToken();
+    next();
+  } catch (error) {
+    res.status(500).json({ error: 'Errore durante l\'aggiornamento del token di Dropbox' });
+  }
+};
 
 // Endpoint per creare e caricare il dump del database
-app.post('/backup-db', async (req, res) => {
+app.post('/backup-db', ensureDropboxToken, async (req, res) => {
   try {
     const dumpPath = path.join(__dirname, 'dump.sql');
+    const compressedPath = dumpPath + '.gz';
     notifyClient({ message: 'Backup in corso...', status: 'warning' });
     console.log('Inizio del processo di dump del database...'); // Log di inizio processo
     await dumpDatabase('players', 'root', 'password', 'localhost', dumpPath);
 
-    console.log('Dump del database completato. Inizio del caricamento su Dropbox...'); // Log dopo il dump
-    const dropboxResponse = await uploadToDropbox(dumpPath, DROPBOX_ACCESS_TOKEN);
+    console.log('Compressione del file dump...'); // Log dopo il dump
+    await compressFile(dumpPath, compressedPath);
 
-    console.log('Caricamento su Dropbox completato. Eliminazione del file dump...'); // Log dopo l'upload
+    console.log('Dump del database compresso. Inizio del caricamento su Dropbox...'); // Log dopo la compressione
+    const dropboxResponse = await uploadToDropbox(compressedPath);
+
+    console.log('Caricamento su Dropbox completato. Eliminazione dei file dump...'); // Log dopo l'upload
     await deleteFile(dumpPath);
+    await deleteFile(compressedPath);
 
-    notifyClient({ message: 'Backup creato, caricato e file eliminato con successo' });
+    notifyClient({ message: 'Backup creato, caricato e file eliminato con successo', status: 'success' });
 
     res.json({
       message: 'Backup creato, caricato e file eliminato con successo',
@@ -170,12 +222,14 @@ app.post('/backup-db', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Secondary Server running on port ${PORT}`);
+server.listen(PORT, () => {
+  console.log(`Server avviato sulla porta ${PORT}`);
 });
 
 //--------------------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------------------
+
+
 
 // Un endpoint protetto come esempio
 app.get('/players/protected', authMiddleware, (req, res) => {
