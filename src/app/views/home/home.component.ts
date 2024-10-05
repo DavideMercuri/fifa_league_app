@@ -108,17 +108,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
         this.transactions = this.convertJsonStrings(res);
 
-        console.log(this.transactions);
-        
-        
-
       },
       error: (err: any) => {
         console.error(err);
       }
     });
   }
-
 
   convertJsonStrings(array: any[]): any[] {
     let transactions: any[] = [];
