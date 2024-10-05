@@ -1,4 +1,4 @@
-<div class="mx-4 mt-3 row">
+<div class="mx-4 mt-3 row unzoomed-view">
     <ng-container  *ngFor="let fixture of fixtures; let i = index;" class="col-12 col-md-4">
         <div class="tui-space_right-2 col-12 matchday" *ngIf="i % 3 === 0">
             {{'Giornata ' + fixture.matchday}}
@@ -27,7 +27,9 @@
 </div>
 
 <ng-template #content dismissible="false" let-observer>
-    <app-match [match]="match" [observer]="observer"></app-match>
+    <div id="match-container">
+        <app-match [match]="match" [observer]="observer"></app-match>
+    </div>
 </ng-template>
 
 <ng-template #header>
