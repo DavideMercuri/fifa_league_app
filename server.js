@@ -155,7 +155,7 @@ const uploadToDropbox = async (filePath) => {
   const dropboxPath = `/fc-league-app-dump/dump-${dateStamp}.sql.gz`;
   console.log('Inizio del caricamento su Dropbox'); // Log di inizio caricamento
   const response = await dbx.filesUpload({ path: dropboxPath, contents });
-  
+
   console.log('Risposta di Dropbox:', response); // Log della risposta di Dropbox
   return response;
 };
@@ -208,6 +208,8 @@ app.post('/backup-db', ensureDropboxToken, async (req, res) => {
     await deleteFile(dumpPath);
     await deleteFile(compressedPath);
 
+    console.log('Server listening on port 3000');
+
     notifyClient({ message: 'Backup creato, caricato e file eliminato con successo', status: 'success' });
 
     res.json({
@@ -223,7 +225,7 @@ app.post('/backup-db', ensureDropboxToken, async (req, res) => {
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
-  console.log(`Server avviato sulla porta ${PORT}`);
+  console.log(`Backup Server ready on ${PORT}`);
 });
 
 //--------------------------------------------------------------------------------------------------------------------------
@@ -266,7 +268,7 @@ app.get('/players/fixture', (req, res) => {
 app.get('/players/fixtures/get-last-avalaible-match', (req, res) => {
 
   const query = `SELECT * FROM fixtures WHERE played = 'no' ORDER BY id_game ASC LIMIT 1;`;
-  
+
   connection.query(query, (error, results) => {
     if (error) {
       res.status(500).send(error);
@@ -506,7 +508,7 @@ app.delete('/players/player-delete/:id', (req, res) => {
 });
 
 app.post('/players/insert-new-player', upload.single('photo'), (req, res) => {
-
+  console.log('File ricevuto:', req.file); // Aggiungi questo log
   if (!req.file) {
     return res.status(400).send('No image file uploaded.');
   }
@@ -1036,9 +1038,9 @@ app.put('/players/team_detail/update-team-trophy', async (req, res) => {
 
   var query = ``;
 
-  if(trophyType == 'cup_win'){
+  if (trophyType == 'cup_win') {
     query = `UPDATE teams SET ${trophyType} = ${trophyType} + 1, season_champions_league_winner = 'yes' WHERE team_id = ?;`;
-  }else{
+  } else {
     query = `UPDATE teams SET ${trophyType} = ${trophyType} + 1 WHERE team_id = ?;`;
   }
 
@@ -1338,7 +1340,7 @@ app.post('/players/register-transaction', async (req, res) => {
     if (results != '' && (!results || results.length === 0)) {
       return res.status(404).json({ message: 'Team not found' });
     }
-    else if(results == ''){
+    else if (results == '') {
       return res.status(200).json({ message: 'Added to Svincolati' });
     }
 
@@ -1371,23 +1373,33 @@ function savePlayerData(playerData, imageFile) {
     let imageBuffer = null;
     if (imageFile) {
       try {
-        // Leggi il file in un buffer
-        imageBuffer = await fs.readFile(imageFile.path);
+        console.log('Lettura dell\'immagine:', imageFile.path); 
+        imageBuffer = await fsPromises.readFile(imageFile.path); // Usa fsPromises.readFile
       } catch (readError) {
+        console.error('Errore durante la lettura del file immagine:', readError);
         return reject(readError);
       }
     }
 
-    // Query SQL per inserire i dati
+    console.log('Buffer immagine pronto:', imageBuffer);
+
     const sql = `INSERT INTO players_list (name, position, country, team, goals, assist, motm, photo, yellow_card, red_card, injured, salary, overall, player_value) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    const values = [playerData.name, playerData.position, playerData.country, playerData.team, playerData.goals, playerData.assist, playerData.motm, imageBuffer, playerData.yellow_card, playerData.red_card, playerData.injured, playerData.salary, playerData.overall, playerData.player_value];
+    const values = [
+      playerData.name, playerData.position, playerData.country, playerData.team,
+      playerData.goals, playerData.assist, playerData.motm, imageBuffer,
+      playerData.yellow_card, playerData.red_card, playerData.injured,
+      playerData.salary, playerData.overall, playerData.player_value
+    ];
+
+    console.log('SQL Query:', sql);
+    console.log('Valori:', values);
 
     connection.query(sql, values, async (error, results) => {
       if (error) {
+        console.error('Errore SQL:', error);
         return reject(error);
       }
       try {
-        // Pulisci la cartella uploads dopo che i dati del giocatore sono stati salvati
         await clearUploadsDirectory('uploads/');
         resolve(results);
       } catch (clearError) {
@@ -1397,16 +1409,17 @@ function savePlayerData(playerData, imageFile) {
   });
 }
 
+
 // Funzione per eseguire la query di aggiornamento nel database
 function updatePlayerData(playerId, playerData, imageFile) {
 
   return new Promise(async (resolve, reject) => { // Make sure to handle this async function properly with try-catch
-    let imageBuffer = null;
     if (imageFile) {
       try {
-        // Read the file into a buffer
-        imageBuffer = await fs.readFile(imageFile.path);
+        console.log('Lettura dell\'immagine:', imageFile.path); 
+        imageBuffer = await fsPromises.readFile(imageFile.path); // Usa fsPromises.readFile
       } catch (readError) {
+        console.error('Errore durante la lettura del file immagine:', readError);
         return reject(readError);
       }
     }
