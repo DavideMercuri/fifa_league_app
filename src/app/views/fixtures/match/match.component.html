@@ -1,4 +1,4 @@
-<div class="match-component" *ngIf="match">
+<div *ngIf="match">
 
     <button tuiIconButton [icon]="'tuiIconBarChartLarge'" style="position: absolute; left: 30px; top: 30px;" [size]="'s'" [shape]="'rounded'" (click)="toggle(true)" (tuiActiveZoneChange)="toggle($event)">
         <div *tuiSidebar="open; direction: 'right'">

@@ -1,12 +1,12 @@
 import { faBolt, faFutbol, faHand, faMedal, faPersonRunning, faPlus, faSquare, faSquarePlus, faSquarePollVertical, faTruckMedical } from '@fortawesome/free-solid-svg-icons';
 import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, Input, OnInit, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy, Inject } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { TuiContextWithImplicit, TuiStringHandler } from '@taiga-ui/cdk';
 import { Player } from 'src/interfaces/player.interface';
 import { TUI_DEFAULT_MATCHER } from '@taiga-ui/cdk';
 import { Observable, of, Subject } from 'rxjs';
-import { delay, filter, startWith, switchMap } from 'rxjs/operators';
+import { filter, startWith, switchMap } from 'rxjs/operators';
 import { Fixture } from 'src/interfaces/fixture.interfaces';
 import { TuiAlertService, TuiNotification } from '@taiga-ui/core';
 import { FixturesComponent } from '../fixtures.component';
@@ -42,7 +42,7 @@ class PlayerSearch implements Player {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
-export class MatchComponent implements OnInit, AfterViewInit {
+export class MatchComponent implements OnInit {
 
   readonly tabMenu = [
     {
@@ -98,35 +98,38 @@ export class MatchComponent implements OnInit, AfterViewInit {
   private readonly alerts: TuiAlertService, private fixtures: FixturesComponent) { }
 
   ngOnInit(): void {
+    this.GetPlayers().then(() => {
+      this.activeScorers.valueChanges.subscribe(() => {
+        this.AddCounter('scorers', this.activeScorers.value);
+      });
+      this.activeAssist.valueChanges.subscribe(() => {
+        this.AddCounter('assists', this.activeAssist.value);
+      });
+      this.activeInjured.valueChanges.subscribe(() => {
+        this.AddCounter('injured', this.activeInjured.value);
+      });
+      this.activeRedCards.valueChanges.subscribe(() => {
+        this.AddCounter('redCard', this.activeRedCards.value);
+      });
 
-    this.GetPlayers();
-
-    // Iscriviti ai cambiamenti delle selezioni attive e chiama `AddCounter` quando cambiano
-    this.activeScorers.valueChanges.subscribe(() => {
-      this.AddCounter('scorers', this.activeScorers.value);
+      this.generateArrays();
+      this.SetDefaultData();
+    }).catch(error => {
+      console.error('Errore nel caricamento dei giocatori:', error);
     });
-    this.activeAssist.valueChanges.subscribe(() => {
-      this.AddCounter('assists', this.activeAssist.value);
-    });
-    this.activeInjured.valueChanges.subscribe(() => {
-      this.AddCounter('injured', this.activeInjured.value);
-    });
-    this.activeRedCards.valueChanges.subscribe(() => {
-      this.AddCounter('redCard', this.activeRedCards.value);
-    });
-
   }
+
 
   ngAfterViewInit(): void {
 
     setTimeout(() => {
       this.generateArrays();
       this.SetDefaultData();
-    }, 100);
+    }, 1000);
 
     setTimeout(() => {
       this.cdRef.detectChanges();
-    }, 200);
+    }, 2000);
 
   }
 
@@ -169,11 +172,15 @@ export class MatchComponent implements OnInit, AfterViewInit {
     return of(result).pipe();
   }
 
-  GetPlayers() {
-    this.http.get('http://localhost:3000/players/players_list').subscribe({
-      next: (res: any) => {
-        this.players = this.SortPlayerByName(res);
-      },
+  GetPlayers(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http.get('http://localhost:3000/players/players_list').subscribe({
+        next: (res: any) => {
+          this.players = this.SortPlayerByName(res);
+          resolve();
+        },
+        error: (err) => reject(err)
+      });
     });
   }
 
@@ -243,7 +250,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
           });
         }
       };
-      // Estrai i dati dai tui-tags per marcatori e assist
+      // Extract scorers and assists data from tui-tags
       extractData(tuituiTags, scorersArray);
       extractData(tuituiassistTags, assistsArray);
       extractData(tuituiRedCard, redCardsArray);
@@ -366,12 +373,9 @@ export class MatchComponent implements OnInit, AfterViewInit {
 
   AddCounter(type: 'scorers' | 'assists' | 'redCard' | 'injured', playersCount?: { id: string, count: number }[]) {
 
-    // this.onSearchChange('');
-
     var playerCount: number;
     var tuiTags: any;
-    
-    // Aggiungi una chiamata a detectChanges per assicurarti che l'elemento sia completamente renderizzato
+
     this.cdRef.detectChanges();
 
     const tuiTagsMap = {
@@ -433,13 +437,14 @@ export class MatchComponent implements OnInit, AfterViewInit {
           this.removePlayerFromActiveForm(type, playerData.id);
         });
 
-        if (divElement) {
+        if (!divElement.querySelector('.plus-button') && !divElement.querySelector('.minus-button') && !divElement.querySelector('.counter')) {
           divElement.appendChild(plusButton);
           divElement.appendChild(minusButton);
           divElement.appendChild(count);
-        }
+      }
+      
 
-        // Aggiungi la classe 'modified' all'elemento per indicare che è stato modificato
+        // Add 'modified' class to the element to indicate that the element is modified
         tuiTag.classList.add('modified');
       }
     }, 0);
@@ -460,17 +465,17 @@ export class MatchComponent implements OnInit, AfterViewInit {
   };
 
   FindPlayerDataForTag(tuiTag: Element): PlayerSearch {
-    // Trova l'elemento che contiene il nome del giocatore
+    // Find the element that contains the player name
     const playerNameElement = tuiTag.querySelector('[automation-id="tui-tag__text"]');
 
-    // Controlla se l'elemento esiste prima di accedere alla proprietà textContent
+    // Check if the element exist before access at property 'textContent'
     if (!playerNameElement) {
       throw new Error('Player name element not found');
     }
 
     const playerName = playerNameElement.textContent;
 
-    // Trova il giocatore corrispondente nell'array dei giocatori
+    // Find the corresponding player in Players Array
     const player = this.players.find(p => p.name === playerName);
 
     if (!player) {
@@ -483,7 +488,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
   open = false;
 
   toggle(open: boolean): void {
-      this.open = open;
+    this.open = open;
   }
 
 }
