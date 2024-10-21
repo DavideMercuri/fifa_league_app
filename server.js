@@ -31,7 +31,7 @@ const DROPBOX_APP_KEY = process.env.DROPBOX_APP_KEY;
 const DROPBOX_APP_SECRET = process.env.DROPBOX_APP_SECRET;
 
 if (!DROPBOX_ACCESS_TOKEN || !DROPBOX_REFRESH_TOKEN || !DROPBOX_APP_KEY || !DROPBOX_APP_SECRET) {
-  console.error('Dropbox Access Token, Refresh Token, App Key o App Secret non configurati correttamente. Assicurati che il file .env contenga questi valori.');
+  console.error('Dropbox Access Token, Refresh Token, App Key or App Secret are not configured correctly. Make sure your .env file contains these values.');
   process.exit(1);
 }
 
@@ -61,6 +61,7 @@ const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'password',
+  //database: 'players_test'
   database: 'players'
 });
 connection.connect();
@@ -99,32 +100,32 @@ app.post('/login', async (req, res) => {
 //---------------------------------------------------------BACKUP-----------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------------------
 
-// Funzione per creare un dump del database
+// function to create a database dump
 const dumpDatabase = async (databaseName, user, password, host, outputPath) => {
   const command = `mysqldump -u ${user} -p${password} -h ${host} ${databaseName} > ${outputPath}`;
-  console.log('Esecuzione del comando:', command); // Log del comando
+  console.log('Esecuzione del comando:', command); // command log
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
       if (error) {
-        console.error('Errore durante il dump del database:', error); // Log dell'errore
+        console.error('Errore durante il dump del database:', error); // error log
         reject(`Errore durante il dump del database: ${error.message}`);
         return;
       }
       if (stderr && !stderr.includes('[Warning] Using a password on the command line interface can be insecure.')) {
-        console.error('stderr durante il dump del database:', stderr); // Log di stderr
+        console.error('stderr durante il dump del database:', stderr); // stderr log
         reject(`stderr: ${stderr}`);
         return;
       }
-      console.log('stdout durante il dump del database:', stdout); // Log di stdout
+      console.log('stdout durante il dump del database:', stdout); // stdout log
       resolve(`Dump del database completato e salvato in: ${outputPath}`);
     });
   });
 };
 
-// Funzione per formattare la data
+// function for formatting date
 const formatDate = (date) => {
   const dd = String(date.getDate()).padStart(2, '0');
-  const mm = String(date.getMonth() + 1).padStart(2, '0'); // Gennaio è 0
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
   const yyyy = date.getFullYear();
   const hh = String(date.getHours()).padStart(2, '0');
   const min = String(date.getMinutes()).padStart(2, '0');
@@ -133,7 +134,7 @@ const formatDate = (date) => {
   return `${dd}-${mm}-${yyyy} ${hh}:${min}:${ss}`;
 };
 
-// Funzione per comprimere il file dump utilizzando gzip
+// function to zip dump file using gzip
 const compressFile = async (inputPath, outputPath) => {
   return new Promise((resolve, reject) => {
     const input = fs.createReadStream(inputPath);
@@ -144,23 +145,23 @@ const compressFile = async (inputPath, outputPath) => {
   });
 };
 
-// Funzione per caricare il dump su Dropbox
+// function to upload dump file on dropbox
 const uploadToDropbox = async (filePath) => {
   const dbx = new Dropbox({ accessToken: DROPBOX_ACCESS_TOKEN, fetch: fetch });
 
-  console.log('Lettura del file per il caricamento su Dropbox:', filePath); // Log del percorso del file
+  console.log('Lettura del file per il caricamento su Dropbox:', filePath); // log of filepath
   const contents = await fsPromises.readFile(filePath);
 
   var dateStamp = formatDate(new Date());
   const dropboxPath = `/fc-league-app-dump/dump-${dateStamp}.sql.gz`;
-  console.log('Inizio del caricamento su Dropbox'); // Log di inizio caricamento
+  console.log('Inizio del caricamento su Dropbox'); // starting upload log
   const response = await dbx.filesUpload({ path: dropboxPath, contents });
 
-  console.log('Risposta di Dropbox:', response); // Log della risposta di Dropbox
+  console.log('Risposta di Dropbox:', response); // log of the response from Dropbox
   return response;
 };
 
-// Funzione per eliminare il file dump
+// function to delete dump file
 const deleteFile = async (filePath) => {
   try {
     await fsPromises.unlink(filePath);
@@ -170,7 +171,7 @@ const deleteFile = async (filePath) => {
   }
 };
 
-// Funzione per inviare una notifica tramite WebSocket
+// function to send a notification using WebSocket
 const notifyClient = (message) => {
   wss.clients.forEach(client => {
     if (client.readyState === WebSocket.OPEN) {
@@ -179,7 +180,7 @@ const notifyClient = (message) => {
   });
 };
 
-// Middleware per verificare e aggiornare l'access token prima di ogni richiesta
+// Middleware to verify and update the access token before each request
 const ensureDropboxToken = async (req, res, next) => {
   try {
     await refreshDropboxToken();
@@ -189,22 +190,22 @@ const ensureDropboxToken = async (req, res, next) => {
   }
 };
 
-// Endpoint per creare e caricare il dump del database
+// Endpoint to create and load database dump
 app.post('/backup-db', ensureDropboxToken, async (req, res) => {
   try {
     const dumpPath = path.join(__dirname, 'dump.sql');
     const compressedPath = dumpPath + '.gz';
     notifyClient({ message: 'Backup in corso...', status: 'warning' });
-    console.log('Inizio del processo di dump del database...'); // Log di inizio processo
+    console.log('Inizio del processo di dump del database...'); // starting processo log
     await dumpDatabase('players', 'root', 'password', 'localhost', dumpPath);
 
-    console.log('Compressione del file dump...'); // Log dopo il dump
+    console.log('Compressione del file dump...'); // after dump log
     await compressFile(dumpPath, compressedPath);
 
-    console.log('Dump del database compresso. Inizio del caricamento su Dropbox...'); // Log dopo la compressione
+    console.log('Dump del database compresso. Inizio del caricamento su Dropbox...'); // after compression log
     const dropboxResponse = await uploadToDropbox(compressedPath);
 
-    console.log('Caricamento su Dropbox completato. Eliminazione dei file dump...'); // Log dopo l'upload
+    console.log('Caricamento su Dropbox completato. Eliminazione dei file dump...'); // uploade end log
     await deleteFile(dumpPath);
     await deleteFile(compressedPath);
 
@@ -230,8 +231,6 @@ server.listen(PORT, () => {
 
 //--------------------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------------------
-
-
 
 // Un endpoint protetto come esempio
 app.get('/players/protected', authMiddleware, (req, res) => {
@@ -428,12 +427,15 @@ app.put('/players/fixture/save-match', async (req, res) => {
     // Update league_table
     // 1. Determina il risultato della partita
     let winning_team = null;
+    let losing_team = null;
     let is_draw = false;
 
     if (ht_goals > aw_goals) {
       winning_team = req.body.result.home_team;
+      losing_team = req.body.result.away_team;
     } else if (aw_goals > ht_goals) {
       winning_team = req.body.result.away_team;
+      losing_team = req.body.result.home_team;
     } else {
       is_draw = true;
     }
@@ -441,10 +443,21 @@ app.put('/players/fixture/save-match', async (req, res) => {
     if (is_draw) {
       // Pareggio, entrambi i team ricevono +1 punto
       await queryAsync(`UPDATE league_table SET points = points + 1 WHERE team IN (?, ?)`, [req.body.result.home_team, req.body.result.away_team]);
+      await queryAsync(`UPDATE league_table SET draws = draws + 1 WHERE team IN (?, ?)`, [req.body.result.home_team, req.body.result.away_team]);
     } else {
       // Uno dei team ha vinto e riceve +3 punti
-      await queryAsync(`UPDATE league_table SET points = points + 3 WHERE team = ?`, [winning_team]);
+      await queryAsync(`UPDATE league_table SET points = points + 3 WHERE team = ?`, [winning_team]);      
+      await queryAsync(`UPDATE league_table SET victories = victories + 1 WHERE team = ?`, [winning_team]);
+      await queryAsync(`UPDATE league_table SET losses = losses + 1 WHERE team = ?`, [losing_team]);
     }
+
+    await queryAsync(`UPDATE league_table SET played_games = played_games + 1 WHERE team IN (?, ?)`, [req.body.result.home_team, req.body.result.away_team]);
+
+    await queryAsync(`UPDATE league_table SET scored_goals = scored_goals + ${ht_goals} WHERE team = ?`, [req.body.result.home_team]);
+    await queryAsync(`UPDATE league_table SET scored_goals = scored_goals + ${aw_goals} WHERE team = ?`, [req.body.result.away_team]);
+    await queryAsync(`UPDATE league_table SET conceded_goals = conceded_goals + ${aw_goals} WHERE team = ?`, [req.body.result.home_team]);
+    await queryAsync(`UPDATE league_table SET conceded_goals = conceded_goals + ${ht_goals} WHERE team = ?`, [req.body.result.away_team]);
+
     res.status(200).send({ message: 'Update successful' });
   } catch (error) {
     console.error(error);
@@ -687,321 +700,17 @@ app.get('/players/players_list/top_players', (req, res) => {
   });
 });
 
-app.get('/players/getWins', (req, res) => {
-  const query = `
-      SELECT teams.team,
-          COALESCE(victories.total_home_wins, 0) AS total_home_wins,
-          COALESCE(victories.total_away_wins, 0) AS total_away_wins
-    FROM (
-        SELECT home_team AS team FROM fixtures
-        UNION
-        SELECT away_team AS team FROM fixtures
-    ) AS teams
-    LEFT JOIN (
-        SELECT team,
-              SUM(home_wins) AS total_home_wins,
-              SUM(away_wins) AS total_away_wins
-        FROM (
-            SELECT home_team AS team,
-                  COUNT(*) AS home_wins,
-                  0 AS away_wins
-            FROM fixtures
-            WHERE ht_goals > aw_goals AND played = 'yes'
-            GROUP BY home_team
-            UNION ALL
-            SELECT away_team AS team,
-                  0 AS home_wins,
-                  COUNT(*) AS away_wins
-            FROM fixtures
-            WHERE aw_goals > ht_goals AND played = 'yes'
-            GROUP BY away_team
-        ) AS Subquery
-        GROUP BY team
-    ) AS victories ON teams.team = victories.team;`;
-  connection.query(query, (error, results) => {
-    if (error) throw error;
-    res.send(results);
-  });
-});
-
-app.get('/players/getLosses', (req, res) => {
-  const query = `
-      SELECT teams.team,
-            COALESCE(losses.total_home_losses, 0) AS total_home_losses,
-            COALESCE(losses.total_away_losses, 0) AS total_away_losses
-      FROM (
-          SELECT home_team AS team FROM fixtures
-          UNION
-          SELECT away_team AS team FROM fixtures
-      ) AS teams
-      LEFT JOIN (
-          SELECT team,
-                SUM(home_losses) AS total_home_losses,
-                SUM(away_losses) AS total_away_losses
-          FROM (
-              SELECT home_team AS team,
-                    COUNT(*) AS home_losses,
-                    0 AS away_losses
-              FROM fixtures
-              WHERE ht_goals < aw_goals AND played = 'yes'
-              GROUP BY home_team
-              UNION ALL
-              SELECT away_team AS team,
-                    0 AS home_losses,
-                    COUNT(*) AS away_losses
-              FROM fixtures
-              WHERE aw_goals < ht_goals AND played = 'yes'
-              GROUP BY away_team
-          ) AS Subquery
-          GROUP BY team
-      ) AS losses ON teams.team = losses.team;`;
-  connection.query(query, (error, results) => {
-    if (error) throw error;
-    res.send(results);
-  });
-});
-
-app.get('/players/getDraws', (req, res) => {
-  const query = `
-      SELECT teams.team,
-            COALESCE(draws.total_home_draws, 0) AS total_home_draws,
-            COALESCE(draws.total_away_draws, 0) AS total_away_draws
-      FROM (
-          SELECT home_team AS team FROM fixtures
-          UNION
-          SELECT away_team AS team FROM fixtures
-      ) AS teams
-      LEFT JOIN (
-          SELECT team,
-                SUM(home_draws) AS total_home_draws,
-                SUM(away_draws) AS total_away_draws
-          FROM (
-              SELECT home_team AS team,
-                    COUNT(*) AS home_draws,
-                    0 AS away_draws
-              FROM fixtures
-              WHERE ht_goals = aw_goals AND played = 'yes'
-              GROUP BY home_team
-              UNION ALL
-              SELECT away_team AS team,
-                    0 AS home_draws,
-                    COUNT(*) AS away_draws
-              FROM fixtures
-              WHERE ht_goals = aw_goals AND played = 'yes'
-              GROUP BY away_team
-          ) AS Subquery
-          GROUP BY team
-      ) AS draws ON teams.team = draws.team;`;
-  connection.query(query, (error, results) => {
-    if (error) throw error;
-    res.send(results);
-  });
-});
-
-app.get('/players/getGoalDifference', (req, res) => {
-  const query = `SELECT 
-  teams.team,
-  COALESCE(goals_for.total_goals_for, 0) - COALESCE(goals_against.total_goals_against, 0) AS goal_difference
-FROM (
-  SELECT home_team AS team FROM fixtures
-  UNION
-  SELECT away_team AS team FROM fixtures
-) AS teams
-LEFT JOIN (
-  SELECT 
-    team,
-    SUM(home_goals_for) AS total_goals_for
-  FROM (
-    SELECT 
-      home_team AS team,
-      SUM(ht_goals) AS home_goals_for
-    FROM fixtures
-    WHERE played = 'yes'
-    GROUP BY home_team
-    UNION ALL
-    SELECT 
-      away_team AS team,
-      SUM(aw_goals) AS home_goals_for
-    FROM fixtures
-    WHERE played = 'yes'
-    GROUP BY away_team
-  ) AS SubqueryGoalsFor
-  GROUP BY team
-) AS goals_for ON teams.team = goals_for.team
-LEFT JOIN (
-  SELECT 
-    team,
-    SUM(away_goals_against) AS total_goals_against
-  FROM (
-    SELECT 
-      home_team AS team,
-      SUM(aw_goals) AS away_goals_against
-    FROM fixtures
-    WHERE played = 'yes'
-    GROUP BY home_team
-    UNION ALL
-    SELECT 
-      away_team AS team,
-      SUM(ht_goals) AS away_goals_against
-    FROM fixtures
-    WHERE played = 'yes'
-    GROUP BY away_team
-  ) AS SubqueryGoalsAgainst
-  GROUP BY team
-) AS goals_against ON teams.team = goals_against.team;
-`;
-
-  connection.query(query, (error, results) => {
-    if (error) throw error;
-    res.send(results);
-  });
-});
-
 app.get('/players/league_table', (req, res) => {
-
-  const query = `WITH Teams AS (
-    SELECT home_team AS team FROM fixtures
-    UNION
-    SELECT away_team AS team FROM fixtures
-  ),
   
-  Victories AS (
-    SELECT team,
-          SUM(home_wins + away_wins) AS wins
-    FROM (
-        SELECT home_team AS team,
-              COUNT(*) AS home_wins,
-              0 AS away_wins
-        FROM fixtures
-        WHERE ht_goals > aw_goals AND played = 'yes'
-        GROUP BY home_team
-        UNION ALL
-        SELECT away_team AS team,
-              0 AS home_wins,
-              COUNT(*) AS away_wins
-        FROM fixtures
-        WHERE aw_goals > ht_goals AND played = 'yes'
-        GROUP BY away_team
-    ) AS Subquery
-    GROUP BY team
-  ),
+  const query = `SELECT * FROM league_table ORDER BY points DESC`;
   
-  Losses AS (
-    SELECT team,
-          SUM(home_losses + away_losses) AS losses
-    FROM (
-        SELECT home_team AS team,
-              COUNT(*) AS home_losses,
-              0 AS away_losses
-        FROM fixtures
-        WHERE ht_goals < aw_goals AND played = 'yes'
-        GROUP BY home_team
-        UNION ALL
-        SELECT away_team AS team,
-              0 AS home_losses,
-              COUNT(*) AS away_losses
-        FROM fixtures
-        WHERE aw_goals < ht_goals AND played = 'yes'
-        GROUP BY away_team
-    ) AS Subquery
-    GROUP BY team
-  ),
-  
-  Draws AS (
-    SELECT team,
-          SUM(home_draws + away_draws) AS draws
-    FROM (
-        SELECT home_team AS team,
-              COUNT(*) AS home_draws,
-              0 AS away_draws
-        FROM fixtures
-        WHERE ht_goals = aw_goals AND played = 'yes'
-        GROUP BY home_team
-        UNION ALL
-        SELECT away_team AS team,
-              0 AS home_draws,
-              COUNT(*) AS away_draws
-        FROM fixtures
-        WHERE ht_goals = aw_goals AND played = 'yes'
-        GROUP BY away_team
-    ) AS Subquery
-    GROUP BY team
-  ),
-  
-  GamesPlayed AS (
-    SELECT team, COUNT(*) AS games_played
-    FROM (
-        SELECT home_team AS team
-        FROM fixtures
-        WHERE played = 'yes'
-        UNION ALL
-        SELECT away_team AS team
-        FROM fixtures
-        WHERE played = 'yes'
-    ) AS Subquery
-    GROUP BY team
-  ),
-  
-  GoalsScored AS (
-    SELECT team, SUM(goals) AS goals_scored
-    FROM (
-        SELECT home_team AS team, SUM(ht_goals) AS goals
-        FROM fixtures
-        WHERE played = 'yes'
-        GROUP BY home_team
-        UNION ALL
-        SELECT away_team AS team, SUM(aw_goals) AS goals
-        FROM fixtures
-        WHERE played = 'yes'
-        GROUP BY away_team
-    ) AS Subquery
-    GROUP BY team
-  ),
-  
-  GoalsConceded AS (
-    SELECT team, SUM(goals) AS goals_conceded
-    FROM (
-        SELECT home_team AS team, SUM(aw_goals) AS goals
-        FROM fixtures
-        WHERE played = 'yes'
-        GROUP BY home_team
-        UNION ALL
-        SELECT away_team AS team, SUM(ht_goals) AS goals
-        FROM fixtures
-        WHERE played = 'yes'
-        GROUP BY away_team
-    ) AS Subquery
-    GROUP BY team
-  )
-  
-  SELECT ROW_NUMBER() OVER (ORDER BY L.points DESC, (COALESCE(G.goals_scored, 0) - COALESCE(GC.goals_conceded, 0)) DESC) AS position,
-        T.team,
-        L.id,
-        L.team_logo,
-        L.points,
-        COALESCE(V.wins, 0) AS wins,
-        COALESCE(Ls.losses, 0) AS losses,
-        COALESCE(D.draws, 0) AS draws,
-        COALESCE(G.goals_scored, 0) AS goals_scored,
-        COALESCE(GC.goals_conceded, 0) AS goals_conceded,
-        COALESCE(G.goals_scored, 0) - COALESCE(GC.goals_conceded, 0) AS goal_difference,
-        COALESCE(GP.games_played, 0) AS games_played
-  FROM Teams T
-  JOIN league_table L ON T.team = L.team
-  LEFT JOIN Victories V ON T.team = V.team
-  LEFT JOIN Losses Ls ON T.team = Ls.team
-  LEFT JOIN Draws D ON T.team = D.team
-  LEFT JOIN GoalsScored G ON T.team = G.team
-  LEFT JOIN GoalsConceded GC ON T.team = GC.team
-  LEFT JOIN GamesPlayed GP ON T.team = GP.team
-  ORDER BY L.points DESC, (COALESCE(G.goals_scored, 0) - COALESCE(GC.goals_conceded, 0)) DESC;
-  `;
   connection.query(query, (error, results) => {
 
     const teams = results.map(team => {
       if (team.team_logo) {
         team.team_logo = 'data:image/webp;base64,' + Buffer.from(team.team_logo).toString('base64');
       }
+      team.goal_difference = team.scored_goals - team.conceded_goals;
       return team;
     });
 
@@ -1373,7 +1082,7 @@ function savePlayerData(playerData, imageFile) {
     let imageBuffer = null;
     if (imageFile) {
       try {
-        console.log('Lettura dell\'immagine:', imageFile.path); 
+        console.log('Lettura dell\'immagine:', imageFile.path);
         imageBuffer = await fsPromises.readFile(imageFile.path); // Usa fsPromises.readFile
       } catch (readError) {
         console.error('Errore durante la lettura del file immagine:', readError);
@@ -1416,7 +1125,7 @@ function updatePlayerData(playerId, playerData, imageFile) {
   return new Promise(async (resolve, reject) => { // Make sure to handle this async function properly with try-catch
     if (imageFile) {
       try {
-        console.log('Lettura dell\'immagine:', imageFile.path); 
+        console.log('Lettura dell\'immagine:', imageFile.path);
         imageBuffer = await fsPromises.readFile(imageFile.path); // Usa fsPromises.readFile
       } catch (readError) {
         console.error('Errore durante la lettura del file immagine:', readError);
@@ -1456,8 +1165,8 @@ function updateTeamData(team_id, teamData, imageFile, oldTeamName) {
     let imageBuffer = null;
     if (imageFile) {
       try {
-        // Leggi il file in un buffer
-        imageBuffer = await fs.readFile(imageFile.path);
+        // Leggi il file in un buffer utilizzando fs/promises
+        imageBuffer = await fsPromises.readFile(imageFile.path);
       } catch (readError) {
         return reject(readError);
       }
@@ -1533,14 +1242,13 @@ function updateTeamData(team_id, teamData, imageFile, oldTeamName) {
     });
   });
 }
-
 async function clearUploadsDirectory(directoryPath) {
   try {
     // Leggi i nomi dei file nella directory
-    const files = await fs.readdir(directoryPath);
+    const files = await fsPromises.readdir(directoryPath);
 
     // Crea una promessa per ciascun file da rimuovere
-    const deletePromises = files.map(file => fs.unlink(path.join(directoryPath, file)));
+    const deletePromises = files.map(file => fsPromises.unlink(path.join(directoryPath, file)));
 
     // Attendi che tutti i file siano rimossi
     await Promise.all(deletePromises);
