@@ -28,26 +28,27 @@ export class AuthService {
     );
   }
 
-    // Salva il token nel localStorage
-    saveToken(token: string): void {
-      localStorage.setItem(this.TOKEN_KEY, token);
-    }
-  
-    // Ottiene il token dal localStorage
-    getToken(): string | null {
-      return localStorage.getItem(this.TOKEN_KEY);
-    }
-  
-    // Elimina il token dal localStorage
-    removeToken(): void {
-      localStorage.removeItem(this.TOKEN_KEY);
-    }
+  // Save token in localStorage
+  saveToken(token: string): void {
+    localStorage.setItem(this.TOKEN_KEY, token);
+  }
 
-    logout(): void {
-      this.removeToken();
-      this.isAuthenticated = false;
-    }
+  // Get token from localStorage
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
 
+  // Delete token from localStorage
+  removeToken(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
+  }
+
+  logout(): void {
+    this.removeToken();
+    this.isAuthenticated = false;
+  }
+
+  //check if user is logged in
   isLoggedIn(): boolean {
     return this.isAuthenticated;
   }
