@@ -1,4 +1,4 @@
-<div *ngIf="team" class="tui-row" style="width: 95%; height: 105px; margin-top: 15px; margin-left: 50px; display: inline-flex;" [style.backgroundColor]="team && team.team_main_color ? team.team_main_color : ''" [style.color]="team && team.team_text_color ? team.team_text_color : ''">
+<div *ngIf="team" class="tui-row" style="width: 95%; height: 105px; margin-top: 15px; margin-left: 50px; display: inline-flex;" [style.border]="team.team_main_color.toLowerCase() === '#ffffff' ? '1px solid rgb(190 190 190)' : 'none'" [style.backgroundColor]="team && team.team_main_color ? team.team_main_color : ''" [style.color]="team && team.team_text_color ? team.team_text_color : ''">
     <div class="tui-col_md-1">
         <img [src]="team.team_logo" alt="" class="team-logo-small-detail">
     </div>

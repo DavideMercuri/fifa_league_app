@@ -1,3 +1,4 @@
+import { Fixture } from 'src/interfaces/fixture.interfaces';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
@@ -56,7 +57,7 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
 
     this.loadDataBasedOnId(this.teamId);
-    if (this.team)  
+    if (this.team)
       this.FilterPlayers('', '', this.team.team_name);
 
   }
@@ -71,7 +72,11 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
       }, 1000)
     });
 
-    
+
+  }
+
+  getBorderStyle(teamColor: string): string {
+    return teamColor.toLowerCase() == '#fffff' ? '1px solid #000' : 'none';
   }
 
   loadDataBasedOnId(id: string): void {
@@ -86,7 +91,7 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
           const imageBlob = this.base64ToBlob(res.team_logo.split(',')[1], 'image/webp');
           const imageName = 'team_logo.webp';
           const imageFile = new File([imageBlob], imageName, { type: 'image/webp' });
-    
+
           this.control.setValue(imageFile);
           this.imageSrc = res.team_logo;
         }
