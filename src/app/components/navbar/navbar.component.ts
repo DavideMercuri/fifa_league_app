@@ -1,17 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { switchMap } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SubMenuVoicesService } from 'src/app/sub-menu-voices.service';
-
-interface Item {
-
-  text: string;
-  icon: string;
-  routerLink?: string;
-  badge?: number;
-
-}
 
 @Component({
   selector: 'app-navbar',
@@ -84,19 +76,32 @@ export class NavbarComponent implements OnInit, AfterViewInit {
     }, 0);
   }
 
-  getSubMenu(){
-    this.http.get('http://localhost:3000/players/league_table').subscribe({
-      next: (res) => {
-        this.teams = res;
+  getSubMenu() {
 
-        this.items[3].subMenu = [];
-        this.teams.forEach((element: any) => {
-          if (this.items[3].subMenu) {
-            this.items[3].subMenu.push({ text: String(element.team), routerLink: `team-detail/${element.id}`, logo: String(element.team_logo) })
-          }
-        });
+    this.http.get('http://localhost:3000/players/league_table').pipe(
+      switchMap((res: any) => {
+        this.teams = res;
+        const subMenu = this.teams.map((element: any) => ({
+          text: String(element.team),
+          routerLink: `team-detail/${element.id}`,
+          logo: String(element.team_logo)
+        }));
+
+        const menuLocation = this.items.findIndex(item => item.text == 'Squadre');
+
+        if(menuLocation != -1){
+          this.items[menuLocation].subMenu = subMenu;
+        }else{
+          console.log('Oggetto squadre non presente');
+        }
+
+        return subMenu;
+      })
+    ).subscribe({
+      error: (err) => {
+        console.error('Errore nella richiesta HTTP:', err);
       }
-    });
+    })
   }
 
   showSubmenu(i: number): void {
