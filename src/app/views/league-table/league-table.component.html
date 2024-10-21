@@ -15,20 +15,24 @@
                 <th class="txt-center-align v-align-middle" tuiTh>Vittorie</th>
                 <th class="txt-center-align v-align-middle" tuiTh>Pareggi</th>
                 <th class="txt-center-align v-align-middle" tuiTh>Sconfitte</th>
+                <th class="txt-center-align v-align-middle" tuiTh>Gol Fatti</th>
+                <th class="txt-center-align v-align-middle" tuiTh>Gol Subiti</th>
                 <th class="txt-center-align v-align-middle" tuiTh>Diff. Reti</th>
                 <th class="txt-center-align v-align-middle font-b" tuiTh>Punti</th>
             </tr>
         </thead>
         <tbody tuiTbody [data]="leagueTable">
-            <tr *ngFor="let item of leagueTable" tuiTr>
-                <td *tuiCell="'position'" class="txt-center-align v-align-middle ftsz-15" tuiTd>{{ item.position }}</td>
+            <tr *ngFor="let item of leagueTable; let i = index" tuiTr>
+                <td *tuiCell="'position'" class="txt-center-align v-align-middle ftsz-15" tuiTd>{{ i+1 }}</td>
                 <td *tuiCell="'team'" class="v-align-middle ftsz-15" tuiTd>
                     <span><img style="width: 30px; height: 30px; margin-right: 10px; margin-left: 10px;" src="{{item.team_logo}}">{{ item.team }}</span>
                 </td>
-                <td *tuiCell="'games_played'" class="txt-center-align v-align-middle ftsz-15" tuiTd>{{ item.games_played }}</td>
-                <td *tuiCell="'wins'" class="txt-center-align v-align-middle ftsz-15" tuiTd>{{ item.wins }}</td>
+                <td *tuiCell="'games_played'" class="txt-center-align v-align-middle ftsz-15" tuiTd>{{ item.played_games }}</td>
+                <td *tuiCell="'wins'" class="txt-center-align v-align-middle ftsz-15" tuiTd>{{ item.victories }}</td>
                 <td *tuiCell="'draws'" class="txt-center-align v-align-middle ftsz-15" tuiTd>{{ item.draws }}</td>
                 <td *tuiCell="'losses'" class="txt-center-align v-align-middle ftsz-15" tuiTd>{{ item.losses }}</td>
+                <td *tuiCell="'scored_goals'" class="txt-center-align v-align-middle ftsz-15" tuiTd>{{ item.scored_goals }}</td>
+                <td *tuiCell="'conceded_goals'" class="txt-center-align v-align-middle ftsz-15" tuiTd>{{ item.conceded_goals }}</td>
                 <td *tuiCell="'goal_difference'" class="txt-center-align v-align-middle ftsz-15" tuiTd [ngClass]="goalDifferenceStyle(item.goal_difference)">
                     {{ item.goal_difference > 0 ? '+'+item.goal_difference: item.goal_difference }}
                 </td>
@@ -48,8 +52,8 @@
                 </tr>
             </thead>
             <tbody tuiTbody [data]="leagueTable">
-                <tr *ngFor="let item of leagueTable" tuiTr>
-                    <td *tuiCell="'position'" class="txt-center-align v-align-middle ftsz-15" tuiTd>{{ item.position }}</td>
+                <tr *ngFor="let item of leagueTable; let i = index" tuiTr>
+                    <td *tuiCell="'position'" class="txt-center-align v-align-middle ftsz-15" tuiTd>{{ i+1 }}</td>
                     <td *tuiCell="'team'" class="v-align-middle ftsz-15" tuiTd>
                         <span><img style="width: 30px; height: 30px; margin-right: 10px; margin-left: 10px;" src="{{item.team_logo}}">{{ item.team }}</span>
                     </td>

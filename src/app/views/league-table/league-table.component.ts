@@ -27,6 +27,8 @@ export class LeagueTableComponent implements OnInit {
 
   disableDumpButton: boolean = false;
 
+  goal_difference!: number;
+
   @Input('fullModeVisualization') fullModeVisualization: boolean = true;
   @Input('homeVisualization') homeVisualization: boolean = false;
 
@@ -39,13 +41,13 @@ export class LeagueTableComponent implements OnInit {
 
   leagueTable: any = [];
 
-  columns = ['position', 'team', 'games_played', 'wins', 'draws', 'losses', 'goal_difference', 'points'];
+  columns = ['position', 'team', 'games_played', 'wins', 'draws', 'losses', 'scored_goals', 'conceded_goals', 'goal_difference', 'points'];
   columnsMin = ['position', 'team', 'points'];
 
   GetLeagueTable() {
     this.http.get('http://localhost:3000/players/league_table').subscribe({
-      next: (res) => {
-        this.leagueTable = res;
+      next: (res: any) => {
+        this.leagueTable = res;      
       },
       error: (err: any) => {
         console.error(err);
