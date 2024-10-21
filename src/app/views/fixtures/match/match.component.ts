@@ -68,7 +68,13 @@ export class MatchComponent implements OnInit {
   awGoals = '0';
   tdStyleClass: string = 'tui-table__td tui-table__td_text_center team tui-table__td_first tui-table__td_last';
   search: string | null = '';
+
   players: Array<PlayerSearch> = [];
+  playersGoalsSorted: Array<PlayerSearch> = [];
+  playersAssistSorted: Array<PlayerSearch> = [];
+  playersMotmSorted: Array<PlayerSearch> = [];
+  playersYellowCardsSorted: Array<PlayerSearch> = [];
+  playersRedCardsSorted: Array<PlayerSearch> = [];
 
   @ViewChild('tuitui') tuitui !: any;
   @ViewChild('tuituiSelect') tuituiSelect !: any;
@@ -139,13 +145,61 @@ export class MatchComponent implements OnInit {
 
   readonly search$ = new Subject<string | null>();
 
-  readonly items$: Observable<readonly PlayerSearch[] | null> = this.search$.pipe(
+  readonly itemsGoals$: Observable<readonly PlayerSearch[] | null> = this.search$.pipe(
     filter(value => value !== null),
     switchMap(search =>
-      this.serverRequest(search).pipe(startWith<readonly PlayerSearch[] | null>(null)),
+      this.serverRequest(search, this.playersGoalsSorted).pipe(startWith<readonly PlayerSearch[] | null>(null)),
+    ),
+    startWith(this.playersGoalsSorted),
+  );
+
+  readonly itemsAssist$: Observable<readonly PlayerSearch[] | null> = this.search$.pipe(
+    filter(value => value !== null),
+    switchMap(search =>
+      this.serverRequest(search, this.playersAssistSorted).pipe(startWith<readonly PlayerSearch[] | null>(null)),
+    ),
+    startWith(this.playersAssistSorted),
+  );
+
+  readonly itemsMotm$: Observable<readonly PlayerSearch[] | null> = this.search$.pipe(
+    filter(value => value !== null),
+    switchMap(search =>
+      this.serverRequest(search, this.playersMotmSorted).pipe(startWith<readonly PlayerSearch[] | null>(null)),
+    ),
+    startWith(this.playersMotmSorted),
+  );
+
+  readonly itemsYellowCards$: Observable<readonly PlayerSearch[] | null> = this.search$.pipe(
+    filter(value => value !== null),
+    switchMap(search =>
+      this.serverRequest(search, this.playersYellowCardsSorted).pipe(startWith<readonly PlayerSearch[] | null>(null)),
+    ),
+    startWith(this.playersYellowCardsSorted),
+  );
+
+  readonly itemsRedCards$: Observable<readonly PlayerSearch[] | null> = this.search$.pipe(
+    filter(value => value !== null),
+    switchMap(search =>
+      this.serverRequest(search, this.playersRedCardsSorted).pipe(startWith<readonly PlayerSearch[] | null>(null)),
+    ),
+    startWith(this.playersRedCardsSorted),
+  );
+
+  readonly itemsInjured$: Observable<readonly PlayerSearch[] | null> = this.search$.pipe(
+    filter(value => value !== null),
+    switchMap(search =>
+      this.serverRequest(search, this.players).pipe(startWith<readonly PlayerSearch[] | null>(null)),
     ),
     startWith(this.players),
   );
+
+  private serverRequest(searchQuery: string | null, sortedArray: any): Observable<readonly PlayerSearch[]> {
+    const result = sortedArray.filter((user: { name: any; }) =>
+      TUI_DEFAULT_MATCHER(user.name, searchQuery || ''),
+    );
+
+    return of(result).pipe();
+  }
 
   readonly activeScorers = new FormControl();
   readonly activeAssist = new FormControl();
@@ -164,28 +218,34 @@ export class MatchComponent implements OnInit {
     return (event.target as HTMLInputElement)?.value || null;
   }
 
-  private serverRequest(searchQuery: string | null): Observable<readonly PlayerSearch[]> {
-    const result = this.players.filter(user =>
-      TUI_DEFAULT_MATCHER(user.name, searchQuery || ''),
-    );
-
-    return of(result).pipe();
-  }
-
+  // Metodo per ottenere i giocatori, con possibilità di specificare il campo di ordinamento (es. 'goals', 'assists', 'overall')
   GetPlayers(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.http.get('http://localhost:3000/players/players_list').subscribe({
         next: (res: any) => {
-          this.players = this.SortPlayerByName(res);
+          this.players = res;
+          this.playersGoalsSorted = this.sortPlayersByProperty('goals', res);
+          this.playersAssistSorted = this.sortPlayersByProperty('assist', res)
+          this.playersMotmSorted = this.sortPlayersByProperty('motm', res)
+          this.playersYellowCardsSorted = this.sortPlayersByProperty('yellow_card', res)
+          this.playersRedCardsSorted = this.sortPlayersByProperty('red_card', res)
           resolve();
         },
-        error: (err) => reject(err)
+        error: (err) => {
+          console.error('Errore nella richiesta:', err);
+          reject(err);
+        }
       });
     });
   }
 
-  SortPlayerByName(arrayToSort: any): Array<any> {
-    return arrayToSort.sort((a: any, b: any) => a.name.localeCompare(b.name));
+  sortPlayersByProperty(property: keyof PlayerSearch, arrayToSort: PlayerSearch[]): PlayerSearch[] {
+    const sortedArray = [...arrayToSort];  // Crea una copia per evitare modifiche all'array originale
+    return sortedArray.sort((a, b) => {
+      const fieldA = Number(a[property]) || 0;
+      const fieldB = Number(b[property]) || 0;
+      return fieldB - fieldA;
+    });
   }
 
   SetDefaultData() {
@@ -441,8 +501,7 @@ export class MatchComponent implements OnInit {
           divElement.appendChild(plusButton);
           divElement.appendChild(minusButton);
           divElement.appendChild(count);
-      }
-      
+        }
 
         // Add 'modified' class to the element to indicate that the element is modified
         tuiTag.classList.add('modified');
