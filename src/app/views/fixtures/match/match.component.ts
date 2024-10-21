@@ -112,8 +112,8 @@ export class MatchComponent implements OnInit {
         this.AddCounter('redCard', this.activeRedCards.value);
       });
 
-      this.generateArrays();
-      this.SetDefaultData();
+      // this.generateArrays();
+      // this.SetDefaultData();
     }).catch(error => {
       console.error('Errore nel caricamento dei giocatori:', error);
     });
@@ -128,8 +128,8 @@ export class MatchComponent implements OnInit {
     }, 1000);
 
     setTimeout(() => {
-      this.cdRef.detectChanges();
-    }, 2000);
+      this.cdRef.markForCheck();
+    }, 1000);
 
   }
 
