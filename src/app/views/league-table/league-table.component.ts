@@ -31,6 +31,8 @@ export class LeagueTableComponent implements OnInit {
 
   @Input('fullModeVisualization') fullModeVisualization: boolean = true;
   @Input('homeVisualization') homeVisualization: boolean = false;
+  @Input('iconVisualization') iconVisualization: boolean = true;
+  @Input('titleVisualization') titleVisualization: boolean = true;
 
   ngOnInit(): void {
     this.GetLeagueTable();
