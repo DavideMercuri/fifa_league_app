@@ -228,7 +228,7 @@ export class TeamDetailComponent implements OnInit, AfterViewInit {
 
     this.http.get('http://localhost:3000/players/players_list/filters', { params: httpParams }).subscribe({
       next: (res: any) => {
-        this.players = res;
+        this.players = res;        
         this.dataService.setPlayersList(res);
         this.page$.next(0);
       },
