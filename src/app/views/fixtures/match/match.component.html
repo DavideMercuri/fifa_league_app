@@ -2,8 +2,10 @@
 
     <button tuiIconButton [icon]="'tuiIconBarChartLarge'" style="position: absolute; left: 30px; top: 30px;" [size]="'s'" [shape]="'rounded'" (click)="toggle(true)" (tuiActiveZoneChange)="toggle($event)">
         <div *tuiSidebar="open; direction: 'right'">
-            <app-league-table [fullModeVisualization]="false"></app-league-table>
-            <button class="close-custom" tuiIconButton [icon]="'tuiIconCloseLarge'"[size]="'m'" [shape]="'rounded'" [appearance]="'flat'" (click)="toggle(false)"></button>
+            <div style="padding-top: 70px;">
+                <app-league-table [fullModeVisualization]="true" [iconVisualization]="false" [titleVisualization]="false"></app-league-table>
+                <button class="close-custom" tuiIconButton [icon]="'tuiIconCloseLarge'"[size]="'m'" [shape]="'rounded'" [appearance]="'flat'" (click)="toggle(false)"></button>
+            </div>
         </div>
     </button>
 

@@ -259,7 +259,7 @@ export class MatchComponent implements OnInit {
     } else {
       const response = this.match;
       const players = this.players;
-      const { scorers, assists, motm, yellowCard, redCard, injured, notation_injured, notation_expelled } = this.ProcessGame(response, players);
+      const { scorers, assists, motm, yellowCard, redCard, injured } = this.ProcessGame(response, players);
       this.htGoals = this.match.ht_goals;
       this.awGoals = this.match.aw_goals;
       this.activeScorers.setValue(scorers);
