@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { DataService } from 'src/app/data.service';
 import { FormControl } from '@angular/forms';
 import { Fixture } from 'src/interfaces/fixture.interfaces';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { DataService } from 'src/app/core/services/data.service';
 
 @Component({
   selector: 'app-home',

@@ -9,10 +9,10 @@ import { tuiIsFalsy, tuiIsPresent, TUI_DEFAULT_MATCHER, tuiDefaultSort } from '@
 import { TuiDialogContext, TuiDialogService, TuiDialogSize } from '@taiga-ui/core';
 import { TUI_ARROW } from '@taiga-ui/kit';
 import { BehaviorSubject, Observable, combineLatest, debounceTime, filter, map, share, startWith, switchMap, timer } from 'rxjs';
-import { DataService } from 'src/app/data.service';
 import { Player } from 'src/interfaces/player.interface';
 import { Team } from 'src/interfaces/team.interfaces';
 import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
+import { DataService } from 'src/app/core/services/data.service';
 
 type Key = 'name' | 'overall' | 'position' | 'salary' | 'player_value';
 

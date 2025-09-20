@@ -10,7 +10,7 @@ import { Observable, Subject, delay, filter, finalize, map, of, startWith, switc
 import { TUI_DEFAULT_MATCHER, TuiContextWithImplicit, TuiStringHandler } from '@taiga-ui/cdk';
 import { TuiFileLike } from '@taiga-ui/kit';
 import { NavbarComponent } from 'src/app/components/navbar/navbar.component';
-import { SubMenuVoicesService } from 'src/app/sub-menu-voices.service';
+import { SubMenuVoicesService } from 'src/app/core/services/sub-menu-voices.service';
 
 class PlayerSearch implements Player {
   constructor(

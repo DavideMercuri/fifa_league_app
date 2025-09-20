@@ -8,9 +8,9 @@ import { BehaviorSubject, combineLatest, Observable, timer } from 'rxjs';
 import { debounceTime, filter, map, share, startWith, switchMap } from 'rxjs/operators';
 import { Player } from 'src/interfaces/player.interface';
 import { faFutbol, faIdCard, faMagnifyingGlass, faMedal, faPenToSquare, faPersonRunning, faPlus, faShieldHalved, faStar, faTrashCan, faUser } from '@fortawesome/free-solid-svg-icons';
-import { DataService } from 'src/app/data.service';
 import { TuiAlertService, TuiDialogContext, TuiDialogService, TuiDialogSize, TuiNotification } from '@taiga-ui/core';
 import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
+import { DataService } from 'src/app/core/services/data.service';
 
 
 type Key = 'name' | 'overall' | 'position' | 'team' | 'goals' | 'assist' | 'motm' | 'yellow_card' | 'red_card';

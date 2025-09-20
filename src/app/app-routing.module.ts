@@ -12,10 +12,30 @@ import { PlayersComponent } from './views/players/players.component';
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
-  { path: 'fixtures', component: FixturesComponent, canActivate: [AuthGuard] },
-  { path: 'players', component: PlayersComponent, canActivate: [AuthGuard] },
+  {
+    path: 'fixtures',
+    component: FixturesComponent,
+    canActivate: [AuthGuard],
+    loadChildren: () =>
+      import('./views/fixtures/fixtures.module').then(m => m.FixturesModule)
+  },
+  // { path: 'players', component: PlayersComponent, canActivate: [AuthGuard] },
+  {
+    path: 'players',
+    component: PlayersComponent,
+    canActivate: [AuthGuard],
+    loadChildren: () =>
+      import('./views/players/players.module').then(m => m.PlayersModule)
+  },
   { path: 'league-table', component: LeagueTableComponent, canActivate: [AuthGuard] },
-  { path: 'team-detail/:id', component: TeamDetailComponent, canActivate: [AuthGuard] },
+  // { path: 'team-detail/:id', component: TeamDetailComponent, canActivate: [AuthGuard] },
+  {
+    path: 'team-detail/:id',
+    component: TeamDetailComponent,
+    canActivate: [AuthGuard],
+    loadChildren: () =>
+      import('./views/team-detail/team-detail.module').then(m => m.TeamDetailModule)
+  },
   { path: 'history', component: HistoryComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '/home' }
 ];

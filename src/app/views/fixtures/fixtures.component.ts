@@ -5,7 +5,7 @@ import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
 import { Fixture } from 'src/interfaces/fixture.interfaces';
 import { Router } from '@angular/router';
 import { faCircleExclamation, faCircleUp, faSquarePlus, faTruckMedical } from '@fortawesome/free-solid-svg-icons';
-import { ScrollService } from 'src/app/scroll.service';
+import { ScrollService } from 'src/app/core/services/scroll.service';
 
 @Component({
   selector: 'app-fixtures',
@@ -78,10 +78,10 @@ export class FixturesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (array) {
       const teamObj = array.find((obj: any) => obj.team === teamName);
       return teamObj ? teamObj.team_logo : 'No logo found for this team';
-    }else{
+    } else {
       setTimeout(() => {
         this.teamLogo(array, teamName);
-      },100)
+      }, 100)
     }
 
   }

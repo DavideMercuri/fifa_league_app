@@ -3,7 +3,7 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { switchMap } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
-import { SubMenuVoicesService } from 'src/app/sub-menu-voices.service';
+import { SubMenuVoicesService } from 'src/app/core/services/sub-menu-voices.service';
 
 @Component({
   selector: 'app-navbar',

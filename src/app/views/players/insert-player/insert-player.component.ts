@@ -4,9 +4,9 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TuiAlertService, TuiNotification } from '@taiga-ui/core';
 import { TuiFileLike } from '@taiga-ui/kit';
 import { Observable, Subject, finalize, map, of, switchMap, timer } from 'rxjs';
-import { playerOSV } from 'src/app/components/navbar/common-data';
 import { PlayersComponent } from '../players.component';
 import { Transaction } from 'src/interfaces/transaction.interface';
+import { playerOSV } from 'src/app/shared/common-data';
 
 @Component({
   selector: 'app-insert-player',

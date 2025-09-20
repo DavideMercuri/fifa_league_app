@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, ChangeDetectorRef, Component, Inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, OnInit } from '@angular/core';
 import { faCloudArrowUp, faFolderPlus } from '@fortawesome/free-solid-svg-icons';
 import { TuiAlertService, TuiDialogContext, TuiDialogService, TuiDialogSize, TuiNotification } from '@taiga-ui/core';
 import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
-import { Observable, Subscription } from 'rxjs';
-import { WebsocketService } from 'src/app/websocket.service';
+import { Subscription } from 'rxjs';
+import { WebsocketService } from 'src/app/core/services/websocket.service';
 
 @Component({
   selector: 'app-league-table',
@@ -20,7 +20,7 @@ export class LeagueTableComponent implements OnInit {
     private cdRef: ChangeDetectorRef,
     @Inject(TuiAlertService) private readonly alerts: TuiAlertService,
     private websocketService: WebsocketService // Aggiungi WebsocketService al costruttore
-  ) {}
+  ) { }
 
   faFolderPlus = faFolderPlus;
   faCloudArrowUp = faCloudArrowUp;
@@ -38,7 +38,7 @@ export class LeagueTableComponent implements OnInit {
     this.GetLeagueTable();
 
     // Ascolta i messaggi WebSocket per le notifiche in tempo reale
-    this.websocketService.messages$.subscribe(() => {});
+    this.websocketService.messages$.subscribe(() => { });
   }
 
   leagueTable: any = [];
@@ -49,7 +49,7 @@ export class LeagueTableComponent implements OnInit {
   GetLeagueTable() {
     this.http.get('http://localhost:3000/players/league_table').subscribe({
       next: (res: any) => {
-        this.leagueTable = res;      
+        this.leagueTable = res;
       },
       error: (err: any) => {
         console.error(err);

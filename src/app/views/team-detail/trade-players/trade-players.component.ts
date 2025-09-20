@@ -89,7 +89,7 @@ export class TradePlayersComponent implements OnInit {
     this.selectTeam.setValue('Svincolati');
 
     this.transferValueInput.disable();
-    this.transferValueInput.setValue(this.player.player_value / 2);
+    this.transferValueInput.setValue(this.player.player_value * 0.8);
 
     this.additionalPlayers.disable();
     this.multitrade.disable();
@@ -99,7 +99,7 @@ export class TradePlayersComponent implements OnInit {
   checkBuyerTeam(team: any) {
     if (team == 'Svincolati') {
       this.transferValueInput.disable();
-      this.transferValueInput.setValue(this.player.player_value / 2);
+      this.transferValueInput.setValue(this.player.player_value * 0.8);
       this.additionalPlayers.reset();
       this.additionalBuyerPlayers.reset();
       this.multitrade.setValue(false);
@@ -166,7 +166,7 @@ export class TradePlayersComponent implements OnInit {
       additionalPlayers: this.additionalPlayers.value,
       additionalBuyerPlayers: this.additionalBuyerPlayers.value,
     };
-    
+
     let sold_players: Array<string> = [];
     let purchased_players: Array<string> = [];
 
@@ -277,13 +277,10 @@ export class TradePlayersComponent implements OnInit {
   readonly identityMatcher: TuiIdentityMatcher<PlayerSearch> = (player1, player2) =>
     player1.id === player2.id;
 
-
   readonly search$ = new Subject<string | null>();
 
   onSearchChange(searchQuery: string | null): void {
-
     this.search$.next(searchQuery);
-
   }
 
   extractValueFromEvent(event: Event): string | null {

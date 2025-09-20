@@ -17,6 +17,10 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "text-mask-core",
+              "dompurify"
+            ],
             "outputPath": "dist/fifa_league_app",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -57,7 +61,12 @@
                   "maximumError": "4kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "sourceMap": {
+                "scripts": true,
+                "styles": true,
+                "hidden": false
+              }
             },
             "development": {
               "buildOptimizer": false,

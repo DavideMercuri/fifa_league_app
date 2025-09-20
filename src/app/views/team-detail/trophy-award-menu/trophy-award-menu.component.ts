@@ -2,7 +2,6 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { faShieldHalved, faTrophy } from '@fortawesome/free-solid-svg-icons';
-import { UCLInfo, leagueInfo } from 'src/app/components/navbar/common-data';
 import { Team } from 'src/interfaces/team.interfaces';
 import { TeamDetailComponent } from '../team-detail.component';
 import { TuiAlertService, TuiNotification } from '@taiga-ui/core';
@@ -10,6 +9,7 @@ import { TUI_DEFAULT_MATCHER, TuiContextWithImplicit, TuiIdentityMatcher, TuiStr
 import { Player } from 'src/interfaces/player.interface';
 import { Observable, Subject, delay, filter, of, startWith, switchMap } from 'rxjs';
 import { Transaction } from 'src/interfaces/transaction.interface';
+import { leagueInfo, UCLInfo } from 'src/app/shared/common-data';
 
 class PlayerSearch implements Player {
   constructor(

@@ -1,7 +1,7 @@
 // notification.component.ts
 import { Component, OnInit } from '@angular/core';
 import { TuiAlertService, TuiNotification } from '@taiga-ui/core';
-import { WebsocketService } from 'src/app/websocket.service';
+import { WebsocketService } from 'src/app/core/services/websocket.service';
 
 @Component({
   selector: 'app-notification',
