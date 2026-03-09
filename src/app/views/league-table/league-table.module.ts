@@ -1,24 +1,13 @@
-import { LeagueTableComponent } from './league-table.component';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { SharedModule } from '../../shared/shared.module';
-import { SeasonCheckComponent } from './season-check/season-check.component';
-import { CommonModule } from '@angular/common';
+import { LeagueTableComponent } from './league-table.component';
+import { LeagueTableSharedModule } from './league-table-shared.module';
 
 @NgModule({
-    declarations: [
-        LeagueTableComponent,
-        SeasonCheckComponent
-    ],
+    // no declarations here; they live in LeagueTableSharedModule
     imports: [
-        CommonModule,
-        SharedModule,
-        RouterModule.forChild([
-            { path: '', component: LeagueTableComponent }
-        ])
-    ],
-    exports: [
-        LeagueTableComponent
+        LeagueTableSharedModule, // components + Common/Shared
+        RouterModule.forChild([{ path: '', component: LeagueTableComponent }]) // routing only qui
     ]
 })
 export class LeagueTableModule { }

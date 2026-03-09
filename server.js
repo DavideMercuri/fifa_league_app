@@ -925,7 +925,7 @@ app.post('/start-new-season', async (req, res) => {
 });
 
 app.get('/players/history', (req, res) => {
-  const query = 'SELECT * FROM history WHERE season_id < (SELECT season_id FROM history ORDER BY season_id DESC LIMIT 1);';
+    const query = `SELECT * FROM history WHERE season_id < (SELECT MAX(season_id) FROM history) ORDER BY season_id DESC`;
   connection.query(query, async (error, results) => {
     if (error) {
       return res.status(500).send(error);
@@ -959,8 +959,6 @@ app.get('/players/history', (req, res) => {
     }
   });
 });
-
-
 
 app.get('/players/history/:seasonId', (req, res) => {
   const seasonId = req.params.seasonId;

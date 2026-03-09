@@ -41,15 +41,17 @@ export class HistoryComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
 
   }
-  
+
   getHistory() {
     this.isLoading = true;
 
     this.http.get('http://localhost:3000/players/history').subscribe({
       next: (res: any) => {
-        this.totalItems = (Math.floor(res.length / 10)) + 1; // Imposta il numero totale di elementi
-        // Assicurati di prendere la fetta giusta dell'array per la pagina corrente
-        this.getSummary(res.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize));
+        this.totalItems = Math.ceil(res.length / this.pageSize); // number of pages
+
+        const start = (this.currentPage - 1) * this.pageSize;
+        const end = this.currentPage * this.pageSize;
+        this.getSummary(res.slice(start, end)); // slice mantiene l'ordine del server (DESC)
       },
       complete: () => {
         this.isLoading = false;
@@ -83,8 +85,8 @@ export class HistoryComponent implements OnInit, AfterViewInit {
       };
     });
 
-    this.seasonsSummary = seasonsSummaryTemp.sort((a, b) => a.season_id - b.season_id);
-
+    // non riordinare in crescente, tieni l'ordine del server (già DESC)
+    this.seasonsSummary = seasonsSummaryTemp;
   }
 
   openDialog(content: PolymorpheusContent<TuiDialogContext>, header: PolymorpheusContent, size: TuiDialogSize): void {

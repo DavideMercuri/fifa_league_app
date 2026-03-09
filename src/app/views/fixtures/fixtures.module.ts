@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 import { FixturesComponent } from './fixtures.component';
 import { MatchComponent } from './match/match.component';
-import { LeagueTableModule } from '../league-table/league-table.module';
+import { LeagueTableSharedModule } from '../league-table/league-table-shared.module';
 import { CommonModule } from '@angular/common';
 
 @NgModule({
@@ -15,8 +15,8 @@ import { CommonModule } from '@angular/common';
     imports: [
         SharedModule,
         CommonModule,
-        LeagueTableModule,
-        RouterModule.forChild([{ path: 'fixtures', component: FixturesComponent }])
+        LeagueTableSharedModule,
+        RouterModule.forChild([{ path: '', component: FixturesComponent }])
     ]
 })
 export class FixturesModule { }

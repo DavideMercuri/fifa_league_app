@@ -1,42 +1,52 @@
 import { AuthGuard } from './auth/auth.guard';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { FixturesComponent } from './views/fixtures/fixtures.component';
-import { HomeComponent } from './views/home/home.component';
-import { LoginComponent } from './auth/login/login.component';
-import { TeamDetailComponent } from './views/team-detail/team-detail.component';
-import { HistoryComponent } from './views/history/history.component';
-import { LeagueTableComponent } from './views/league-table/league-table.component';
-import { PlayersComponent } from './views/players/players.component';
 
 const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  {
+    path: 'login',
+    loadChildren: () =>
+      import('./auth/auth.module').then(m => m.AuthModule)
+  },
+  {
+    path: 'home',
+    canActivate: [AuthGuard],
+    loadChildren: () =>
+      import('./views/home/home.module').then(m => m.HomeModule)
+  },
+
+  // keep only lazy loading; the feature module provides its own declarations/imports (CommonModule etc.)
   {
     path: 'fixtures',
-    component: FixturesComponent,
     canActivate: [AuthGuard],
     loadChildren: () =>
       import('./views/fixtures/fixtures.module').then(m => m.FixturesModule)
   },
-  // { path: 'players', component: PlayersComponent, canActivate: [AuthGuard] },
   {
     path: 'players',
-    component: PlayersComponent,
     canActivate: [AuthGuard],
     loadChildren: () =>
       import('./views/players/players.module').then(m => m.PlayersModule)
   },
-  { path: 'league-table', component: LeagueTableComponent, canActivate: [AuthGuard] },
-  // { path: 'team-detail/:id', component: TeamDetailComponent, canActivate: [AuthGuard] },
+  {
+    path: 'league-table',
+    canActivate: [AuthGuard],
+    loadChildren: () =>
+      import('./views/league-table/league-table.module').then(m => m.LeagueTableModule)
+  },
   {
     path: 'team-detail/:id',
-    component: TeamDetailComponent,
     canActivate: [AuthGuard],
     loadChildren: () =>
       import('./views/team-detail/team-detail.module').then(m => m.TeamDetailModule)
   },
-  { path: 'history', component: HistoryComponent, canActivate: [AuthGuard] },
+
+  {
+    path: 'history',
+    canActivate: [AuthGuard],
+    loadChildren: () =>
+      import('./views/history/history.module').then(m => m.HistoryModule)
+  },
   { path: '**', redirectTo: '/home' }
 ];
 
